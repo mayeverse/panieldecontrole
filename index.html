@@ -2382,7 +2382,7 @@
       }
 
 
-      function financeInstallmentInvoiceDate(dateStr, cardId, installmentNumber) { const d=new Date(dateStr+"T12:00:00"); if(Number.isNaN(d.getTime()))return null; const c=state.finance.cards?.[cardId]; const closeDay=Number(c?.closingDay||c?.endDay||1); let month=d.getMonth(),year=d.getFullYear(); if(d.getDate()>closeDay)month++; return new Date(year,month+Math.max(0,Number(installmentNumber||1)-1),1); }
+      function financeInstallmentInvoiceDate(dateStr, cardId, installmentNumber) { const d=new Date(dateStr+"T12:00:00"); if(Number.isNaN(d.getTime()))return null; const c=state.finance.cards?.[cardId]; const closeDay=Number(c?.closingDay||c?.endDay||1); let month=d.getMonth(),year=d.getFullYear(); if(d.getDate()>=closeDay)month++; return new Date(year,month+Math.max(0,Number(installmentNumber||1)-1),1); }
 
       function financeInvoiceLabel(dateStr, cardId, installmentNumber) {
         const inv = financeInstallmentInvoiceDate(dateStr, cardId, installmentNumber);
@@ -3395,7 +3395,7 @@
       function ensureFinanceCards(){ if(!state.finance.cards || typeof state.finance.cards!=="object" || Array.isArray(state.finance.cards)) state.finance.cards={}; }
       function openFinanceCardsModal(id=null){ ensureFinanceCards(); const c=id?state.finance.cards[id]:null; $("#financeCardEditingId").value=id||""; $("#financeCardModalTitle").textContent=c?"Configurar cartão":"Novo cartão"; $("#financeCardName").value=c?.name||""; $("#financeCardClosingDay").value=c?.closingDay||c?.endDay||""; updateFinanceCardCyclePreview(); $("#financeCardsModalBackdrop").classList.add("open"); }
       function closeFinanceCardsModal(){ $("#financeCardsModalBackdrop").classList.remove("open"); }
-      function updateFinanceCardCyclePreview(){ const day=Number($("#financeCardClosingDay")?.value||0), box=$("#financeCardCyclePreview"); if(!box)return; if(!day){box.innerHTML="<strong>Como a fatura será calculada</strong><span>Informe o dia de fechamento.</span>";return;} const d=String(day).padStart(2,"0"); box.innerHTML=`<strong>Exemplo</strong><span>Compras de <b>${d}/09</b> até <b>${d}/10</b> entram na <b>fatura de outubro</b>.</span><span>Depois, ${d}/10 → ${d}/11 será a fatura de novembro.</span>`; }
+      function updateFinanceCardCyclePreview(){ const day=Number($("#financeCardClosingDay")?.value||0), box=$("#financeCardCyclePreview"); if(!box)return; if(!day){box.innerHTML="<strong>Como a fatura será calculada</strong><span>Informe o dia de fechamento.</span>";return;} const d=String(day).padStart(2,"0"), dNext=String(Math.min(31,day+1)).padStart(2,"0"); box.innerHTML=`<strong>Exemplo</strong><span>Compras de <b>${dNext}/09</b> até <b>${d}/10</b> (inclusive) entram na <b>fatura de outubro</b>.</span><span>Uma compra feita no próprio dia ${d}/10 já vai para a fatura de novembro.</span>`; }
       $("#financeCardSettingsBtn")?.addEventListener("click",()=>openFinanceCardsModal());
       $("#closeFinanceCardsModalBtn")?.addEventListener("click",closeFinanceCardsModal);
       $("#cancelFinanceCardBtn")?.addEventListener("click",closeFinanceCardsModal);
