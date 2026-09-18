@@ -568,6 +568,16 @@
     .finance-section-total + .finance-section-total { border-top:1px dashed var(--line); font-weight:700; color:var(--muted); }
     .finance-section-total + .finance-section-total .money, .finance-section-total + .finance-section-total span { font-weight:800; }
     .finance-mini-note { color:var(--muted); font-size:11px; }
+    .finance-filter-bar {
+      display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 14px;
+    }
+    .finance-filter-bar .field { flex:1 1 170px; min-width:140px; }
+    .finance-filter-bar #financeExpenseFilterClear { flex:0 0 auto; }
+    @media (max-width:640px) {
+      .finance-filter-bar { padding:0 14px 14px; }
+      .finance-filter-bar .field { flex:1 1 100%; }
+      .finance-filter-bar #financeExpenseFilterClear { flex:1 1 100%; }
+    }
     @media (max-width:900px) {
       .finance-kpis { grid-template-columns:repeat(2,1fr); }
       .finance-grid { grid-template-columns:1fr; }
@@ -1203,8 +1213,14 @@
                 <div><h2>Gastos do mês</h2><p>Registre despesas avulsas. Parcelas e gastos fixos aparecem separadamente.</p></div>
                 <button class="secondary-btn" data-finance-add="expense">＋ Novo gasto</button>
               </div>
+              <div class="finance-filter-bar" id="financeExpenseFilterBar">
+                <input class="field" id="financeExpenseSearch" type="search" placeholder="🔎 Buscar por nome...">
+                <select class="field" id="financeExpenseFilterCategory"></select>
+                <select class="field" id="financeExpenseFilterPayment"></select>
+                <button class="mini-btn" type="button" id="financeExpenseFilterClear">Limpar filtros</button>
+              </div>
               <div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Nome</th><th>Data</th><th>Pagamento</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="financeExpenseTable"></tbody></table></div>
-              <div class="finance-section-total">Total de gastos do mês: <span class="money out" id="financeExpenseTotal" style="margin-left:7px;">R$ 0,00</span></div>
+              <div class="finance-section-total">Total <span id="financeExpenseTotalLabel">de gastos do mês</span>: <span class="money out" id="financeExpenseTotal" style="margin-left:7px;">R$ 0,00</span><span class="finance-mini-note" id="financeExpenseFilterCount" style="margin-left:10px;"></span></div>
             </div>
           </section>
 
@@ -1555,6 +1571,7 @@
         <input type="hidden" id="financeCardEditingId">
         <div class="form-group"><label>Nome do cartão</label><input class="field" id="financeCardName" placeholder="Ex.: Cartão da minha mãe"></div>
         <div class="form-group"><label>Dia de fechamento</label><input class="field" id="financeCardClosingDay" type="number" min="1" max="31" placeholder="10"></div>
+        <div class="form-group"><label>Dia de vencimento</label><input class="field" id="financeCardDueDay" type="number" min="1" max="31" placeholder="17"></div>
         <div class="finance-card-cycle-preview" id="financeCardCyclePreview"><strong>Como a fatura será calculada</strong><span>Informe o dia de fechamento.</span></div>
         <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelFinanceCardBtn">Cancelar</button><button type="submit" class="primary-btn">Salvar cartão</button></div>
       </form>
@@ -1620,6 +1637,9 @@
         personal: loadPersonal(),
         view: "today"
       };
+
+      // Filtro dos gastos do mês (não é salvo — reinicia a cada acesso)
+      let financeExpenseFilter = { q: "", category: "", payment: "" };
 
       function uid() {
         return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -1935,7 +1955,7 @@
         return current;
       }
 
-      function paymentOptions(selected="") {
+      function paymentOptions(selected="", allLabel="Selecione...") {
         const cards = Object.entries(state.finance.cards || {});
         const values = ["Pix","Cartão de débito", ...cards.map(([id]) => `card:${id}`)];
         const labelFor = v => {
@@ -1947,7 +1967,7 @@
         };
         let opts = values;
         if (selected && !opts.includes(selected)) opts = [...opts, selected];
-        return `<option value="">Selecione...</option>` + opts.map(v => `<option value="${escapeHTML(v)}" ${v===selected?"selected":""}>${escapeHTML(labelFor(v))}</option>`).join("");
+        return `<option value="">${escapeHTML(allLabel)}</option>` + opts.map(v => `<option value="${escapeHTML(v)}" ${v===selected?"selected":""}>${escapeHTML(labelFor(v))}</option>`).join("");
       }
 
       function paymentKey(item) {
@@ -2022,9 +2042,9 @@
         setTimeout(() => $("#financeFormFields input, #financeFormFields select")?.focus(), 40);
       }
 
+      const EXPENSE_CATEGORIES = ["Aplicativos de transporte (Uber, 99)","Assinaturas e Serviços Digitais","Cuidados Pessoais","Delivery","Despesas eventuais","Eletrônicos","Empréstimos e Financiamentos","Farmácia","Habitação e moradia","Internet e telefone fixo","Lazer e Entretenimento","Manutenção e Serviços da Casa","Padaria","Passagens de ônibus, metrô e trem","Presentes","Restaurantes, bares e lanchonetes","Saúde","Supermercado","Vestuário"].sort((a,b)=>a.localeCompare(b,"pt-BR"));
       function categoryOptions(selected="") {
-        const values = ["Aplicativos de transporte (Uber, 99)","Assinaturas e Serviços Digitais","Cuidados Pessoais","Delivery","Despesas eventuais","Eletrônicos","Empréstimos e Financiamentos","Farmácia","Habitação e moradia","Internet e telefone fixo","Lazer e Entretenimento","Manutenção e Serviços da Casa","Padaria","Passagens de ônibus, metrô e trem","Presentes","Restaurantes, bares e lanchonetes","Saúde","Supermercado","Vestuário"].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-        return `<option value="">Selecione...</option>` + values.map(v => `<option value="${escapeHTML(v)}" ${v===selected?"selected":""}>${escapeHTML(v)}</option>`).join("");
+        return `<option value="">Selecione...</option>` + EXPENSE_CATEGORIES.map(v => `<option value="${escapeHTML(v)}" ${v===selected?"selected":""}>${escapeHTML(v)}</option>`).join("");
       }
 
       function incomeCategoryOptions(selected="") {
@@ -2430,6 +2450,24 @@
         </div>`;
       }
 
+      function populateFinanceExpenseFilters() {
+        const catSel = $("#financeExpenseFilterCategory");
+        if (catSel) catSel.innerHTML = `<option value="">Todas as categorias</option>` + EXPENSE_CATEGORIES.map(v => `<option value="${escapeHTML(v)}" ${v===financeExpenseFilter.category?"selected":""}>${escapeHTML(v)}</option>`).join("");
+        const paySel = $("#financeExpenseFilterPayment");
+        if (paySel) paySel.innerHTML = paymentOptions(financeExpenseFilter.payment, "Todas as formas de pagamento");
+      }
+
+      function applyFinanceExpenseFilter(list) {
+        const f = financeExpenseFilter;
+        if (!f.q && !f.category && !f.payment) return list;
+        return list.filter(x => {
+          if (f.q && !String(x.name||"").toLowerCase().includes(f.q)) return false;
+          if (f.category && (x.category||"") !== f.category) return false;
+          if (f.payment && paymentKey(x) !== f.payment) return false;
+          return true;
+        });
+      }
+
       function renderFinance() {
         renderFinanceCardsSummary();
         ensureFinanceCards();
@@ -2472,8 +2510,14 @@
         $("#financePaymentGrid").innerHTML = pays.length ? pays.map(([p,v])=>`<div class="payment-item"><small>${escapeHTML(paymentLabel(p))}</small><strong>${moneyBRL(v)}</strong></div>`).join("") :
           `<div class="finance-empty" style="grid-column:1/-1"><strong>Sem pagamentos registrados</strong><span>Os valores aparecerão aqui automaticamente.</span></div>`;
 
-        renderFinanceTableBody("#financeExpenseTable", t.expenses.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("expense",x.id)}</td></tr>`).join(""), "Nenhum gasto avulso neste mês.");
-        $("#financeExpenseTotal").textContent = moneyBRL(t.expenseTotal);
+        populateFinanceExpenseFilters();
+        const filterActive = !!(financeExpenseFilter.q || financeExpenseFilter.category || financeExpenseFilter.payment);
+        const filteredExpenses = applyFinanceExpenseFilter(t.expenses);
+        renderFinanceTableBody("#financeExpenseTable", filteredExpenses.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("expense",x.id)}</td></tr>`).join(""), filterActive ? "Nenhum gasto encontrado com esse filtro." : "Nenhum gasto avulso neste mês.");
+        const filteredExpenseTotal = filteredExpenses.reduce((s,x)=>s+Number(x.value||0),0);
+        $("#financeExpenseTotal").textContent = moneyBRL(filterActive ? filteredExpenseTotal : t.expenseTotal);
+        $("#financeExpenseTotalLabel").textContent = filterActive ? "filtrado" : "de gastos do mês";
+        $("#financeExpenseFilterCount").textContent = filterActive ? `${filteredExpenses.length} de ${t.expenses.length} gasto${t.expenses.length===1?"":"s"}` : "";
 
         renderFinanceTableBody("#financeFixedTable", t.fixed.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td><button class="paid-toggle ${x.paid?"paid":""}" data-finance-toggle-paid="${x.id}">${x.paid?"✓ Pago":"Pendente"}</button></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("fixed",x.id)}</td></tr>`).join(""), "Nenhum gasto fixo neste mês.");
         $("#financeFixedTotal").textContent = moneyBRL(t.fixedTotal);
@@ -3388,12 +3432,30 @@
       $("#financePrevMonth")?.addEventListener("click", () => shiftFinanceMonth(-1));
       $("#financeNextMonth")?.addEventListener("click", () => shiftFinanceMonth(1));
 
+      $("#financeExpenseSearch")?.addEventListener("input", e => {
+        financeExpenseFilter.q = e.target.value.trim().toLowerCase();
+        renderFinance();
+      });
+      $("#financeExpenseFilterCategory")?.addEventListener("change", e => {
+        financeExpenseFilter.category = e.target.value;
+        renderFinance();
+      });
+      $("#financeExpenseFilterPayment")?.addEventListener("change", e => {
+        financeExpenseFilter.payment = e.target.value;
+        renderFinance();
+      });
+      $("#financeExpenseFilterClear")?.addEventListener("click", () => {
+        financeExpenseFilter = { q: "", category: "", payment: "" };
+        if ($("#financeExpenseSearch")) $("#financeExpenseSearch").value = "";
+        renderFinance();
+      });
+
       $("#closeFinanceModalBtn")?.addEventListener("click", financeCloseModal);
       $("#cancelFinanceModalBtn")?.addEventListener("click", financeCloseModal);
       $("#financeModalBackdrop")?.addEventListener("click", e => { if (e.target === $("#financeModalBackdrop")) financeCloseModal(); });
 
       function ensureFinanceCards(){ if(!state.finance.cards || typeof state.finance.cards!=="object" || Array.isArray(state.finance.cards)) state.finance.cards={}; }
-      function openFinanceCardsModal(id=null){ ensureFinanceCards(); const c=id?state.finance.cards[id]:null; $("#financeCardEditingId").value=id||""; $("#financeCardModalTitle").textContent=c?"Configurar cartão":"Novo cartão"; $("#financeCardName").value=c?.name||""; $("#financeCardClosingDay").value=c?.closingDay||c?.endDay||""; updateFinanceCardCyclePreview(); $("#financeCardsModalBackdrop").classList.add("open"); }
+      function openFinanceCardsModal(id=null){ ensureFinanceCards(); const c=id?state.finance.cards[id]:null; $("#financeCardEditingId").value=id||""; $("#financeCardModalTitle").textContent=c?"Configurar cartão":"Novo cartão"; $("#financeCardName").value=c?.name||""; $("#financeCardClosingDay").value=c?.closingDay||c?.endDay||""; $("#financeCardDueDay").value=c?.dueDay||""; updateFinanceCardCyclePreview(); $("#financeCardsModalBackdrop").classList.add("open"); }
       function closeFinanceCardsModal(){ $("#financeCardsModalBackdrop").classList.remove("open"); }
       function updateFinanceCardCyclePreview(){ const day=Number($("#financeCardClosingDay")?.value||0), box=$("#financeCardCyclePreview"); if(!box)return; if(!day){box.innerHTML="<strong>Como a fatura será calculada</strong><span>Informe o dia de fechamento.</span>";return;} const d=String(day).padStart(2,"0"), dNext=String(Math.min(31,day+1)).padStart(2,"0"); box.innerHTML=`<strong>Exemplo</strong><span>Compras de <b>${dNext}/09</b> até <b>${d}/10</b> (inclusive) entram na <b>fatura de outubro</b>.</span><span>Uma compra feita no próprio dia ${d}/10 já vai para a fatura de novembro.</span>`; }
       $("#financeCardSettingsBtn")?.addEventListener("click",()=>openFinanceCardsModal());
@@ -3406,15 +3468,18 @@
         const id=$("#financeCardEditingId").value||("card"+Date.now());
         const name=$("#financeCardName").value.trim();
         const rawDay=Number($("#financeCardClosingDay").value);
+        const rawDueDay=$("#financeCardDueDay").value?Number($("#financeCardDueDay").value):null;
         if(!name){ showToast("Informe o nome do cartão"); return; }
         if(!rawDay || rawDay<1 || rawDay>31){ showToast("Informe um dia de fechamento entre 1 e 31"); return; }
+        if(rawDueDay!==null && (rawDueDay<1 || rawDueDay>31)){ showToast("Informe um dia de vencimento entre 1 e 31"); return; }
         const closingDay=Math.min(31,Math.max(1,rawDay));
-        state.finance.cards[id]={name,closingDay,startDay:closingDay,startMonth:1,endDay:closingDay,endMonth:1};
+        const dueDay=rawDueDay?Math.min(31,Math.max(1,rawDueDay)):null;
+        state.finance.cards[id]={name,closingDay,dueDay,startDay:closingDay,startMonth:1,endDay:closingDay,endMonth:1};
         saveFinance("Cartão salvo!");
         closeFinanceCardsModal();
         renderFinance();
       });
-      function renderFinanceCardsSummary(){ ensureFinanceCards(); const el=$("#financeCardsSummary"); if(!el)return; const cards=Object.entries(state.finance.cards); if(!cards.length){el.innerHTML=`<div class="finance-empty"><strong>Nenhum cartão cadastrado</strong><span>Cadastre o primeiro cartão.</span></div><button class="primary-btn" type="button" id="newFinanceCardFromEmpty">＋ Novo cartão</button>`; $("#newFinanceCardFromEmpty")?.addEventListener("click",()=>openFinanceCardsModal()); return;} el.innerHTML=`<div class="finance-cards-list">${cards.map(([id,c])=>`<div class="finance-summary-row finance-card-summary-row"><span><strong>${escapeHTML(c.name)}</strong><br><small class="finance-mini-note">Fechamento: dia ${String(c.closingDay||c.endDay||1).padStart(2,"0")}</small></span><button class="mini-btn" type="button" data-edit-finance-card="${escapeHTML(id)}">Configurar</button></div>`).join("")}</div><button class="secondary-btn" type="button" id="newFinanceCardBtn" style="margin-top:12px">＋ Novo cartão</button>`; $("#newFinanceCardBtn")?.addEventListener("click",()=>openFinanceCardsModal()); el.querySelectorAll("[data-edit-finance-card]").forEach(b=>b.addEventListener("click",()=>openFinanceCardsModal(b.dataset.editFinanceCard))); }
+      function renderFinanceCardsSummary(){ ensureFinanceCards(); const el=$("#financeCardsSummary"); if(!el)return; const cards=Object.entries(state.finance.cards); if(!cards.length){el.innerHTML=`<div class="finance-empty"><strong>Nenhum cartão cadastrado</strong><span>Cadastre o primeiro cartão.</span></div><button class="primary-btn" type="button" id="newFinanceCardFromEmpty">＋ Novo cartão</button>`; $("#newFinanceCardFromEmpty")?.addEventListener("click",()=>openFinanceCardsModal()); return;} el.innerHTML=`<div class="finance-cards-list">${cards.map(([id,c])=>`<div class="finance-summary-row finance-card-summary-row"><span><strong>${escapeHTML(c.name)}</strong><br><small class="finance-mini-note">Fechamento: dia ${String(c.closingDay||c.endDay||1).padStart(2,"0")}${c.dueDay?` · Vencimento: dia ${String(c.dueDay).padStart(2,"0")}`:""}</small></span><button class="mini-btn" type="button" data-edit-finance-card="${escapeHTML(id)}">Configurar</button></div>`).join("")}</div><button class="secondary-btn" type="button" id="newFinanceCardBtn" style="margin-top:12px">＋ Novo cartão</button>`; $("#newFinanceCardBtn")?.addEventListener("click",()=>openFinanceCardsModal()); el.querySelectorAll("[data-edit-finance-card]").forEach(b=>b.addEventListener("click",()=>openFinanceCardsModal(b.dataset.editFinanceCard))); }
                   $("#financeForm")?.addEventListener("submit", e => {
         e.preventDefault();
         const type = $("#financeType").value;
