@@ -194,6 +194,7 @@
     }
     .icon-btn { width: 42px; padding: 0; }
     .icon-btn:hover, .secondary-btn:hover { transform: translateY(-1px); box-shadow: 0 7px 16px rgba(15,23,42,.07); }
+    .agenda-filters .secondary-btn.active { background: var(--primary-soft); color: var(--primary); border-color: transparent; font-weight: 700; }
     .primary-btn {
       color: #fff;
       background: var(--primary);
@@ -1240,7 +1241,6 @@
               <button class="secondary-btn" data-finance-add="expense">＋ Registrar Gasto</button>
               <button class="secondary-btn" id="quickAgendaBtn">📅 Abrir Agenda</button>
               <button class="secondary-btn" id="quickInboxBtn">📥 Caixa de entrada</button>
-              <button class="secondary-btn" id="quickPriorityBtn">🎯 Prioridades</button>
             </div>
           </section>
 
@@ -1622,7 +1622,6 @@
             <button class="personal-tab active" data-personal-pane="agenda">📅 Agenda</button>
             <button class="personal-tab" data-personal-pane="todos">✅ Lista de tarefas</button>
             <button class="personal-tab" data-personal-pane="inbox">📥 Caixa de entrada</button>
-            <button class="personal-tab" data-personal-pane="priorities">🎯 Prioridades</button>
           </div>
 
           <section id="personalAgendaPane" class="personal-pane active">
@@ -1636,6 +1635,7 @@
             <div class="agenda-filters">
               <button class="secondary-btn" id="agendaTodayBtn">Hoje</button>
               <button class="secondary-btn" id="agendaWeekBtn">Próximos 7 dias</button>
+              <button class="secondary-btn" id="agendaAllBtn">Todos</button>
             </div>
             <div id="personalAgendaList" class="agenda-list"></div>
           </section>
@@ -1669,23 +1669,6 @@
               <button class="secondary-btn" data-personal-add="inbox">＋ Capturar agora</button>
             </div>
             <div id="personalInboxList" class="personal-item-list"></div>
-          </section>
-
-          <section id="personalPrioritiesPane" class="personal-pane">
-            <div class="personal-section-intro">
-              <div>
-                <h2>Prioridades do dia</h2>
-                <p>Escolha de uma a três tarefas mais importantes para concentrar sua energia primeiro.</p>
-              </div>
-            </div>
-            <div class="priority-summary-card">
-              <div>
-                <strong id="prioritySelectedCount">0 de 3 selecionadas</strong>
-                <span>Marque até três tarefas da lista “Hoje”.</span>
-              </div>
-              <span class="badge today">🎯 Foco do dia</span>
-            </div>
-            <div id="personalPriorityList" class="personal-list"></div>
           </section>
         </section>
         <section id="doneView" class="view">
@@ -2728,7 +2711,12 @@
             end.setDate(end.getDate() + 6);
             const endIso = localDateISO(end);
             const source = [...p.agenda]
-              .filter(x => x.date && (mode === "today" ? x.date === todayIso : x.date >= todayIso && x.date <= endIso))
+              .filter(x => {
+                if (!x.date) return false;
+                if (mode === "today") return x.date === todayIso;
+                if (mode === "week") return x.date >= todayIso && x.date <= endIso;
+                return true; // "all": nenhum compromisso salvo fica de fora da lista
+              })
               .sort((a,b) => `${a.date} ${a.time||"99:99"}`.localeCompare(`${b.date} ${b.time||"99:99"}`));
 
             const groups = [];
@@ -3674,7 +3662,7 @@
         renderTcc();
         renderFinance();
         const personalAgendaList = $("#personalAgendaList");
-        if (personalAgendaList && !personalAgendaList.dataset.mode) personalAgendaList.dataset.mode = "week";
+        if (personalAgendaList && !personalAgendaList.dataset.mode) { personalAgendaList.dataset.mode = "week"; $("#agendaWeekBtn")?.classList.add("active"); }
         renderPersonal();
 
         renderTaskList(
@@ -4190,8 +4178,18 @@
       });
 
       $("#clearBoughtBtn")?.addEventListener("click", clearBoughtShopping);
-      $("#agendaTodayBtn")?.addEventListener("click", () => { const el = $("#personalAgendaList"); if (el) { el.dataset.mode = "today"; renderPersonal(); } });
-      $("#agendaWeekBtn")?.addEventListener("click", () => { const el = $("#personalAgendaList"); if (el) { el.dataset.mode = "week"; renderPersonal(); } });
+      function setAgendaMode(mode) {
+        const el = $("#personalAgendaList");
+        if (!el) return;
+        el.dataset.mode = mode;
+        $("#agendaTodayBtn")?.classList.toggle("active", mode === "today");
+        $("#agendaWeekBtn")?.classList.toggle("active", mode === "week");
+        $("#agendaAllBtn")?.classList.toggle("active", mode === "all");
+        renderPersonal();
+      }
+      $("#agendaTodayBtn")?.addEventListener("click", () => setAgendaMode("today"));
+      $("#agendaWeekBtn")?.addEventListener("click", () => setAgendaMode("week"));
+      $("#agendaAllBtn")?.addEventListener("click", () => setAgendaMode("all"));
       $("#mediaTypeFilter")?.addEventListener("change", renderPersonal);
       $("#mediaStatusFilter")?.addEventListener("change", renderPersonal);
       $("#personalAddTaskBtn")?.addEventListener("click", () => openModal());
@@ -4224,7 +4222,6 @@
       $("#openAllBtn")?.addEventListener("click", () => setView("all"));
       $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
       $("#quickInboxBtn")?.addEventListener("click", () => goToPersonalPane("inbox"));
-      $("#quickPriorityBtn")?.addEventListener("click", () => goToPersonalPane("priorities"));
 
       $("#personalForm")?.addEventListener("submit", e => {
         e.preventDefault();
