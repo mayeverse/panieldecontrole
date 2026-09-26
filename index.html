@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Minha Vida — Organizador Pessoal & Acadêmico</title>
+  <title>Painel de Controle — Organizador Pessoal & Acadêmico</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -285,6 +285,8 @@
     .agenda-day-items { display:flex; flex-wrap:wrap; gap:6px; }
 
     .quick-actions { display:flex; flex-wrap:wrap; gap:10px; padding: 0 21px 21px; }
+    .focus-panel { border: 1px solid var(--primary); box-shadow: 0 12px 30px rgba(99,102,241,.10); background: linear-gradient(180deg, var(--surface), var(--primary-soft)); }
+    .focus-panel .panel-header { border-bottom: 1px solid rgba(99,102,241,.20); }
 
     .focus-row { display:flex; align-items:center; gap:12px; padding:13px 9px; border-top:1px solid var(--line); }
     .focus-row:first-child { border-top:0; }
@@ -552,7 +554,7 @@
     .payment-item { padding:11px; background:var(--surface-2); border:1px solid var(--line); border-radius:13px; }
     .payment-item small { color:var(--muted); display:block; font-size:10px; font-weight:800; }
     .payment-item strong { display:block; margin-top:4px; font-size:14px; }
-    .finance-table-wrap { overflow-x:auto; }
+    .finance-table-wrap { overflow-x:auto; position:relative; }
     .finance-table { width:100%; border-collapse:collapse; }
     .finance-table th,.finance-table td { padding:11px 12px; border-top:1px solid var(--line); text-align:left; font-size:12px; }
     .finance-table th { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.05em; }
@@ -640,6 +642,89 @@
       .personal-item-actions { align-self:flex-end; }
     }
 
+
+    .personal-section-intro {
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      margin:0 0 14px;
+    }
+    .personal-section-intro h2 { margin:0; font-size:18px; letter-spacing:-.02em; }
+    .personal-section-intro p { margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
+    .agenda-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .agenda-list, .personal-list { display:grid; gap:10px; }
+    .agenda-day-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:18px;
+      overflow:hidden; box-shadow:0 4px 15px rgba(15,23,42,.03);
+    }
+    .agenda-day-head {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:13px 16px; background:var(--surface-2); border-bottom:1px solid var(--line);
+    }
+    .agenda-day-head strong { font-size:13px; }
+    .agenda-day-head span { color:var(--muted); font-size:11px; }
+    .agenda-event {
+      display:grid; grid-template-columns:74px minmax(0,1fr) auto; gap:12px; align-items:center;
+      padding:13px 16px; border-top:1px solid var(--line);
+    }
+    .agenda-event:first-child { border-top:0; }
+    .agenda-event-time { font-weight:850; color:var(--primary); font-size:13px; }
+    .agenda-event-main h3 { margin:0; font-size:13.5px; }
+    .agenda-event-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+    .todo-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .personal-list-panel {
+      background:var(--surface); border:1px solid var(--line); border-radius:18px;
+      overflow:hidden; box-shadow:0 4px 15px rgba(15,23,42,.03);
+    }
+    .personal-list-panel-head { padding:15px 16px 11px; border-bottom:1px solid var(--line); }
+    .personal-list-panel-head h3 { margin:0; font-size:14px; }
+    .personal-list-panel-head span { display:block; margin-top:3px; color:var(--muted); font-size:11px; }
+    .personal-todo-row {
+      display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:10px; align-items:start;
+      padding:12px 14px; border-top:1px solid var(--line);
+    }
+    .personal-todo-row:first-child { border-top:0; }
+    .personal-todo-row.done .personal-todo-title { color:var(--muted); text-decoration:line-through; }
+    .personal-todo-title { margin:0; font-size:13px; font-weight:700; line-height:1.35; }
+    .personal-todo-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:5px; }
+    .personal-todo-actions { display:flex; gap:4px; }
+    .personal-check {
+      width:22px; height:22px; border-radius:8px; border:1.5px solid #cbd5e1; background:var(--surface);
+      color:white; display:grid; place-items:center; padding:0; margin-top:1px;
+    }
+    .personal-check.done { border-color:var(--success); background:var(--success); }
+    .inbox-card {
+      background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 15px;
+      display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+      box-shadow:0 4px 15px rgba(15,23,42,.03);
+    }
+    .inbox-card h3 { margin:0; font-size:13.5px; line-height:1.4; white-space:pre-wrap; }
+    .inbox-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+    .inbox-actions { display:flex; gap:5px; flex-shrink:0; }
+    .priority-summary-card {
+      background:var(--primary-soft); border:1px solid var(--primary); border-radius:16px;
+      padding:14px 15px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;
+    }
+    .priority-summary-card strong { display:block; color:var(--primary); font-size:14px; }
+    .priority-summary-card span:not(.badge) { display:block; margin-top:3px; color:var(--muted); font-size:11px; }
+    .priority-choice-row {
+      display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--surface);
+      border:1px solid var(--line); border-radius:14px;
+    }
+    .priority-choice-row.selected { border-color:var(--primary); box-shadow:0 0 0 2px var(--primary-soft); }
+    .priority-choice-row input { width:18px; height:18px; accent-color:var(--primary); }
+    .priority-rank { min-width:24px; height:24px; border-radius:8px; background:var(--surface-2); display:grid; place-items:center; color:var(--muted); font-size:11px; font-weight:800; }
+    @media (max-width:900px) {
+      .todo-columns { grid-template-columns:1fr; }
+    }
+    @media (max-width:560px) {
+      .personal-section-intro { align-items:flex-start; flex-direction:column; }
+      .personal-section-intro .secondary-btn { width:100%; }
+      .agenda-event { grid-template-columns:58px minmax(0,1fr); }
+      .agenda-event .personal-item-actions { grid-column:2; justify-content:flex-start; }
+      .priority-summary-card { align-items:flex-start; flex-direction:column; }
+      .inbox-card { flex-direction:column; }
+      .inbox-actions { align-self:flex-end; }
+    }
+
     /* Views */
     .view { display:none; }
     .view.active { display:block; }
@@ -696,10 +781,12 @@
       .stats { grid-template-columns: repeat(2, 1fr); }
       .dashboard { grid-template-columns:1fr; }
       .bottom-nav {
-        position:fixed; display:grid; grid-template-columns:repeat(4,1fr); gap:3px;
+        position:fixed; display:grid; grid-template-columns:repeat(5,1fr); gap:3px;
         left:0; right:0; bottom:0; z-index:10; padding:7px 7px calc(7px + env(safe-area-inset-bottom));
         background:rgba(255,255,255,.94); backdrop-filter:blur(15px); border-top:1px solid var(--line);
       }
+      /* Ações do topo (backup/tema) somem da topbar no mobile — ficam dentro do menu "Mais" */
+      .header-actions .icon-btn { display:none; }
       body.dark-mode .bottom-nav { background: rgba(30, 41, 59, .94); }
       .bottom-nav .nav-btn { justify-content:center; flex-direction:column; gap:2px; padding:7px 3px; font-size:10px; }
       .bottom-nav .nav-icon { font-size:16px; }
@@ -797,7 +884,7 @@
     }
 
     /* Barra de navegação inferior (retrato) com alvo de toque maior para o polegar */
-    .bottom-nav { grid-template-columns: repeat(4, 1fr); padding: 9px 6px calc(9px + env(safe-area-inset-bottom)); }
+    .bottom-nav { grid-template-columns: repeat(5, 1fr); padding: 9px 6px calc(9px + env(safe-area-inset-bottom)); }
     .bottom-nav .nav-btn { min-height: 56px; padding: 8px 3px; font-size: 10.5px; gap: 3px; }
     .bottom-nav .nav-icon { font-size: 18px; }
   }
@@ -823,7 +910,26 @@
 
   /* Abas roláveis com "encaixe" no toque */
   .faculty-nav, .finance-tabs, .personal-tabs { scroll-snap-type: x proximity; }
+  .faculty-nav { scroll-snap-type: x mandatory; }
   .faculty-tab, .finance-tab, .personal-tab { scroll-snap-align: start; }
+
+  @media (max-width: 700px) {
+    .finance-table-wrap::after {
+      content:""; position:absolute; top:0; right:0; bottom:0; width:24px; pointer-events:none;
+      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.92));
+      box-shadow:inset -7px 0 10px -12px rgba(15,23,42,.55);
+    }
+    body.dark-mode .finance-table-wrap::after {
+      background:linear-gradient(90deg, rgba(30,41,59,0), rgba(30,41,59,.92));
+    }
+    /* Mesmo indicador de "há mais abas" nas listas de abas roláveis */
+    .faculty-nav, .finance-tabs, .personal-tabs { position:relative; }
+    .faculty-nav::after, .finance-tabs::after, .personal-tabs::after {
+      content:""; position:absolute; top:0; right:0; bottom:0; width:22px; pointer-events:none;
+      border-radius:0 15px 15px 0;
+      background:linear-gradient(90deg, rgba(241,245,249,0), var(--surface-2) 78%);
+    }
+  }
 
   /* --- Tablet em retrato / telas medias --- */
   @media (min-width: 601px) and (max-width: 1180px) {
@@ -850,7 +956,8 @@
     .detail-grid { gap: 6px; }
     .detail-stat strong { font-size: 15px; }
     .quick-actions { padding: 0 14px 16px; }
-    .quick-actions button { flex: 1 1 calc(50% - 5px); }
+    .quick-actions button { flex: 1 1 calc(50% - 5px); min-width: 0; }
+    .finance-monthbar .month-picker .icon-btn { width: 50px; height: 50px; min-height: 50px; font-size: 25px; }
     .weekly-legend .badge { font-size: 10px; }
 
     /* Modais viram "folha" deslizante — muito mais confortavel no celular */
@@ -915,6 +1022,141 @@
       border-color:var(--line);
     }
 
+    /* TCC / Pesquisa */
+    .tcc-hero-card { background:linear-gradient(145deg,#111827,#1e1b4b); color:#fff; border-radius:22px; padding:22px; box-shadow:var(--shadow); margin-bottom:18px; overflow:hidden; }
+    .tcc-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+    .tcc-hero-card .eyebrow { color:#c7d2fe; }
+    .tcc-hero-card h2 { margin:4px 0 5px; font-size:24px; letter-spacing:-.035em; }
+    .tcc-hero-card p { margin:0; color:#cbd5e1; font-size:12px; line-height:1.55; }
+    .tcc-info-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:10px; margin-top:18px; }
+    .tcc-info-chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:13px; padding:11px; min-width:0; }
+    .tcc-info-chip small { display:block; color:#cbd5e1; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+    .tcc-info-chip strong { display:block; margin-top:4px; color:#fff; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tcc-countdown { color:#fff; font-size:13px; font-weight:800; }
+    .tcc-progress-block { margin-top:18px; }
+    .tcc-progress-head { display:flex; justify-content:space-between; gap:12px; color:#cbd5e1; font-size:11px; font-weight:700; }
+    .tcc-segmented-progress { display:flex; gap:4px; margin-top:8px; height:12px; }
+    .tcc-progress-segment { flex:1; background:rgba(255,255,255,.12); border-radius:99px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
+    .tcc-progress-segment span { display:block; height:100%; background:linear-gradient(90deg,#818cf8,#c4b5fd); border-radius:99px; transition:.35s ease; }
+    .tcc-progress-legend { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:7px; }
+    .tcc-progress-legend span { color:#cbd5e1; font-size:9px; line-height:1.2; }
+    .tcc-stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+    .tcc-stat { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:0 4px 15px rgba(15,23,42,.03); }
+    .tcc-stat .kpi-label { color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+    .tcc-stat .kpi-value { margin-top:7px; font-size:21px; font-weight:850; letter-spacing:-.04em; }
+    .tcc-stat .kpi-note { margin-top:3px; color:var(--muted); font-size:10px; }
+    .tcc-section { background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden; }
+    .tcc-section-head { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:18px 18px 13px; flex-wrap:wrap; }
+    .tcc-section-head h3 { margin:0; font-size:16px; letter-spacing:-.02em; }
+    .tcc-section-head p { margin:4px 0 0; color:var(--muted); font-size:11px; }
+    .tcc-roadmap { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:9px; padding:0 18px 18px; }
+    .tcc-phase-card { border:1px solid var(--line); border-radius:15px; padding:13px; background:var(--surface-2); min-width:0; }
+    .tcc-phase-number { color:var(--primary); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+    .tcc-phase-card h4 { margin:4px 0 5px; font-size:13px; line-height:1.3; }
+    .tcc-phase-desc { color:var(--muted); font-size:10.5px; line-height:1.45; min-height:45px; }
+    .tcc-phase-meta { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:10px; }
+    .tcc-phase-progress { height:7px; background:var(--surface); border-radius:99px; overflow:hidden; margin-top:8px; }
+    .tcc-phase-progress span { display:block; height:100%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:99px; }
+    .tcc-kanban { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding:0 18px 18px; }
+    .tcc-kanban-col { background:var(--surface-2); border:1px solid var(--line); border-radius:15px; min-height:135px; padding:10px; }
+    .tcc-kanban-head { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px; }
+    .tcc-kanban-head strong { font-size:11px; }
+    .tcc-chapter-card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px; margin-top:7px; }
+    .tcc-chapter-card h4 { margin:0; font-size:11px; line-height:1.3; }
+    .tcc-chapter-card p { margin:5px 0 0; color:var(--muted); font-size:10px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .tcc-table-wrap { overflow-x:auto; }
+    .tcc-table { width:100%; border-collapse:collapse; min-width:920px; }
+    .tcc-table th,.tcc-table td { padding:10px 11px; border-top:1px solid var(--line); text-align:left; vertical-align:top; font-size:11px; }
+    .tcc-table th { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.05em; }
+    .tcc-quote { max-width:280px; white-space:normal; line-height:1.4; color:var(--muted); }
+    .tcc-link { color:var(--primary); text-decoration:none; font-weight:700; }
+    .tcc-link:hover { text-decoration:underline; }
+    .tcc-meeting-list { display:grid; gap:9px; padding:0 18px 18px; }
+    .tcc-meeting-card { border:1px solid var(--line); border-radius:15px; padding:13px; background:var(--surface-2); }
+    .tcc-meeting-top { display:flex; justify-content:space-between; gap:8px; align-items:flex-start; }
+    .tcc-meeting-top strong { font-size:12px; }
+    .tcc-meeting-card h4 { margin:8px 0 4px; font-size:11px; }
+    .tcc-meeting-card p { margin:0; color:var(--muted); font-size:11px; line-height:1.45; white-space:pre-wrap; }
+    .tcc-scratchpad { padding:0 18px 18px; }
+    .tcc-scratchpad textarea { min-height:220px; }
+    .tcc-empty { padding:24px 18px; text-align:center; color:var(--muted); }
+    .tcc-empty strong { display:block; color:var(--text); margin-bottom:5px; }
+    @media (max-width:1000px) { .tcc-roadmap { grid-template-columns:repeat(3,minmax(0,1fr)); } .tcc-info-grid { grid-template-columns:1fr 1fr; } .tcc-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:700px) { .tcc-roadmap { grid-template-columns:1fr; } .tcc-kanban { grid-template-columns:1fr 1fr; } .tcc-progress-legend { grid-template-columns:repeat(5,minmax(70px,1fr)); overflow:auto; } .tcc-info-grid { grid-template-columns:1fr; } }
+    @media (max-width:520px) { .tcc-stat-grid { grid-template-columns:1fr 1fr; } .tcc-kanban { grid-template-columns:1fr; } .tcc-hero-card h2 { font-size:20px; } }
+
+
+    /* TCC — artigo científico: interface enxuta */
+    .tcc-hero-card{background:linear-gradient(145deg,#111827,#1e1b4b);color:#fff;border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+    .tcc-hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+    .tcc-hero-card .eyebrow{color:#c7d2fe}
+    .tcc-hero-card h2{margin:4px 0 5px;font-size:24px;letter-spacing:-.035em}
+    .tcc-hero-card p{margin:0;color:#cbd5e1;font-size:12px;line-height:1.55}
+    .tcc-info-grid{display:grid;grid-template-columns:1.45fr 1fr 1.05fr 1.1fr;gap:10px;margin-top:18px}
+    .tcc-info-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:11px;min-width:0}
+    .tcc-info-chip small{display:block;color:#cbd5e1;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+    .tcc-info-chip strong{display:block;margin-top:4px;color:#fff;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .tcc-muted{margin-top:4px;color:#cbd5e1;font-size:10px;line-height:1.35}
+    .tcc-countdown{margin-top:4px;color:#fff;font-size:12px;font-weight:800}
+    .tcc-quick-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+    .tcc-quick-link{color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 7px;text-decoration:none;font-size:10px;font-weight:800;background:rgba(255,255,255,.06)}
+    .tcc-quick-link:hover{background:rgba(255,255,255,.13)}
+    .tcc-sheet-placeholder{color:#cbd5e1;font-size:10px;line-height:1.35;margin-top:5px}
+    .tcc-phase-selector{display:flex;gap:6px;margin-top:16px;overflow:auto;padding-bottom:2px;scrollbar-width:none}
+    .tcc-phase-selector::-webkit-scrollbar{display:none}
+    .tcc-phase-choice{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#e2e8f0;border-radius:11px;padding:9px 12px;font-size:11px;font-weight:800;white-space:nowrap}
+    .tcc-phase-choice.active{background:#fff;color:#312e81;border-color:#fff}
+    .tcc-progress-block{margin-top:14px}
+    .tcc-progress-head{display:flex;justify-content:space-between;gap:12px;color:#cbd5e1;font-size:11px;font-weight:700}
+    .tcc-segmented-progress{display:flex;gap:4px;margin-top:8px;height:10px}
+    .tcc-progress-segment{flex:1;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .tcc-progress-segment span{display:block;height:100%;background:linear-gradient(90deg,#818cf8,#c4b5fd);border-radius:99px;transition:.35s ease}
+    .tcc-page-input{width:66px!important;min-height:32px!important;height:32px!important;padding:0 8px!important;border-radius:8px!important;border:1px solid rgba(255,255,255,.2)!important;background:rgba(255,255,255,.08)!important;color:#fff!important;text-align:center;font-weight:800}
+    .tcc-page-input:focus{box-shadow:0 0 0 3px rgba(255,255,255,.15)!important;border-color:#fff!important;outline:none}
+        .tcc-section{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+    .tcc-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 18px 13px;flex-wrap:wrap}
+    .tcc-section-head h3{margin:0;font-size:16px;letter-spacing:-.02em}
+    .tcc-section-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
+    .tcc-kanban{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0 18px 18px}
+    .tcc-kanban-col{background:var(--surface-2);border:1px solid var(--line);border-radius:15px;min-height:135px;padding:10px}
+    .tcc-kanban-head{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px}
+    .tcc-kanban-head strong{font-size:11px}
+    .tcc-chapter-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:7px}
+    .tcc-chapter-card h4{margin:0;font-size:11px;line-height:1.3}
+    .tcc-chapter-card p{margin:5px 0 0;color:var(--muted);font-size:10px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .tcc-table-wrap{overflow-x:auto}
+    .tcc-table{width:100%;border-collapse:collapse;min-width:960px}
+    .tcc-table th,.tcc-table td{padding:10px 11px;border-top:1px solid var(--line);text-align:left;vertical-align:top;font-size:11px}
+    .tcc-table th{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.05em}
+    .tcc-quote{max-width:300px;white-space:normal;line-height:1.4;color:var(--muted)}
+    .tcc-link{color:var(--primary);text-decoration:none;font-weight:700}
+    .tcc-link:hover{text-decoration:underline}
+    .tcc-bureau-list{padding:0 18px 18px;display:grid;gap:7px}
+    .tcc-bureau-item{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+    .tcc-bureau-item input{margin-top:2px;width:18px;height:18px;accent-color:var(--primary)}
+    .tcc-bureau-item span{font-size:12px;line-height:1.45}
+    .tcc-bureau-item.checked span{color:var(--muted);text-decoration:line-through}
+    .tcc-meeting-table{width:100%;border-collapse:collapse;min-width:760px}
+    .tcc-meeting-table th,.tcc-meeting-table td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:top;text-align:left;font-size:11px}
+    .tcc-meeting-table th{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.05em}
+    .tcc-adjust-check{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:10px;font-weight:800}
+    .tcc-adjust-check input{width:17px;height:17px;accent-color:var(--primary)}
+    .tcc-note-line{color:var(--muted);font-size:10px;line-height:1.4;margin-top:5px;white-space:pre-wrap}
+    .tcc-scratchpad{padding:0 18px 18px}
+    .tcc-scratchpad textarea{min-height:200px}
+    .tcc-rules details{margin:0 18px 18px;border:1px solid var(--line);border-radius:15px;background:var(--surface-2)}
+    .tcc-rules summary{cursor:pointer;padding:13px 14px;font-size:12px;font-weight:800;list-style:none}
+    .tcc-rules summary::-webkit-details-marker{display:none}
+    .tcc-rules summary::after{content:"＋";float:right;color:var(--muted)}
+    .tcc-rules details[open] summary::after{content:"−"}
+    .tcc-rules-body{padding:0 14px 14px;color:var(--muted);font-size:11px;line-height:1.55}
+    .tcc-rules-body strong{color:var(--text)}
+    .tcc-empty{padding:24px 18px;text-align:center;color:var(--muted)}
+    .tcc-empty strong{display:block;color:var(--text);margin-bottom:5px}
+    @media (max-width:1000px){.tcc-info-grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:700px){.tcc-info-grid{grid-template-columns:1fr}.tcc-kanban{grid-template-columns:1fr 1fr}}
+    @media (max-width:520px){.tcc-kanban{grid-template-columns:1fr}.tcc-hero-card h2{font-size:20px}.tcc-phase-choice{flex:1;text-align:center}}
+
 </style>
 </head>
 <body>
@@ -922,7 +1164,7 @@
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark">✦</div>
-        <div><strong>Minha Vida</strong><span>organizador pessoal</span></div>
+        <div><strong>Painel de Controle</strong><span>organizador pessoal</span></div>
       </div>
 
       <nav class="nav" aria-label="Navegação principal">
@@ -939,14 +1181,14 @@
       <header class="topbar">
         <div class="mobile-brand">
           <div class="mobile-brand-mark">✦</div>
-          Minha Vida
+          Painel de Controle
         </div>
         <div></div>
         <div class="header-actions">
           <button class="icon-btn" id="exportDataHeaderBtn" title="Exportar backup (JSON)" aria-label="Exportar backup">📥</button>
           <button class="icon-btn" id="importDataHeaderBtn" title="Importar backup (JSON)" aria-label="Importar backup">📤</button>
           <button class="icon-btn" id="themeToggleBtn" title="Alternar tema claro/escuro" aria-label="Alternar tema">🌙</button>
-          <button class="icon-btn" id="clearDoneBtn" title="Limpar concluídas" aria-label="Limpar concluídas">⌫</button>
+          <button class="icon-btn" id="clearDoneBtn" title="Limpar concluídas" aria-label="Limpar concluídas">🧹</button>
           <button class="primary-btn" id="addTopBtn">＋ <span>Nova tarefa</span></button>
         </div>
       </header>
@@ -959,7 +1201,6 @@
               <h1 id="greeting">Bom dia 👋</h1>
               <p class="subtitle" id="dateSubtitle"></p>
             </div>
-            <button class="primary-btn" id="addHeroBtn">＋ Adicionar tarefa</button>
           </div>
 
           <div class="overview-grid" id="overviewGrid">
@@ -984,7 +1225,7 @@
             <div class="panel-header">
               <div>
                 <h2 class="panel-title">📅 Compromissos & Lembretes da Semana</h2>
-                <div class="panel-subtitle">Tarefas, leituras, avaliações e lembretes dos próximos 7 dias.</div>
+                <div class="panel-subtitle">Compromissos, tarefas, leituras, avaliações e lembretes dos próximos 7 dias.</div>
               </div>
               <button class="secondary-btn" id="openAllBtn">Ver todas as tarefas</button>
             </div>
@@ -997,12 +1238,13 @@
             </div>
             <div class="quick-actions">
               <button class="secondary-btn" data-finance-add="expense">＋ Registrar Gasto</button>
-              <button class="secondary-btn" id="quickHabitCheckinBtn">✓ Check-in de Hábito</button>
-              <button class="secondary-btn" id="quickShoppingBtn">🛒 Ir às Compras</button>
+              <button class="secondary-btn" id="quickAgendaBtn">📅 Abrir Agenda</button>
+              <button class="secondary-btn" id="quickInboxBtn">📥 Caixa de entrada</button>
+              <button class="secondary-btn" id="quickPriorityBtn">🎯 Prioridades</button>
             </div>
           </section>
 
-          <section class="panel">
+          <section class="panel focus-panel">
             <div class="panel-header">
               <div><h2 class="panel-title">📌 Foco do Momento</h2><div class="panel-subtitle">Prioridades para agora.</div></div>
             </div>
@@ -1130,6 +1372,7 @@
             <button class="faculty-tab" data-faculty-pane="attendance">✓ Faltas</button>
             <button class="faculty-tab" data-faculty-pane="exams">★ Avaliações</button>
             <button class="faculty-tab" data-faculty-pane="readings">▤ Leituras</button>
+            <button class="faculty-tab" data-faculty-pane="tcc">🎓 TCC / Pesquisa</button>
           </div>
 
           <section id="facultyCoursesPane" class="faculty-pane active">
@@ -1167,7 +1410,64 @@
               <div><h2 class="panel-title">Controle de leitura</h2><div class="panel-subtitle">Cada texto fica separado e fácil de acompanhar.</div></div>
               <button class="secondary-btn" data-faculty-add="reading">＋ Nova leitura</button>
             </div>
+            <div class="filters" style="grid-template-columns:1fr 1fr; margin:0 0 14px;">
+              <select class="field" id="readingCourseFilter"><option value="all">Todas as disciplinas</option></select>
+              <select class="field" id="readingStatusFilter">
+                <option value="all">Todos os status</option>
+                <option value="not_started">Não iniciada</option>
+                <option value="in_progress">Em andamento</option>
+                <option value="completed">Concluído</option>
+              </select>
+            </div>
             <div id="readingList" class="reading-grid"></div>
+          </section>
+
+          <section id="facultyTccPane" class="faculty-pane">
+            <div class="tcc-hero-card">
+              <div class="tcc-hero-top">
+                <div class="eyebrow">TCC · Artigo Científico</div>
+                <button class="secondary-btn" data-tcc-action="edit-info">✎ Editar projeto</button>
+              </div>
+
+              <div class="tcc-info-grid">
+                <div class="tcc-info-chip"><small>Tema provisório</small><strong id="tccThemeDisplay">Não definido</strong></div>
+                <div class="tcc-info-chip"><small>Orientador(a)</small><strong id="tccAdvisorDisplay">Não informado</strong><div class="tcc-quick-links" id="tccAdvisorLinks"></div></div>
+                <div class="tcc-info-chip"><small>Planilha de Fontes</small><div class="tcc-quick-links" id="tccSheetsDisplay"></div><div class="tcc-sheet-placeholder" id="tccSheetsPlaceholder"></div></div>
+                <div class="tcc-info-chip"><small>Dias para a Banca</small><strong id="tccDefenseDisplay">Não definida</strong><div class="tcc-countdown" id="tccCountdownDisplay">—</div></div>
+              </div>
+            </div>
+
+            <section class="tcc-section">
+              <div class="tcc-section-head"><div><h3>📝 Quadro Kanban de redação</h3><p>Seções fixas do artigo por status de escrita.</p></div></div>
+              <div style="padding:0 18px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                <span class="badge">Fase atual</span>
+                <div class="tcc-phase-selector" id="tccPhaseSelector" role="tablist" aria-label="Fase atual do TCC" style="margin-top:0;">
+                  <button class="tcc-phase-choice" data-tcc-phase-select="0" type="button">1. Projeto</button>
+                  <button class="tcc-phase-choice" data-tcc-phase-select="1" type="button">2. Pesquisa</button>
+                  <button class="tcc-phase-choice" data-tcc-phase-select="2" type="button">3. Escrita</button>
+                </div>
+              </div>
+              <div class="tcc-kanban" id="tccChapterKanban"></div>
+            </section>
+
+            <section class="tcc-section">
+              <div class="tcc-section-head"><div><h3>🧭 Diário de orientação & prazos UnB</h3><p>Trâmites do regulamento e acompanhamento dos feedbacks.</p></div><button class="secondary-btn" data-tcc-add="meeting">＋ Nova reunião</button></div>
+              <div class="tcc-section-head" style="padding-top:2px;"><div><h4 style="margin:0;font-size:13px;">Checklist de trâmites</h4></div></div>
+              <div class="tcc-bureau-list" id="tccBureauList"></div>
+              <div class="tcc-section-head" style="padding-top:4px;"><div><h4 style="margin:0;font-size:13px;">Histórico de reuniões</h4></div></div>
+              <div class="tcc-table-wrap"><table class="tcc-meeting-table"><thead><tr><th>Data</th><th>Feedback da Professora</th><th>Status dos Ajustes</th><th>Ações</th></tr></thead><tbody id="tccMeetingTable"></tbody></table></div>
+            </section>
+
+            <section class="tcc-section tcc-rules">
+              <div class="tcc-section-head"><div><h3>📐 Regras técnicas & formatação</h3><p>Anexo VIII UnB · consulta rápida durante a escrita.</p></div></div>
+              <details open><summary>Guia de formatação do artigo</summary><div class="tcc-rules-body">
+                <p><strong>Extensão recomendada:</strong> 25 a 30 páginas, incluindo pré e pós-textuais.</p>
+                <p><strong>Texto base:</strong> Times New Roman 12, espaçamento 1,5, margens de 3 cm.</p>
+                <p><strong>Citação longa (+3 linhas):</strong> Times New Roman 11, espaçamento simples, recuo à esquerda, sem aspas.</p>
+                <p><strong>Destaques:</strong> apenas <em>itálico</em> (proibido o uso de negrito ou sublinhado).</p>
+                <p><strong>Notas de rodapé:</strong> numeradas ao final de cada página.</p>
+              </div></details>
+            </section>
           </section>
         </section>
 
@@ -1313,103 +1613,81 @@
           <div class="hero">
             <div>
               <div class="eyebrow">Pessoal</div>
-              <h1>🧩 Vida pessoal</h1>
-              <p class="subtitle">Rotina, metas, tarefas, leituras, diário, compras e lembretes num só lugar.</p>
+              <h1>🧩 Painel Pessoal</h1>
+              <p class="subtitle">Um espaço simples para organizar compromissos, tarefas, capturas rápidas e o foco do dia.</p>
             </div>
           </div>
 
-          <div class="personal-tabs" role="tablist">
-            <button class="personal-tab active" data-personal-pane="habits">Hábitos</button>
-            <button class="personal-tab" data-personal-pane="goals">Metas</button>
-            <button class="personal-tab" data-personal-pane="tasks">Tarefas</button>
-            <button class="personal-tab" data-personal-pane="media">Leituras</button>
-            <button class="personal-tab" data-personal-pane="journal">Diário</button>
-            <button class="personal-tab" data-personal-pane="shopping">Compras</button>
-            <button class="personal-tab" data-personal-pane="reminders">Lembretes</button>
+          <div class="personal-tabs" role="tablist" aria-label="Organização pessoal">
+            <button class="personal-tab active" data-personal-pane="agenda">📅 Agenda</button>
+            <button class="personal-tab" data-personal-pane="todos">✅ Lista de tarefas</button>
+            <button class="personal-tab" data-personal-pane="inbox">📥 Caixa de entrada</button>
+            <button class="personal-tab" data-personal-pane="priorities">🎯 Prioridades</button>
           </div>
 
-          <section id="personalHabitsPane" class="personal-pane active">
-            <div class="finance-card">
-              <div class="finance-card-head">
-                <div><h2>Progresso de hoje</h2><p id="habitTodayNote">0 de 0 hábitos concluídos hoje</p></div>
+          <section id="personalAgendaPane" class="personal-pane active">
+            <div class="personal-section-intro">
+              <div>
+                <h2>Agenda</h2>
+                <p>Compromissos com data e horário fixos, como reuniões, consultas e aulas.</p>
               </div>
-              <div style="padding:0 18px 18px;"><div class="progress" style="height:10px;"><span id="habitTodayBar" style="width:0%;"></span></div></div>
+              <button class="secondary-btn" data-personal-add="agenda">＋ Novo compromisso</button>
             </div>
-            <div class="finance-card-head" style="padding:18px 2px 12px;">
-              <div><h2>Meus hábitos</h2><p>Marque quando fizer no dia e acompanhe a ofensiva.</p></div>
-              <button class="secondary-btn" data-personal-add="habit">＋ Novo hábito</button>
+            <div class="agenda-filters">
+              <button class="secondary-btn" id="agendaTodayBtn">Hoje</button>
+              <button class="secondary-btn" id="agendaWeekBtn">Próximos 7 dias</button>
             </div>
-            <div class="personal-item-list" id="habitList"></div>
+            <div id="personalAgendaList" class="agenda-list"></div>
           </section>
 
-          <section id="personalGoalsPane" class="personal-pane">
-            <div class="finance-card-head" style="padding:2px 2px 12px;">
-              <div><h2>Metas pessoais</h2><p>Objetivos com prazo, categoria e progresso.</p></div>
-              <button class="secondary-btn" data-personal-add="goal">＋ Nova meta</button>
-            </div>
-            <div class="personal-item-list" id="goalList"></div>
-          </section>
-
-          <section id="personalTasksPane" class="personal-pane">
-            <div class="finance-card-head" style="padding:2px 2px 12px;">
-              <div><h2>Tarefas pessoais</h2><p>Tarefas da categoria "Pessoal" da sua lista de tarefas.</p></div>
-              <button class="secondary-btn" id="personalAddTaskBtn">＋ Nova tarefa</button>
-            </div>
-            <div class="task-list" id="personalTaskList"></div>
-          </section>
-
-          <section id="personalMediaPane" class="personal-pane">
-            <div class="finance-card-head" style="padding:2px 2px 12px;">
-              <div><h2>Leituras & mídia</h2><p>Livros, filmes, séries e podcasts.</p></div>
-              <button class="secondary-btn" data-personal-add="media">＋ Novo</button>
-            </div>
-            <div class="filters" style="grid-template-columns:1fr 1fr; margin-top:0;">
-              <select class="field" id="mediaTypeFilter"><option value="all">Todos os tipos</option><option>Livro</option><option>Filme</option><option>Série</option><option>Podcast</option></select>
-              <select class="field" id="mediaStatusFilter"><option value="all">Todos os status</option><option>Quero começar</option><option>Em andamento</option><option>Concluído</option><option>Abandonado</option></select>
-            </div>
-            <div class="reading-grid" id="mediaList"></div>
-          </section>
-
-          <section id="personalJournalPane" class="personal-pane">
-            <div class="finance-card-head" style="padding:2px 2px 12px;">
-              <div><h2>Diário & anotações</h2><p>Pensamentos, acontecimentos e anotações livres.</p></div>
-              <button class="secondary-btn" data-personal-add="journal">＋ Nova anotação</button>
-            </div>
-            <div class="personal-item-list" id="journalList"></div>
-          </section>
-
-          <section id="personalShoppingPane" class="personal-pane">
-            <div class="finance-card">
-              <div class="finance-card-head">
-                <div><h2>Mercado / Essenciais</h2><p>Lista de compras do dia a dia.</p></div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                  <button class="secondary-btn" data-personal-add="shoppingItem">＋ Item</button>
-                  <button class="secondary-btn" id="clearBoughtBtn">Limpar concluídos</button>
-                </div>
+          <section id="personalTodosPane" class="personal-pane">
+            <div class="personal-section-intro">
+              <div>
+                <h2>Lista de tarefas</h2>
+                <p>Despeje suas pendências e separe o que precisa de atenção hoje do que pode ficar para depois.</p>
               </div>
-              <div id="shoppingList" style="padding:0 18px 18px;"></div>
+              <button class="secondary-btn" data-personal-add="todo">＋ Nova tarefa</button>
             </div>
-            <div class="finance-card-head" style="padding:18px 2px 12px;">
-              <div><h2>Lista de desejos</h2><p>O que você quer comprar, com preço, prioridade e link.</p></div>
-              <button class="secondary-btn" data-personal-add="wishlistItem">＋ Novo desejo</button>
+            <div class="todo-columns">
+              <section class="personal-list-panel">
+                <div class="personal-list-panel-head"><div><h3>Hoje</h3><span id="todoTodayCount">0 tarefas</span></div></div>
+                <div id="personalTodoTodayList" class="personal-list"></div>
+              </section>
+              <section class="personal-list-panel">
+                <div class="personal-list-panel-head"><div><h3>Depois</h3><span id="todoLaterCount">0 tarefas</span></div></div>
+                <div id="personalTodoLaterList" class="personal-list"></div>
+              </section>
             </div>
-            <div class="personal-item-list" id="wishlistList"></div>
           </section>
 
-          <section id="personalRemindersPane" class="personal-pane">
-            <div class="finance-card-head" style="padding:2px 2px 12px;">
-              <div><h2>Lembretes do mês</h2><p>Aniversários, saúde, eventos e renovações.</p></div>
-              <button class="secondary-btn" data-personal-add="reminder">＋ Novo lembrete</button>
+          <section id="personalInboxPane" class="personal-pane">
+            <div class="personal-section-intro">
+              <div>
+                <h2>Caixa de entrada</h2>
+                <p>Capture rapidamente uma ideia, tarefa ou lembrete antes de decidir o que fazer com ele.</p>
+              </div>
+              <button class="secondary-btn" data-personal-add="inbox">＋ Capturar agora</button>
             </div>
-            <div class="reminder-groups">
-              <div class="reminder-group-card"><h3>🎂 Aniversários</h3><div id="reminderGroupAniversarios"></div></div>
-              <div class="reminder-group-card"><h3>🩺 Saúde & Consultas</h3><div id="reminderGroupSaude"></div></div>
-              <div class="reminder-group-card"><h3>📅 Eventos & Datas</h3><div id="reminderGroupEventos"></div></div>
-              <div class="reminder-group-card"><h3>🔁 Renovações & Prazos</h3><div id="reminderGroupRenovacoes"></div></div>
+            <div id="personalInboxList" class="personal-item-list"></div>
+          </section>
+
+          <section id="personalPrioritiesPane" class="personal-pane">
+            <div class="personal-section-intro">
+              <div>
+                <h2>Prioridades do dia</h2>
+                <p>Escolha de uma a três tarefas mais importantes para concentrar sua energia primeiro.</p>
+              </div>
             </div>
+            <div class="priority-summary-card">
+              <div>
+                <strong id="prioritySelectedCount">0 de 3 selecionadas</strong>
+                <span>Marque até três tarefas da lista “Hoje”.</span>
+              </div>
+              <span class="badge today">🎯 Foco do dia</span>
+            </div>
+            <div id="personalPriorityList" class="personal-list"></div>
           </section>
         </section>
-
         <section id="doneView" class="view">
           <div class="hero">
             <div>
@@ -1431,9 +1709,10 @@
     <button class="nav-btn" data-view="faculty"><span class="nav-icon">📚</span>Faculdade</button>
     <button class="nav-btn" data-view="finance"><span class="nav-icon">💰</span>Financeiro</button>
     <button class="nav-btn" data-view="personal"><span class="nav-icon">👤</span>Pessoal</button>
+    <button class="nav-btn" id="mobileMoreBtn" aria-haspopup="dialog" aria-controls="moreMenuBackdrop"><span class="nav-icon">⋯</span>Mais</button>
   </nav>
 
-  <!-- Menu Mais (mobile) -->
+  <!-- Menu Mais (mobile): tudo que não cabe na topbar em telas pequenas -->
   <div class="modal-backdrop" id="moreMenuBackdrop" role="dialog" aria-modal="true" aria-labelledby="moreMenuTitle">
     <div class="modal" style="max-width:360px;">
       <div class="modal-header">
@@ -1441,8 +1720,11 @@
         <button class="icon-btn" id="closeMoreMenuBtn" aria-label="Fechar">×</button>
       </div>
       <div class="more-menu-list">
-        <button class="more-menu-item" data-more-view="finance"><span class="nav-icon">💰</span> Financeiro</button>
-        <button class="more-menu-item" data-more-view="personal"><span class="nav-icon">👤</span> Pessoal</button>
+        <button class="more-menu-item" data-more-view="all"><span class="nav-icon">🗂️</span> Todas as tarefas</button>
+        <button class="more-menu-item" id="moreThemeBtn"><span class="nav-icon">🌙</span> Alternar tema claro/escuro</button>
+        <button class="more-menu-item" id="moreClearDoneBtn"><span class="nav-icon">🧹</span> Limpar tarefas concluídas</button>
+        <button class="more-menu-item" id="moreExportBtn"><span class="nav-icon">📥</span> Exportar backup (JSON)</button>
+        <button class="more-menu-item" id="moreImportBtn"><span class="nav-icon">📤</span> Importar backup (JSON)</button>
       </div>
     </div>
   </div>
@@ -1852,6 +2134,79 @@
           : `<div class="empty"><div class="empty-icon">☁</div><strong>${emptyTitle}</strong><span>${emptyText}</span></div>`;
       }
 
+      function tccChapterStatusOptions(selected = "todo") {
+        return [["todo","Não iniciado"],["draft","Em rascunho"],["review","Em revisão (Orientador)"],["done","Concluído"]]
+          .map(([v,l]) => `<option value="${v}" ${selected===v?"selected":""}>${l}</option>`).join("");
+      }
+      function normalizeTcc(tcc = {}) {
+        const defaultChapters = [
+          {title:"Elementos Pré-textuais", notes:"Capa, folha de rosto com a frase oficial da UnB, resumo e palavras-chave."},
+          {title:"Introdução", notes:"Problema de pesquisa, justificativa e objetivos."},
+          {title:"Referencial Teórico / Historiográfico", notes:"Debate de autores e conceitos centrais."},
+          {title:"Metodologia & Análise", notes:"Apresentação dos procedimentos e discussão da análise histórica."},
+          {title:"Considerações Finais", notes:"Conclusões e síntese dos resultados."},
+          {title:"Elementos Pós-textuais", notes:"Bibliografia ABNT e Declaração de Autenticidade assinada."}
+        ];
+
+        const aliases = {
+          "elementos pré-textuais":"Elementos Pré-textuais",
+          "elementos pós-textuais":"Elementos Pós-textuais",
+          "metodologia & corpus documental":"Metodologia & Análise",
+          "desenvolvimento / análise histórica":"Metodologia & Análise",
+          "metodologia & análise":"Metodologia & Análise"
+        };
+        const incoming = Array.isArray(tcc.chapters) ? tcc.chapters : [];
+        const normalizedIncoming = incoming.map(x => {
+          const rawTitle = String(x?.title || "").trim();
+          const canonical = aliases[rawTitle.toLowerCase()] || rawTitle;
+          return {
+            id: x?.id || uid(),
+            title: canonical,
+            status: ({writing:"draft",reviewing:"review",todo:"todo",done:"done"}[x?.status] || x?.status || "todo"),
+            dueDate: x?.dueDate || "",
+            notes: x?.notes || ""
+          };
+        });
+
+        const chapters = defaultChapters.map((def, index) => {
+          const matches = normalizedIncoming.filter(x => x.title.toLowerCase() === def.title.toLowerCase());
+          let item = matches[0];
+          if (!item && def.title === "Metodologia & Análise") {
+            item = normalizedIncoming.find(x => x.title === "Metodologia & Análise" || x.title === "Desenvolvimento / Análise Histórica");
+          }
+          return {
+            id: item?.id || `tcc_section_${index + 1}`,
+            title: def.title,
+            status: ["todo","draft","review","done"].includes(item?.status) ? item.status : "todo",
+            dueDate: item?.dueDate || "",
+            notes: item?.notes || def.notes
+          };
+        });
+
+        const bureaucracyDefault = [
+          {id:"orientation_term",label:"Termo de Aceite de Orientação enviado"},
+          {id:"board_copy",label:"Cópia digital enviada à banca (mínimo de 15 dias antes da defesa)"},
+          {id:"library_final",label:"Envio da versão final para a Secretaria / Biblioteca UnB (até 15 dias pós-defesa)"}
+        ];
+        const oldBureau = Array.isArray(tcc.bureaucracy) ? tcc.bureaucracy : [];
+        const bureaucracy = bureaucracyDefault.map(item => ({...item, done:Boolean(oldBureau.find(x => x.id === item.id)?.done)}));
+
+        return {
+          title: String(tcc.title || "").trim() || "Meu Trabalho de Conclusão de Curso",
+          advisor: String(tcc.advisor || "").trim(),
+          advisorEmail: String(tcc.advisorEmail || "").trim(),
+          defenseDate: tcc.defenseDate || "",
+          sourcesSheetUrl: String(tcc.sourcesSheetUrl || "").trim(),
+          currentPhase: Math.max(0, Math.min(2, Number(tcc.currentPhase || 0))),
+          meetings: Array.isArray(tcc.meetings) ? tcc.meetings.map(x => ({...x, adjustmentsDone:Boolean(x.adjustmentsDone)})) : [],
+          chapters,
+          bureaucracy
+        };
+      }
+      function tccDaysUntil(dateStr) {
+        if(!dateStr) return null; const target=new Date(dateStr+"T12:00:00"); const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12); if(isNaN(target)) return null; return Math.ceil((target-today)/86400000);
+      }
+
       function loadFaculty() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY_FACULTY);
@@ -1875,10 +2230,11 @@
               deliveryStatus: x.deliveryStatus || "na"
             })) : [],
             readings: Array.isArray(data.readings) ? data.readings : [],
-            selectedCourseId: data.selectedCourseId || null
+            selectedCourseId: data.selectedCourseId || null,
+            tcc: normalizeTcc(data.tcc)
           };
         } catch {
-          return { courseName: "História", courseSubtitle: "Seu semestre, sob controle.", currentSemester: "2026.2", semesterStart: "2026-08-10", semesterEnd: "2026-12-14", obrigTotal: 2055, obrigDone: 1425, optTotal: 960, optDone: 420, compTotal: 210, compDone: 0, courses: [], absences: [], exams: [], readings: [], selectedCourseId: null };
+          return { courseName: "História", courseSubtitle: "Seu semestre, sob controle.", currentSemester: "2026.2", semesterStart: "2026-08-10", semesterEnd: "2026-12-14", obrigTotal: 2055, obrigDone: 1425, optTotal: 960, optDone: 420, compTotal: 210, compDone: 0, courses: [], absences: [], exams: [], readings: [], selectedCourseId: null , tcc: normalizeTcc({}) };
         }
       }
 
@@ -1917,6 +2273,11 @@
           const raw = localStorage.getItem(STORAGE_KEY_PERSONAL);
           const data = raw ? JSON.parse(raw) : {};
           return {
+            agenda: Array.isArray(data.agenda) ? data.agenda : [],
+            todos: Array.isArray(data.todos) ? data.todos : [],
+            inbox: Array.isArray(data.inbox) ? data.inbox : [],
+            priorities: Array.isArray(data.priorities) ? data.priorities : [],
+            // Mantidos para compatibilidade com dados antigos já salvos.
             habits: Array.isArray(data.habits) ? data.habits : [],
             goals: Array.isArray(data.goals) ? data.goals : [],
             media: Array.isArray(data.media) ? data.media : [],
@@ -1926,7 +2287,7 @@
             reminders: Array.isArray(data.reminders) ? data.reminders : []
           };
         } catch {
-          return { habits: [], goals: [], media: [], journal: [], shopping: [], wishlist: [], reminders: [] };
+          return { agenda: [], todos: [], inbox: [], priorities: [], habits: [], goals: [], media: [], journal: [], shopping: [], wishlist: [], reminders: [] };
         }
       }
 
@@ -2160,7 +2521,7 @@
       }
 
       // Pessoal
-      const personalKeyByType = { habit:"habits", goal:"goals", media:"media", journal:"journal", shoppingItem:"shopping", wishlistItem:"wishlist", reminder:"reminders" };
+      const personalKeyByType = { agenda:"agenda", todo:"todos", inbox:"inbox", habit:"habits", goal:"goals", media:"media", journal:"journal", shoppingItem:"shopping", wishlistItem:"wishlist", reminder:"reminders" };
 
       function habitFrequencyOptions(selected="") {
         const values = ["Todos os dias","Dias úteis (seg-sex)","Fins de semana","1x por semana","2x por semana","3x por semana"];
@@ -2215,6 +2576,21 @@
 
       function personalModal(type, existing = null) {
         const defaults = {
+          agenda: { title:"Novo compromisso", fields:`
+            <div class="form-group full"><label>Título</label><input class="field" name="title" required value="${escapeHTML(existing?.title||"")}" placeholder="Ex.: Consulta médica, reunião, aula"></div>
+            <div class="form-group"><label>Data</label><input class="field" name="date" type="date" required value="${existing?.date||localDateISO()}"></div>
+            <div class="form-group"><label>Horário</label><input class="field" name="time" type="time" required value="${existing?.time||""}"></div>
+            <div class="form-group full"><label>Local <span style="font-weight:500">(opcional)</span></label><input class="field" name="location" value="${escapeHTML(existing?.location||"")}" placeholder="Ex.: Campus, consultório, online"></div>
+            <div class="form-group full"><label>Observações <span style="font-weight:500">(opcional)</span></label><textarea class="field" name="notes" rows="3" placeholder="Detalhes importantes...">${escapeHTML(existing?.notes||"")}</textarea></div>`},
+          todo: { title:"Nova tarefa", fields:`
+            <div class="form-group full"><label>Tarefa</label><input class="field" name="title" required value="${escapeHTML(existing?.title||"")}" placeholder="Ex.: Resolver pendência do banco"></div>
+            <div class="form-group"><label>Quando?</label><select class="field" name="bucket"><option value="today" ${existing?.bucket!=="later"?"selected":""}>Hoje</option><option value="later" ${existing?.bucket==="later"?"selected":""}>Depois</option></select></div>
+            <div class="form-group"><label>Prazo <span style="font-weight:500">(opcional)</span></label><input class="field" name="dueDate" type="date" value="${existing?.dueDate||""}"></div>
+            <div class="form-group"><label>Prioridade</label><select class="field" name="priority"><option value="low" ${existing?.priority==="low"?"selected":""}>Baixa</option><option value="medium" ${!existing?.priority || existing?.priority==="medium"?"selected":""}>Média</option><option value="high" ${existing?.priority==="high"?"selected":""}>Alta</option></select></div>
+            <div class="form-group full"><label>Observações <span style="font-weight:500">(opcional)</span></label><textarea class="field" name="notes" rows="3" placeholder="Algum detalhe...">${escapeHTML(existing?.notes||"")}</textarea></div>`},
+          inbox: { title:"Capturar na caixa de entrada", fields:`
+            <div class="form-group"><label>Tipo</label><select class="field" name="captureType"><option>Ideia</option><option>Tarefa</option><option>Lembrete</option></select></div>
+            <div class="form-group full"><label>O que surgiu agora?</label><textarea class="field" name="text" rows="5" required placeholder="Escreva sem organizar. Você decide depois o destino.">${escapeHTML(existing?.text||"")}</textarea></div>`},
           habit: { title:"Novo hábito", fields:`
             <div class="form-group full"><label>Nome do hábito</label><input class="field" name="name" required value="${escapeHTML(existing?.name||"")}" placeholder="Ex.: Beber água, Meditar"></div>
             <div class="form-group full"><label>Frequência</label><select class="field" name="frequency">${habitFrequencyOptions(existing?.frequency||"Todos os dias")}</select></div>`},
@@ -2264,6 +2640,7 @@
         const key = personalKeyByType[type];
         if (!key) return;
         state.personal[key] = state.personal[key].filter(x => x.id !== id);
+        if (type === "todo") state.personal.priorities = state.personal.priorities.filter(pid => pid !== id);
         savePersonal("Item excluído");
         render();
       }
@@ -2302,135 +2679,154 @@
         render();
       }
 
+      function priorityLabelClass(priority) {
+        return priority === "high" ? "priority-high" : priority === "medium" ? "priority-medium" : "";
+      }
+
+      function formatCapturedAt(iso) {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return "";
+        return new Intl.DateTimeFormat("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" }).format(d);
+      }
+
+      function agendaDateLabel(dateStr) {
+        if (!dateStr) return "";
+        if (dateStr === localDateISO()) return "Hoje";
+        const d = new Date(dateStr + "T12:00:00");
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        if (dateStr === localDateISO(tomorrow)) return "Amanhã";
+        return new Intl.DateTimeFormat("pt-BR", { weekday:"long", day:"2-digit", month:"long" }).format(d);
+      }
+
+      function personalTodoActions(todo) {
+        return `<div class="personal-todo-actions">
+          <button class="mini-btn" data-personal-edit="todo" data-id="${escapeHTML(todo.id)}" title="Editar">✎</button>
+          <button class="mini-btn danger" data-personal-delete="todo" data-id="${escapeHTML(todo.id)}" title="Excluir">⌫</button>
+        </div>`;
+      }
+
+      function agendaActions(item) {
+        return `<div class="personal-item-actions">
+          <button class="mini-btn" data-personal-edit="agenda" data-id="${escapeHTML(item.id)}" title="Editar">✎</button>
+          <button class="mini-btn danger" data-personal-delete="agenda" data-id="${escapeHTML(item.id)}" title="Excluir">⌫</button>
+        </div>`;
+      }
+
       function renderPersonal() {
         const p = state.personal;
-        const todayKey = localDateISO();
 
-        if ($("#habitList")) {
-          const doneToday = p.habits.filter(h => h.completions?.[todayKey]).length;
-          const habitProgress = p.habits.length ? Math.round(doneToday/p.habits.length*100) : 0;
-          if ($("#habitTodayNote")) $("#habitTodayNote").textContent = `${doneToday} de ${p.habits.length} hábito${p.habits.length===1?"":"s"} concluído${doneToday===1?"":"s"} hoje`;
-          if ($("#habitTodayBar")) $("#habitTodayBar").style.width = `${habitProgress}%`;
-          $("#habitList").innerHTML = p.habits.length ? p.habits.map(h => {
-            const done = !!h.completions?.[todayKey];
-            const streak = habitStreak(h);
-            return `<div class="personal-item-card">
-              <button class="habit-check ${done?"done":""}" data-habit-toggle="${escapeHTML(h.id)}" title="${done?"Desmarcar hoje":"Marcar como feito hoje"}">${done?"✓":""}</button>
-              <div class="personal-item-main">
-                <h3>${escapeHTML(h.name)}</h3>
-                <div class="personal-item-meta">
-                  <span class="badge">${escapeHTML(h.frequency||"Todos os dias")}</span>
-                  ${streak > 0 ? `<span class="badge">🔥 ${streak} dia${streak>1?"s":""}</span>` : ""}
-                </div>
-              </div>
-              ${personalRowActions("habit", h.id)}
-            </div>`;
-          }).join("") : `<div class="finance-empty"><strong>Nenhum hábito cadastrado</strong><span>Adicione um hábito para começar a acompanhar sua rotina.</span></div>`;
-        }
+        // Agenda: apenas compromissos com data + horário fixos.
+        {
+          const listEl = $("#personalAgendaList");
+          if (listEl) {
+            const mode = listEl.dataset.mode || "week";
+            const today = new Date();
+            const todayIso = localDateISO(today);
+            const end = new Date(today);
+            end.setDate(end.getDate() + 6);
+            const endIso = localDateISO(end);
+            const source = [...p.agenda]
+              .filter(x => x.date && (mode === "today" ? x.date === todayIso : x.date >= todayIso && x.date <= endIso))
+              .sort((a,b) => `${a.date} ${a.time||"99:99"}`.localeCompare(`${b.date} ${b.time||"99:99"}`));
 
-        if ($("#goalList")) {
-          $("#goalList").innerHTML = p.goals.length ? p.goals.map(g => `
-            <div class="personal-item-card" style="flex-direction:column; align-items:stretch;">
-              <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-                <div class="personal-item-main">
-                  <h3>${escapeHTML(g.title)}</h3>
-                  <div class="personal-item-meta">
-                    ${g.category ? `<span class="badge">${escapeHTML(g.category)}</span>` : ""}
-                    <span class="badge">${escapeHTML(g.status||"Não iniciada")}</span>
-                    ${g.deadline ? `<span class="badge">📅 ${formatDate(g.deadline)}</span>` : ""}
+            const groups = [];
+            source.forEach(item => {
+              let group = groups.find(g => g.date === item.date);
+              if (!group) { group = { date:item.date, items:[] }; groups.push(group); }
+              group.items.push(item);
+            });
+
+            listEl.innerHTML = groups.length ? groups.map(g => `
+              <section class="agenda-day-card">
+                <div class="agenda-day-head"><strong>${escapeHTML(agendaDateLabel(g.date))}</strong><span>${g.items.length} compromisso${g.items.length===1?"":"s"}</span></div>
+                ${g.items.map(item => `
+                  <div class="agenda-event">
+                    <div class="agenda-event-time">${escapeHTML(item.time || "—")}</div>
+                    <div class="agenda-event-main">
+                      <h3>${escapeHTML(item.title)}</h3>
+                      <div class="agenda-event-meta">
+                        ${item.location ? `<span class="badge">📍 ${escapeHTML(item.location)}</span>` : ""}
+                        ${item.notes ? `<span class="badge">📝 ${escapeHTML(item.notes)}</span>` : ""}
+                      </div>
+                    </div>
+                    ${agendaActions(item)}
                   </div>
-                </div>
-                ${personalRowActions("goal", g.id)}
+                `).join("")}
+              </section>
+            `).join("") : `<div class="finance-empty"><strong>Nenhum compromisso</strong><span>${mode === "today" ? "Sua agenda de hoje está livre." : "Cadastre reuniões, consultas, aulas e outros compromissos com horário fixo."}</span></div>`;
+          }
+        }
+
+        // Lista de tarefas: separada em Hoje e Depois.
+        const todoToday = p.todos.filter(t => t.bucket !== "later").sort((a,b) => Number(a.completed)-Number(b.completed) || String(a.dueDate||"9999-99-99").localeCompare(String(b.dueDate||"9999-99-99")) || a.title.localeCompare(b.title));
+        const todoLater = p.todos.filter(t => t.bucket === "later").sort((a,b) => Number(a.completed)-Number(b.completed) || String(a.dueDate||"9999-99-99").localeCompare(String(b.dueDate||"9999-99-99")) || a.title.localeCompare(b.title));
+
+        function todoHTML(t) {
+          const priorityClass = priorityLabelClass(t.priority);
+          return `<article class="personal-todo-row ${t.completed?"done":""}">
+            <button class="personal-check ${t.completed?"done":""}" data-personal-todo-toggle="${escapeHTML(t.id)}" title="${t.completed?"Reabrir tarefa":"Concluir tarefa"}">${t.completed?"✓":""}</button>
+            <div>
+              <p class="personal-todo-title">${escapeHTML(t.title)}</p>
+              <div class="personal-todo-meta">
+                <span class="badge ${priorityClass}">● ${escapeHTML(t.priority === "high" ? "Alta" : t.priority === "low" ? "Baixa" : "Média")}</span>
+                ${t.dueDate ? `<span class="badge">📅 ${escapeHTML(formatDate(t.dueDate))}</span>` : ""}
               </div>
             </div>
-          `).join("") : `<div class="finance-empty"><strong>Nenhuma meta cadastrada</strong><span>Adicione uma meta para começar.</span></div>`;
+            ${personalTodoActions(t)}
+          </article>`;
         }
 
-        if ($("#personalTaskList")) {
-          renderTaskList($("#personalTaskList"), state.tasks.filter(t => t.category === "Pessoal"), "Nenhuma tarefa pessoal", "Adicione uma tarefa com categoria Pessoal.");
+        if ($("#personalTodoTodayList")) {
+          $("#personalTodoTodayList").innerHTML = todoToday.length ? todoToday.map(todoHTML).join("") : `<div class="finance-empty"><strong>Nada para hoje</strong><span>Jogue aqui o que merece atenção no dia.</span></div>`;
+          $("#todoTodayCount").textContent = `${todoToday.length} tarefa${todoToday.length===1?"":"s"}`;
+        }
+        if ($("#personalTodoLaterList")) {
+          $("#personalTodoLaterList").innerHTML = todoLater.length ? todoLater.map(todoHTML).join("") : `<div class="finance-empty"><strong>Sem tarefas para depois</strong><span>As pendências futuras podem ficar aqui.</span></div>`;
+          $("#todoLaterCount").textContent = `${todoLater.length} tarefa${todoLater.length===1?"":"s"}`;
         }
 
-        if ($("#mediaList")) {
-          const typeFilter = $("#mediaTypeFilter")?.value || "all";
-          const statusFilter = $("#mediaStatusFilter")?.value || "all";
-          const media = p.media.filter(x =>
-            (typeFilter === "all" || x.mediaType === typeFilter) &&
-            (statusFilter === "all" || x.status === statusFilter)
-          );
-          $("#mediaList").innerHTML = media.length ? media.map(x => `
-            <div class="reading-card">
-              <div style="display:flex; justify-content:space-between; gap:8px; align-items:flex-start;">
-                <h3>${escapeHTML(x.title)}</h3>
-                ${personalRowActions("media", x.id)}
-              </div>
-              <p>${escapeHTML(x.mediaType||"—")} · ${escapeHTML(x.status||"—")}</p>
-              ${x.rating ? `<div class="stars" style="margin-top:8px;">${starsDisplay(x.rating)}</div>` : ""}
-            </div>
-          `).join("") : `<div class="finance-empty" style="grid-column:1/-1"><strong>Nada por aqui ainda</strong><span>Adicione um livro, filme, série ou podcast.</span></div>`;
-        }
-
-        if ($("#journalList")) {
-          const journal = [...p.journal].sort((a,b) => (b.date||"").localeCompare(a.date||""));
-          $("#journalList").innerHTML = journal.length ? journal.map(x => `
-            <div class="personal-item-card" style="flex-direction:column; align-items:stretch;">
-              <div style="display:flex; justify-content:space-between; gap:8px; align-items:flex-start;">
-                <div class="personal-item-main">
-                  <h3>${escapeHTML(x.title)}</h3>
-                  <div class="personal-item-meta"><span class="badge">📅 ${formatDate(x.date)}</span></div>
-                </div>
-                ${personalRowActions("journal", x.id)}
-              </div>
-              ${x.text ? `<p style="margin:10px 0 0; font-size:12.5px; color:var(--muted); white-space:pre-wrap;">${escapeHTML(x.text)}</p>` : ""}
-            </div>
-          `).join("") : `<div class="finance-empty"><strong>Nenhuma anotação ainda</strong><span>Escreva o que quiser guardar.</span></div>`;
-        }
-
-        if ($("#shoppingList")) {
-          $("#shoppingList").innerHTML = p.shopping.length ? p.shopping.map(x => `
-            <div class="checklist-row ${x.bought?"bought":""}">
-              <button class="check ${x.bought?"done":""}" data-shopping-toggle="${escapeHTML(x.id)}">${x.bought?"✓":""}</button>
-              <span class="checklist-name">${escapeHTML(x.name)}</span>
-              <span class="badge">${escapeHTML(x.category||"Outro")}</span>
-              ${personalRowActions("shoppingItem", x.id)}
-            </div>
-          `).join("") : `<div class="finance-empty"><strong>Lista vazia</strong><span>Adicione itens para o mercado.</span></div>`;
-        }
-
-        if ($("#wishlistList")) {
-          $("#wishlistList").innerHTML = p.wishlist.length ? p.wishlist.map(x => {
-            const priorityClass = x.priority === "Alta" ? "priority-high" : x.priority === "Baixa" ? "" : "priority-medium";
-            return `<div class="personal-item-card">
+        // Caixa de entrada: captura sem organização e conversão opcional para tarefa.
+        const inboxEl = $("#personalInboxList");
+        if (inboxEl) {
+          const inbox = [...p.inbox].sort((a,b) => String(b.capturedAt||"").localeCompare(String(a.capturedAt||"")));
+          inboxEl.innerHTML = inbox.length ? inbox.map(x => `
+            <article class="inbox-card">
               <div class="personal-item-main">
-                <h3>${escapeHTML(x.name)}</h3>
-                <div class="personal-item-meta">
-                  ${x.category ? `<span class="badge">${escapeHTML(x.category)}</span>` : ""}
-                  ${x.priceRange ? `<span class="badge">${escapeHTML(x.priceRange)}</span>` : ""}
-                  <span class="badge ${priorityClass}">● ${escapeHTML(x.priority||"Média")}</span>
-                  ${x.link ? `<a href="${escapeHTML(x.link)}" target="_blank" rel="noopener" class="badge" style="text-decoration:none;">🔗 Link</a>` : ""}
+                <h3>${escapeHTML(x.text)}</h3>
+                <div class="inbox-meta">
+                  <span class="badge">${escapeHTML(x.captureType || "Ideia")}</span>
+                  <span class="badge">🕒 ${escapeHTML(formatCapturedAt(x.capturedAt))}</span>
                 </div>
               </div>
-              ${personalRowActions("wishlistItem", x.id)}
-            </div>`;
-          }).join("") : `<div class="finance-empty"><strong>Nenhum desejo cadastrado</strong><span>Adicione algo que você quer comprar.</span></div>`;
+              <div class="inbox-actions">
+                <button class="mini-btn" data-inbox-to-todo="${escapeHTML(x.id)}" title="Transformar em tarefa">→✓</button>
+                <button class="mini-btn danger" data-inbox-delete="${escapeHTML(x.id)}" title="Excluir">⌫</button>
+              </div>
+            </article>
+          `).join("") : `<div class="finance-empty"><strong>Caixa de entrada vazia</strong><span>Capture aqui qualquer coisa que surgir no meio do dia.</span></div>`;
         }
 
-        if ($("#reminderGroupAniversarios")) {
-          const groups = { aniversarios:"reminderGroupAniversarios", saude:"reminderGroupSaude", eventos:"reminderGroupEventos", renovacoes:"reminderGroupRenovacoes" };
-          const reminders = [...p.reminders].sort((a,b) => (a.date||"").localeCompare(b.date||""));
-          Object.entries(groups).forEach(([key, elId]) => {
-            const items = reminders.filter(x => x.group === key);
-            const el = $(`#${elId}`);
-            if (!el) return;
-            el.innerHTML = items.length ? items.map(x => `
-              <div class="finance-summary-row">
-                <span>${escapeHTML(x.title)}${x.notes ? `<div class="finance-mini-note">${escapeHTML(x.notes)}</div>` : ""}</span>
-                <span style="text-align:right; white-space:nowrap;">
-                  ${formatDate(x.date)}${x.time ? ` · ${escapeHTML(x.time)}` : ""}
-                  <div style="margin-top:4px; display:flex; justify-content:flex-end;">${personalRowActions("reminder", x.id)}</div>
-                </span>
-              </div>
-            `).join("") : `<div class="finance-mini-note">Nada por aqui.</div>`;
-          });
+        // Prioridades: no máximo três tarefas da lista Hoje.
+        p.priorities = (Array.isArray(p.priorities) ? p.priorities : []).filter(id => todoToday.some(t => t.id === id)).slice(0, 3);
+        const priorityEl = $("#personalPriorityList");
+        if (priorityEl) {
+          if (!todoToday.length) {
+            priorityEl.innerHTML = `<div class="finance-empty"><strong>Adicione tarefas para hoje</strong><span>Depois escolha de uma a três delas como prioridades.</span></div>`;
+          } else {
+            priorityEl.innerHTML = todoToday.filter(t => !t.completed).map((t, index) => {
+              const selected = p.priorities.includes(t.id);
+              const rank = selected ? p.priorities.indexOf(t.id) + 1 : "";
+              return `<label class="priority-choice-row ${selected?"selected":""}">
+                <input type="checkbox" data-priority-toggle="${escapeHTML(t.id)}" ${selected?"checked":""} ${!selected && p.priorities.length>=3?"disabled":""}>
+                <span class="priority-rank">${rank || index + 1}</span>
+                <span class="personal-item-main"><strong style="font-size:13px;">${escapeHTML(t.title)}</strong><span style="display:block; margin-top:4px; color:var(--muted); font-size:11px;">${t.dueDate ? `Prazo: ${escapeHTML(formatDate(t.dueDate))}` : "Sem prazo definido"}</span></span>
+              </label>`;
+            }).join("") || `<div class="finance-empty"><strong>Todas as tarefas de hoje estão concluídas</strong><span>Não há uma pendência ativa para priorizar.</span></div>`;
+          }
+          const countEl = $("#prioritySelectedCount");
+          if (countEl) countEl.textContent = `${p.priorities.length} de 3 selecionadas`;
         }
       }
 
@@ -2449,7 +2845,7 @@
       }
 
       function financeInstallmentRows(item) {
-        const total = Math.max(1, Number(item.installments || item.parcelas || 1));
+        const total = Math.max(1, Number(item.totalParcels || item.installments || item.parcelas || 1));
         const cardId = item.creditCard || item.cardId || "";
         const value = Number(item.value || item.valor || 0);
         const rows = [];
@@ -2633,7 +3029,23 @@
                 <option value="completed" ${existing?.status === "completed" ? "selected" : ""}>Concluído</option>
               </select></div>
               <div class="form-group"><label>Pontuação / Valor <span style="font-weight:500">(se valer ponto)</span></label><input class="field" name="points" type="number" step="0.1" min="0" value="${existing?.points ?? ""}" placeholder="Ex.: 1.5"></div>`
-          }
+          },
+          tccInfo: { title:"Configurar TCC / Pesquisa", fields:`
+            <div class="form-group full"><label>Tema / título provisório do artigo</label><input class="field" name="tccTitle" required value="${escapeHTML(state.faculty.tcc?.title||"")}" placeholder="Título ou assunto provisório do artigo"></div>
+            <div class="form-group"><label>Orientador(a)</label><input class="field" name="advisor" value="${escapeHTML(state.faculty.tcc?.advisor||"")}" placeholder="Nome do(a) orientador(a)"></div>
+            <div class="form-group"><label>E-mail do(a) orientador(a)</label><input class="field" name="advisorEmail" type="email" value="${escapeHTML(state.faculty.tcc?.advisorEmail||"")}" placeholder="professor@..."></div>
+            <div class="form-group"><label>Planilha de Fontes (Google Sheets)</label><input class="field" name="sourcesSheetUrl" type="url" value="${escapeHTML(state.faculty.tcc?.sourcesSheetUrl||"")}" placeholder="https://docs.google.com/spreadsheets/..."></div>
+            <div class="form-group"><label>Defesa / Banca prevista</label><input class="field" name="defenseDate" type="date" value="${escapeHTML(state.faculty.tcc?.defenseDate||"")}"></div>
+` },
+          tccMeeting: { title:existing?"Editar reunião":"Nova reunião de orientação", fields:`
+            <div class="form-group"><label>Data da reunião</label><input class="field" name="meetingDate" type="date" required value="${escapeHTML(existing?.date||localDateISO())}"></div>
+            <div class="form-group full"><label>Feedback da Professora</label><textarea class="field" name="discussion" required maxlength="1500" placeholder="O que foi pedido para alterar, aprofundar ou revisar?">${escapeHTML(existing?.discussion||"")}</textarea></div>
+            <div class="form-group full"><label class="day-check"><input type="checkbox" name="adjustmentsDone" value="1" ${existing?.adjustmentsDone?"checked":""}> Ajustes solicitados nesta reunião já foram feitos</label></div>` },
+          tccChapter: { title:"Atualizar seção do artigo", fields:`
+            <div class="form-group full"><label>Seção</label><div class="info-chip" style="padding:11px 13px;"><strong>${escapeHTML(existing?.title||"")}</strong></div></div>
+            <div class="form-group"><label>Status</label><select class="field" name="status">${tccChapterStatusOptions(existing?.status||"todo")}</select></div>
+            <div class="form-group"><label>Prazo</label><input class="field" name="dueDate" type="date" value="${escapeHTML(existing?.dueDate||"")}"></div>
+            <div class="form-group full"><label>Notas / escopo</label><textarea class="field" name="notes" maxlength="800" placeholder="O que precisa entrar nesta parte?">${escapeHTML(existing?.notes||"")}</textarea></div>` }
         };
         const cfg = configs[type];
         $("#facultyType").value = type;
@@ -2859,6 +3271,51 @@
         $("#weeklyLegend").innerHTML = courses.map(c => `<span class="badge">${escapeHTML(c.code || c.scheduleCode || "DISC")} · ${escapeHTML(c.name)}</span>`).join("");
       }
 
+      function renderTcc() {
+        state.faculty.tcc = normalizeTcc(state.faculty.tcc);
+        const t = state.faculty.tcc;
+        const meetings = t.meetings, chapters = t.chapters;
+        const cd = tccDaysUntil(t.defenseDate);
+
+        if ($("#tccThemeDisplay")) $("#tccThemeDisplay").textContent = t.title || "Não definido";
+        if ($("#tccAdvisorDisplay")) $("#tccAdvisorDisplay").textContent = t.advisor || "Não informado";
+        if ($("#tccDefenseDisplay")) $("#tccDefenseDisplay").textContent = t.defenseDate ? formatLongDate(t.defenseDate) : "Não definida";
+        if ($("#tccCountdownDisplay")) $("#tccCountdownDisplay").textContent = cd===null ? "—" : cd>0 ? `Faltam ${cd} dias` : cd===0 ? "É hoje" : `Passou há ${Math.abs(cd)} dias`;
+        $$("#tccPhaseSelector .tcc-phase-choice").forEach((btn,i)=>btn.classList.toggle("active",i===t.currentPhase));
+        if ($("#tccAdvisorLinks")) {
+          const links=[];
+          if(t.advisorEmail) links.push(`<a class="tcc-quick-link" href="mailto:${escapeHTML(t.advisorEmail)}">✉ E-mail</a>`);
+          $("#tccAdvisorLinks").innerHTML = links.join("");
+        }
+        if ($("#tccSheetsDisplay")) {
+          if (t.sourcesSheetUrl) {
+            $("#tccSheetsDisplay").innerHTML = `<a class="tcc-quick-link" href="${escapeHTML(t.sourcesSheetUrl)}" target="_blank" rel="noopener">📊 Abrir Planilha de Fontes</a>`;
+            if ($("#tccSheetsPlaceholder")) $("#tccSheetsPlaceholder").textContent = "Google Sheets";
+          } else {
+            $("#tccSheetsDisplay").innerHTML = `<span class="tcc-quick-link" style="opacity:.72;cursor:default;">📊 Planilha não configurada</span>`;
+            if ($("#tccSheetsPlaceholder")) $("#tccSheetsPlaceholder").textContent = "Adicione o link em “Editar projeto”.";
+          }
+        }
+
+        const chapterStatuses=[["todo","Não iniciado"],["draft","Em rascunho"],["review","Em revisão (Orientador)"],["done","Concluído"]];
+        if($("#tccChapterKanban")) $("#tccChapterKanban").innerHTML=chapterStatuses.map(([status,label])=>{
+          const items=chapters.filter(c=>c.status===status);
+          return `<div class="tcc-kanban-col"><div class="tcc-kanban-head"><strong>${label}</strong><span class="badge">${items.length}</span></div>${items.map(c=>`<article class="tcc-chapter-card"><h4>${escapeHTML(c.title)}</h4>${c.dueDate?`<span class="badge" style="margin-top:6px;">📅 ${escapeHTML(formatDate(c.dueDate))}</span>`:""}${c.notes?`<p>${escapeHTML(c.notes)}</p>`:""}<div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;"><button class="mini-btn" data-tcc-edit="chapter" data-id="${escapeHTML(c.id)}" title="Atualizar status / prazo / notas">✎</button></div></article>`).join("") || `<div style="padding:14px 4px;text-align:center;color:var(--muted);font-size:10px;">Nenhum item</div>`}</div>`;
+        }).join("");
+
+        if($("#tccBureauList")) $("#tccBureauList").innerHTML = t.bureaucracy.map(item=>`<label class="tcc-bureau-item ${item.done?"checked":""}"><input type="checkbox" data-tcc-bureau="${escapeHTML(item.id)}" ${item.done?"checked":""}><span>${escapeHTML(item.label)}</span></label>`).join("");
+
+        if($("#tccMeetingTable")) {
+          const ordered=[...meetings].sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+          $("#tccMeetingTable").innerHTML = ordered.length ? ordered.map(m=>`<tr>
+            <td><strong>${escapeHTML(formatLongDate(m.date))}</strong></td>
+            <td><div class="tcc-quote">${escapeHTML(m.discussion||"—")}</div></td>
+            <td><label class="tcc-adjust-check"><input type="checkbox" data-tcc-adjust="${escapeHTML(m.id)}" ${m.adjustmentsDone?"checked":""}> ${m.adjustmentsDone?"Concluído":"Pendente"}</label></td>
+            <td><div class="finance-actions"><button class="mini-btn" data-tcc-edit="meeting" data-id="${escapeHTML(m.id)}" title="Editar">✎</button><button class="mini-btn danger" data-tcc-delete="meeting" data-id="${escapeHTML(m.id)}" title="Excluir">⌫</button></div></td>
+          </tr>`).join("") : `<tr><td colspan="4"><div class="tcc-empty"><strong>Nenhuma reunião registrada</strong><span>Registre cada conversa com a professora para acompanhar o que foi pedido.</span></div></td></tr>`;
+        }
+      }
+
       function renderFaculty() {
         const { courses, absences, exams, readings, currentSemester, obrigTotal, obrigDone, optTotal, optDone, compTotal, compDone } = state.faculty;
         
@@ -3001,7 +3458,20 @@
         }).join("") : `<tr><td colspan="6"><div class="grade-empty">Nenhuma avaliação cadastrada.</div></td></tr>`;
 
         // Leituras
-        $("#readingList").innerHTML = readings.length ? readings.map(x => {
+        const readingCourseFilter = $("#readingCourseFilter");
+        const readingStatusFilter = $("#readingStatusFilter");
+        const selectedReadingCourse = readingCourseFilter?.value || "all";
+        const selectedReadingStatus = readingStatusFilter?.value || "all";
+        if (readingCourseFilter) {
+          readingCourseFilter.innerHTML = `<option value="all">Todas as disciplinas</option>` + courses.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join("");
+          readingCourseFilter.value = courses.some(c => c.id === selectedReadingCourse) ? selectedReadingCourse : "all";
+        }
+        if (readingStatusFilter) readingStatusFilter.value = selectedReadingStatus;
+        const filteredReadings = readings.filter(r =>
+          (!readingCourseFilter || readingCourseFilter.value === "all" || r.courseId === readingCourseFilter.value) &&
+          (!readingStatusFilter || readingStatusFilter.value === "all" || r.status === readingStatusFilter.value)
+        );
+        $("#readingList").innerHTML = filteredReadings.length ? filteredReadings.map(x => {
           const st = x.status === "completed" ? { label: "Concluído", cls: "attendance-good" } : x.status === "in_progress" ? { label: "Em andamento", cls: "priority-medium" } : { label: "Não iniciada", cls: "" };
           return `<article class="reading-card">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
@@ -3022,7 +3492,7 @@
               <button class="mini-btn danger" data-faculty-delete="reading" data-id="${x.id}" title="Excluir">⌫</button>
             </div>
           </article>`;
-        }).join("") : `<div class="faculty-empty" style="grid-column:1/-1"><div class="empty-icon">📚</div><strong>Nenhuma leitura cadastrada</strong><span>Adicione textos e acompanhe seu cronograma e notas.</span></div>`;
+        }).join("") : `<div class="faculty-empty" style="grid-column:1/-1"><div class="empty-icon">📚</div><strong>${readings.length ? "Nenhuma leitura encontrada" : "Nenhuma leitura cadastrada"}</strong><span>${readings.length ? "Ajuste os filtros para visualizar outros textos." : "Adicione textos e acompanhe seu cronograma e notas."}</span></div>`;
       }
 
       function sortedFacultyExams(exams) {
@@ -3122,6 +3592,9 @@
             items.push({ time: "", label: `📝 ${e.title}` });
           });
 
+          state.personal.agenda.filter(a => a.date === iso).forEach(a => {
+            items.push({ time: a.time || "", label: `📅 ${a.title}${a.time ? ` (${a.time.replace(":","h")})` : ""}` });
+          });
           state.personal.reminders.filter(r => r.date === iso).forEach(r => {
             const icon = r.group === "aniversarios" ? "🎂" : r.group === "saude" ? "🩺" : r.group === "renovacoes" ? "⏰" : "📌";
             items.push({ time: r.time || "", label: `${icon} ${r.title}${r.time ? ` (${r.time.replace(":","h")})` : ""}` });
@@ -3147,17 +3620,31 @@
         else if (nextExam) academicText = `${nextExam.title} em ${formatDate(nextExam.date)}`;
         rows.push({ icon: "🎓", label: "Acadêmico", text: academicText });
 
-        const nextPersonalTask = [...state.tasks].filter(t => !t.completed && t.category === "Pessoal").sort((a,b) => a.date.localeCompare(b.date))[0];
+        const nextPersonalTask = [...state.personal.todos].filter(t => !t.completed && t.bucket !== "later").sort((a,b) => String(a.dueDate||"9999-99-99").localeCompare(String(b.dueDate||"9999-99-99")))[0];
+        const priorityTask = state.personal.priorities.map(id => state.personal.todos.find(t => t.id === id)).find(Boolean);
+        const nextAgenda = [...state.personal.agenda].filter(a => `${a.date} ${a.time||""}` >= `${localDateISO()} 00:00`).sort((a,b) => `${a.date} ${a.time||"99:99"}`.localeCompare(`${b.date} ${b.time||"99:99"}`))[0];
         const pendingShopping = state.personal.shopping.find(x => !x.bought);
         let personalText = "Nenhuma pendência pessoal";
-        if (nextPersonalTask) personalText = nextPersonalTask.title;
+        if (priorityTask) personalText = `Prioridade: ${priorityTask.title}`;
+        else if (nextPersonalTask) personalText = nextPersonalTask.title;
+        else if (nextAgenda) personalText = `${nextAgenda.title} · ${formatDate(nextAgenda.date)}${nextAgenda.time ? ` às ${nextAgenda.time.replace(":","h")}` : ""}`;
         else if (pendingShopping) personalText = `Comprar: ${pendingShopping.name}`;
         rows.push({ icon: "👤", label: "Pessoal", text: personalText });
 
         const curMonth = localDateISO().slice(0,7);
-        const nextBill = financeFixedOccurrences(curMonth).filter(x => !x.paid).sort((a,b) => a.occurrenceDate.localeCompare(b.occurrenceDate))[0];
+        const todayDate = localDateISO();
+        const fixedBills = financeFixedOccurrences(curMonth).filter(x => !x.paid).map(x => ({
+          date:x.occurrenceDate, text:`Pagar: ${x.name} (${formatDate(x.occurrenceDate)})`
+        }));
+        const cardInstallments = state.finance.installments.flatMap(item => {
+          if (!item?.date || !item?.totalParcels) return [];
+          return financeInstallmentRows(item)
+            .filter(r => r.invoiceDate && r.invoiceYear === Number(curMonth.slice(0,4)) && r.invoiceMonth === Number(curMonth.slice(5,7))-1)
+            .map(r => ({ date:curMonth+"-01", text:`Parcela: ${item.name || "Compra no cartão"} (${r.number}/${r.total})` }));
+        });
+        const financePending = [...fixedBills, ...cardInstallments].sort((a,b) => a.date.localeCompare(b.date));
         let financeText = "Nenhuma conta pendente";
-        if (nextBill) financeText = `Pagar: ${nextBill.name} (${formatDate(nextBill.occurrenceDate)})`;
+        if (financePending.length) financeText = financePending[0].text;
         rows.push({ icon: "💰", label: "Financeiro", text: financeText });
 
         el.innerHTML = rows.map(r => `<div class="focus-row"><span class="badge">${r.icon} ${escapeHTML(r.label)}</span><span class="focus-text">${escapeHTML(r.text)}</span></div>`).join("");
@@ -3184,7 +3671,10 @@
         );
 
         renderFaculty();
+        renderTcc();
         renderFinance();
+        const personalAgendaList = $("#personalAgendaList");
+        if (personalAgendaList && !personalAgendaList.dataset.mode) personalAgendaList.dataset.mode = "week";
         renderPersonal();
 
         renderTaskList(
@@ -3306,13 +3796,14 @@
           tasks: state.tasks,
           faculty: state.faculty,
           finance: state.finance,
+          personal: state.personal,
           exportedAt: new Date().toISOString()
         };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `minha-vida-backup-${localDateISO()}.json`;
+        a.download = `painel-de-controle-backup-${localDateISO()}.json`;
         a.click();
         URL.revokeObjectURL(url);
         showToast("Backup exportado com sucesso!");
@@ -3324,49 +3815,77 @@
         reader.onload = (e) => {
           try {
             const data = JSON.parse(e.target.result);
-            if (data.tasks || data.faculty || data.finance) {
-              if (Array.isArray(data.tasks)) {
-                state.tasks = data.tasks;
-                saveTasks();
-              }
-              if (data.faculty && typeof data.faculty === "object") {
-                state.faculty = data.faculty;
-                saveFaculty();
-              }
-              if (data.finance && typeof data.finance === "object") {
-                state.finance = data.finance;
-                saveFinance();
-              }
-              render();
-              showToast("Dados importados com sucesso!");
-            } else {
-              showToast("Formato de arquivo inválido.");
+            if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("Backup inválido");
+            const hasAny = ["tasks","faculty","finance","personal"].some(key => Object.prototype.hasOwnProperty.call(data,key));
+            if (!hasAny) throw new Error("Nenhuma seção válida encontrada");
+
+            // Cada seção só substitui o estado atual quando o backup traz um valor válido.
+            // Campos ausentes, nulos ou com tipo incorreto preservam os dados atuais.
+            if (Array.isArray(data.tasks)) {
+              state.tasks = data.tasks;
+              saveTasks();
             }
-          } catch {
-            showToast("Erro ao ler o arquivo JSON.");
+
+            if (data.faculty && typeof data.faculty === "object" && !Array.isArray(data.faculty)) {
+              const current = { ...state.faculty, tcc: normalizeTcc(state.faculty.tcc) };
+              const incoming = data.faculty;
+              const merged = { ...current };
+              const scalarKeys = ["courseName","courseSubtitle","currentSemester","semesterStart","semesterEnd","obrigTotal","obrigDone","optTotal","optDone","compTotal","compDone","selectedCourseId"];
+              scalarKeys.forEach(key => {
+                const value = incoming[key];
+                const valid = typeof value === "string" ? value.trim() !== "" : typeof value === "number" && Number.isFinite(value) || (key === "selectedCourseId" && (value === null || typeof value === "string"));
+                if (valid) merged[key] = value;
+              });
+              ["courses","absences","exams","readings"].forEach(key => { if (Array.isArray(incoming[key])) merged[key] = incoming[key]; });
+              if (incoming.tcc && typeof incoming.tcc === "object" && !Array.isArray(incoming.tcc)) {
+                const currentTcc = current.tcc || {};
+                const incomingTcc = incoming.tcc;
+                const tccMerged = { ...currentTcc };
+                ["title","advisor","advisorEmail","defenseDate","sourcesSheetUrl","currentPhase"].forEach(key => {
+                  const value = incomingTcc[key];
+                  if ((typeof value === "string" && value.trim() !== "") || (key === "currentPhase" && Number.isFinite(Number(value)))) tccMerged[key] = value;
+                });
+                if (Array.isArray(incomingTcc.chapters)) tccMerged.chapters = incomingTcc.chapters;
+                if (Array.isArray(incomingTcc.meetings)) tccMerged.meetings = incomingTcc.meetings;
+                if (Array.isArray(incomingTcc.bureaucracy)) tccMerged.bureaucracy = incomingTcc.bureaucracy;
+                merged.tcc = normalizeTcc(tccMerged);
+              } else {
+                merged.tcc = normalizeTcc(current.tcc);
+              }
+              state.faculty = merged;
+              saveFaculty();
+            }
+
+            if (data.finance && typeof data.finance === "object" && !Array.isArray(data.finance)) {
+              const current = { ...state.finance };
+              const incoming = data.finance;
+              const merged = { ...current };
+              ["fixed","installments","expenses","income","outflow","investments"].forEach(key => { if (Array.isArray(incoming[key])) merged[key] = incoming[key]; });
+              if (incoming.cards && typeof incoming.cards === "object" && !Array.isArray(incoming.cards)) merged.cards = incoming.cards;
+              if (typeof incoming.selectedMonth === "string" && /^\d{4}-\d{2}$/.test(incoming.selectedMonth)) merged.selectedMonth = incoming.selectedMonth;
+              state.finance = merged;
+              saveFinance();
+            }
+
+            if (data.personal && typeof data.personal === "object" && !Array.isArray(data.personal)) {
+              const current = { ...state.personal };
+              const incoming = data.personal;
+              const merged = { ...current };
+              ["agenda","todos","inbox","priorities","habits","goals","media","journal","shopping","wishlist","reminders"].forEach(key => { if (Array.isArray(incoming[key])) merged[key] = incoming[key]; });
+              state.personal = merged;
+              savePersonal();
+            }
+
+            render();
+            showToast("Backup importado com segurança!");
+          } catch (err) {
+            showToast("Não foi possível importar este backup.");
           }
         };
         reader.readAsText(file);
       }
 
-      // Navegação
-      $$(".nav-btn[data-view]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
-      $$(".overview-card[data-view-link]").forEach(card => card.addEventListener("click", () => setView(card.dataset.viewLink)));
-
-      // Abrir modal
-      ["addTopBtn", "addHeroBtn", "addAllBtn", "mobileAddBtn"].forEach(id => {
-        $(`#${id}`)?.addEventListener("click", () => openModal());
-      });
-      $("#addFinanceBtn")?.addEventListener("click", () => financeModal("expense"));
-      $("#openAllBtn").addEventListener("click", () => setView("all"));
-      $("#quickHabitCheckinBtn")?.addEventListener("click", () => goToPersonalPane("habits"));
-      $("#quickShoppingBtn")?.addEventListener("click", () => goToPersonalPane("shopping"));
-
-      // Alternar Tema
-      $("#themeToggleBtn").addEventListener("click", toggleTheme);
-
-      // Backup Handlers
-            $("#exportDataHeaderBtn").addEventListener("click", exportData);
+      $("#exportDataHeaderBtn").addEventListener("click", exportData);
       $("#importDataHeaderBtn").addEventListener("click", () => $("#importFileInput").click());
             $("#importFileInput").addEventListener("change", (e) => importData(e.target.files[0]));
 
@@ -3482,8 +4001,16 @@
         }
       });
 
+      function resetFinanceExpenseFilters() {
+        financeExpenseFilter = { q: "", category: "", payment: "" };
+        if ($("#financeExpenseSearch")) $("#financeExpenseSearch").value = "";
+        if ($("#financeExpenseFilterCategory")) $("#financeExpenseFilterCategory").value = "";
+        if ($("#financeExpenseFilterPayment")) $("#financeExpenseFilterPayment").value = "";
+      }
+
       $("#financeMonthInput")?.addEventListener("change", e => {
         state.finance.selectedMonth = e.target.value || localDateISO().slice(0,7);
+        resetFinanceExpenseFilters();
         saveFinance();
         renderFinance();
       });
@@ -3492,6 +4019,7 @@
         const [y,m] = (state.finance.selectedMonth || localDateISO().slice(0,7)).split("-").map(Number);
         const d = new Date(y,m-1+delta,1);
         state.finance.selectedMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+        resetFinanceExpenseFilters();
         saveFinance();
         renderFinance();
       }
@@ -3511,8 +4039,7 @@
         renderFinance();
       });
       $("#financeExpenseFilterClear")?.addEventListener("click", () => {
-        financeExpenseFilter = { q: "", category: "", payment: "" };
-        if ($("#financeExpenseSearch")) $("#financeExpenseSearch").value = "";
+        resetFinanceExpenseFilters();
         renderFinance();
       });
 
@@ -3610,9 +4137,61 @@
 
         const shopToggle = e.target.closest("[data-shopping-toggle]");
         if (shopToggle) { shoppingToggleBought(shopToggle.dataset.shoppingToggle); return; }
+
+        const todoToggle = e.target.closest("[data-personal-todo-toggle]");
+        if (todoToggle) {
+          const todo = state.personal.todos.find(x => x.id === todoToggle.dataset.personalTodoToggle);
+          if (todo) {
+            todo.completed = !todo.completed;
+            if (todo.completed) state.personal.priorities = state.personal.priorities.filter(id => id !== todo.id);
+            savePersonal(todo.completed ? "Tarefa concluída ✓" : "Tarefa reaberta");
+            render();
+          }
+          return;
+        }
+
+        const priorityToggle = e.target.closest("[data-priority-toggle]");
+        if (priorityToggle) {
+          const id = priorityToggle.dataset.priorityToggle;
+          if (priorityToggle.checked) {
+            if (state.personal.priorities.length >= 3) {
+              priorityToggle.checked = false;
+              showToast("Escolha no máximo 3 prioridades.");
+              return;
+            }
+            if (!state.personal.priorities.includes(id)) state.personal.priorities.push(id);
+          } else {
+            state.personal.priorities = state.personal.priorities.filter(x => x !== id);
+          }
+          savePersonal("Prioridades atualizadas");
+          render();
+          return;
+        }
+
+        const inboxToTodo = e.target.closest("[data-inbox-to-todo]");
+        if (inboxToTodo) {
+          const item = state.personal.inbox.find(x => x.id === inboxToTodo.dataset.inboxToTodo);
+          if (!item) return;
+          state.personal.todos.push({ id: uid(), title: item.text, bucket: "today", dueDate: "", priority: "medium", notes: item.captureType === "Tarefa" ? "Capturado pela caixa de entrada" : `Capturado como ${item.captureType || "Ideia"}`, completed:false, createdAt:new Date().toISOString() });
+          state.personal.inbox = state.personal.inbox.filter(x => x.id !== item.id);
+          savePersonal("Captura transformada em tarefa");
+          render();
+          return;
+        }
+
+        const inboxDelete = e.target.closest("[data-inbox-delete]");
+        if (inboxDelete) {
+          if (!confirm("Excluir esta captura?")) return;
+          state.personal.inbox = state.personal.inbox.filter(x => x.id !== inboxDelete.dataset.inboxDelete);
+          savePersonal("Captura excluída");
+          render();
+          return;
+        }
       });
 
       $("#clearBoughtBtn")?.addEventListener("click", clearBoughtShopping);
+      $("#agendaTodayBtn")?.addEventListener("click", () => { const el = $("#personalAgendaList"); if (el) { el.dataset.mode = "today"; renderPersonal(); } });
+      $("#agendaWeekBtn")?.addEventListener("click", () => { const el = $("#personalAgendaList"); if (el) { el.dataset.mode = "week"; renderPersonal(); } });
       $("#mediaTypeFilter")?.addEventListener("change", renderPersonal);
       $("#mediaStatusFilter")?.addEventListener("change", renderPersonal);
       $("#personalAddTaskBtn")?.addEventListener("click", () => openModal());
@@ -3628,6 +4207,24 @@
         setView(btn.dataset.moreView);
         $("#moreMenuBackdrop")?.classList.remove("open");
       }));
+      $("#moreThemeBtn")?.addEventListener("click", () => { toggleTheme(); $("#moreMenuBackdrop")?.classList.remove("open"); });
+      $("#moreClearDoneBtn")?.addEventListener("click", () => { clearDone(); $("#moreMenuBackdrop")?.classList.remove("open"); });
+      $("#moreExportBtn")?.addEventListener("click", () => { exportData(); $("#moreMenuBackdrop")?.classList.remove("open"); });
+      $("#moreImportBtn")?.addEventListener("click", () => { $("#importFileInput")?.click(); $("#moreMenuBackdrop")?.classList.remove("open"); });
+
+      // ------------------------------------------------------------------
+      // CORREÇÃO: navegação principal (sidebar + bottom-nav) e botões de
+      // ação que existiam no HTML mas não tinham handler de clique.
+      // ------------------------------------------------------------------
+      $$(".nav-btn[data-view]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
+      $$("[data-view-link]").forEach(el => el.addEventListener("click", () => setView(el.dataset.viewLink)));
+      $("#themeToggleBtn")?.addEventListener("click", toggleTheme);
+      $("#addTopBtn")?.addEventListener("click", () => openModal());
+      $("#addAllBtn")?.addEventListener("click", () => openModal());
+      $("#openAllBtn")?.addEventListener("click", () => setView("all"));
+      $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
+      $("#quickInboxBtn")?.addEventListener("click", () => goToPersonalPane("inbox"));
+      $("#quickPriorityBtn")?.addEventListener("click", () => goToPersonalPane("priorities"));
 
       $("#personalForm")?.addEventListener("submit", e => {
         e.preventDefault();
@@ -3639,6 +4236,32 @@
         if (!key) return;
 
         let payload = { id: id || uid() };
+        if (type === "agenda") {
+          payload.title = (data.title||"").trim();
+          payload.date = data.date || localDateISO();
+          payload.time = data.time || "";
+          payload.location = (data.location||"").trim();
+          payload.notes = (data.notes||"").trim();
+          if (!payload.title || !payload.date || !payload.time) { showToast("Informe título, data e horário"); return; }
+        }
+        if (type === "todo") {
+          const existingItem = state.personal.todos.find(x => x.id === id);
+          payload.title = (data.title||"").trim();
+          payload.bucket = data.bucket === "later" ? "later" : "today";
+          payload.dueDate = data.dueDate || "";
+          payload.priority = data.priority || "medium";
+          payload.notes = (data.notes||"").trim();
+          payload.completed = existingItem?.completed || false;
+          if (!payload.title) { showToast("Digite a tarefa"); return; }
+          if (payload.bucket === "later") state.personal.priorities = state.personal.priorities.filter(pid => pid !== payload.id);
+        }
+        if (type === "inbox") {
+          payload.text = (data.text||"").trim();
+          payload.captureType = data.captureType || "Ideia";
+          const existingItem = state.personal.inbox.find(x => x.id === id);
+          payload.capturedAt = existingItem?.capturedAt || new Date().toISOString();
+          if (!payload.text) { showToast("Digite o que você quer capturar"); return; }
+        }
         if (type === "habit") {
           const existingItem = state.personal.habits.find(x => x.id === id);
           payload.name = (data.name||"").trim();
@@ -3742,9 +4365,82 @@
         render();
       });
 
+      // TCC — interações
+      document.addEventListener("click", e => {
+        const phaseBtn = e.target.closest("[data-tcc-phase-select]");
+        if (phaseBtn) {
+          state.faculty.tcc = normalizeTcc(state.faculty.tcc);
+          state.faculty.tcc.currentPhase = Math.max(0, Math.min(2, Number(phaseBtn.dataset.tccPhaseSelect)));
+          saveFaculty("Fase atualizada");
+          render();
+          setFacultyPane("tcc");
+          return;
+        }
+
+        const action = e.target.closest("[data-tcc-action]");
+        if (action && action.dataset.tccAction === "edit-info") {
+          facultyModal("tccInfo");
+          return;
+        }
+
+        const add = e.target.closest("[data-tcc-add]");
+        if (add) {
+          const typeMap = {meeting:"tccMeeting"};
+          const type = typeMap[add.dataset.tccAdd];
+          if (type) facultyModal(type);
+          return;
+        }
+
+        const edit = e.target.closest("[data-tcc-edit]");
+        if (edit) {
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const type=edit.dataset.tccEdit, id=edit.dataset.id;
+          const key=type==="meeting"?"meetings":"chapters";
+          const item=state.faculty.tcc[key].find(x=>x.id===id);
+          if(item) facultyModal(`tcc${type.charAt(0).toUpperCase()+type.slice(1)}`,item);
+          return;
+        }
+
+        const del = e.target.closest("[data-tcc-delete]");
+        if (del) {
+          if (!confirm("Excluir este registro do TCC?")) return;
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const type=del.dataset.tccDelete, id=del.dataset.id;
+          const key=type==="meeting"?"meetings":"chapters";
+          state.faculty.tcc[key]=state.faculty.tcc[key].filter(x=>x.id!==id);
+          saveFaculty("Registro do TCC excluído");
+          render();
+          return;
+        }
+      });
+
+      document.addEventListener("change", e => {
+        const bureau=e.target.closest("[data-tcc-bureau]");
+        if(bureau){
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const item=state.faculty.tcc.bureaucracy.find(x=>x.id===bureau.dataset.tccBureau);
+          if(item) item.done=bureau.checked;
+          saveFaculty("Checklist atualizado");
+          renderFaculty();
+          return;
+        }
+        const adjust=e.target.closest("[data-tcc-adjust]");
+        if(adjust){
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const item=state.faculty.tcc.meetings.find(x=>x.id===adjust.dataset.tccAdjust);
+          if(item) item.adjustmentsDone=adjust.checked;
+          saveFaculty("Ajustes atualizados");
+          renderFaculty();
+          return;
+        }
+
+      });
+
       // Faculdade Handlers
       $("#addCourseBtn").addEventListener("click", () => facultyModal("course"));
       $$(".faculty-nav .faculty-tab").forEach(btn => btn.addEventListener("click", () => setFacultyPane(btn.dataset.facultyPane)));
+      $("#readingCourseFilter")?.addEventListener("change", renderFaculty);
+      $("#readingStatusFilter")?.addEventListener("change", renderFaculty);
       document.addEventListener("click", e => {
         const add = e.target.closest("[data-faculty-add]");
         if (add) {
@@ -3877,6 +4573,31 @@
           };
           const item = state.faculty.exams.find(x => x.id === id);
           if (item) Object.assign(item, payload); else state.faculty.exams.push(payload);
+        }
+
+        if (type === "tccInfo") {
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          Object.assign(state.faculty.tcc,{
+            title:(data.tccTitle||"").trim()||"Meu Trabalho de Conclusão de Curso",
+            advisor:(data.advisor||"").trim(),
+            advisorEmail:(data.advisorEmail||"").trim(),
+            sourcesSheetUrl:(data.sourcesSheetUrl||"").trim(),
+            defenseDate:data.defenseDate||""
+          });
+        }
+        if (type === "tccMeeting") {
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const payload={id:id||uid(),date:data.meetingDate||localDateISO(),discussion:(data.discussion||"").trim(),adjustmentsDone:Boolean(formData.get("adjustmentsDone"))};
+          const item=state.faculty.tcc.meetings.find(x=>x.id===id); if(item) Object.assign(item,payload); else state.faculty.tcc.meetings.push(payload);
+        }
+        if (type === "tccChapter") {
+          state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          const item=state.faculty.tcc.chapters.find(x=>x.id===id);
+          if (item) {
+            item.status=data.status||"todo";
+            item.dueDate=data.dueDate||"";
+            item.notes=(data.notes||"").trim();
+          }
         }
 
         if (type === "reading") {
