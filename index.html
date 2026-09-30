@@ -194,7 +194,6 @@
     }
     .icon-btn { width: 42px; padding: 0; }
     .icon-btn:hover, .secondary-btn:hover { transform: translateY(-1px); box-shadow: 0 7px 16px rgba(15,23,42,.07); }
-    .agenda-filters .secondary-btn.active { background: var(--primary-soft); color: var(--primary); border-color: transparent; font-weight: 700; }
     .primary-btn {
       color: #fff;
       background: var(--primary);
@@ -650,8 +649,28 @@
     }
     .personal-section-intro h2 { margin:0; font-size:18px; letter-spacing:-.02em; }
     .personal-section-intro p { margin:4px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
-    .agenda-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
     .agenda-list, .personal-list { display:grid; gap:10px; }
+    .calendar-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .calendar-month-label { font-size:14px; text-transform:capitalize; flex:1; text-align:center; }
+    .calendar-toolbar #calendarTodayBtn { margin-left:4px; }
+    .calendar-weekdays {
+      display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:6px;
+      text-align:center; font-size:10.5px; font-weight:800; color:var(--muted); text-transform:uppercase;
+    }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:16px; }
+    .calendar-cell {
+      position:relative; aspect-ratio:1/.85; min-height:44px; border:1px solid var(--line); border-radius:12px;
+      background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:3px; font-size:12.5px; font-weight:700; color:var(--text); transition:.15s ease;
+    }
+    .calendar-cell:hover { background:var(--surface-2); }
+    .calendar-cell.outside { color:var(--muted); font-weight:500; opacity:.5; }
+    .calendar-cell.today { border-color:var(--primary); color:var(--primary); }
+    .calendar-cell.selected { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .calendar-cell .calendar-dot { width:5px; height:5px; border-radius:50%; background:var(--primary); }
+    .calendar-cell.selected .calendar-dot { background:#fff; }
+    .calendar-cell .calendar-count { position:absolute; top:3px; right:5px; font-size:9px; font-weight:800; color:var(--muted); }
+    .calendar-cell.selected .calendar-count { color:rgba(255,255,255,.85); }
     .agenda-day-card {
       background:var(--surface); border:1px solid var(--line); border-radius:18px;
       overflow:hidden; box-shadow:0 4px 15px rgba(15,23,42,.03);
@@ -793,6 +812,10 @@
       .bottom-nav .nav-icon { font-size:16px; }
       .filters { grid-template-columns:1fr 1fr; }
       .filters .search { grid-column:1/-1; }
+      .calendar-grid, .calendar-weekdays { gap:4px; }
+      .calendar-cell { min-height:38px; font-size:11px; border-radius:9px; }
+      .calendar-cell .calendar-count { display:none; }
+      .calendar-month-label { font-size:12.5px; }
     }
     .more-menu-list { display:grid; gap:8px; padding:4px 0; }
     .more-menu-item {
@@ -1190,7 +1213,6 @@
           <button class="icon-btn" id="importDataHeaderBtn" title="Importar backup (JSON)" aria-label="Importar backup">📤</button>
           <button class="icon-btn" id="themeToggleBtn" title="Alternar tema claro/escuro" aria-label="Alternar tema">🌙</button>
           <button class="icon-btn" id="clearDoneBtn" title="Limpar concluídas" aria-label="Limpar concluídas">🧹</button>
-          <button class="primary-btn" id="addTopBtn">＋ <span>Nova tarefa</span></button>
         </div>
       </header>
 
@@ -1622,6 +1644,7 @@
             <button class="personal-tab active" data-personal-pane="agenda">📅 Agenda</button>
             <button class="personal-tab" data-personal-pane="todos">✅ Lista de tarefas</button>
             <button class="personal-tab" data-personal-pane="inbox">📥 Caixa de entrada</button>
+            <button class="personal-tab" data-personal-pane="habits">🔥 Hábitos</button>
           </div>
 
           <section id="personalAgendaPane" class="personal-pane active">
@@ -1632,12 +1655,17 @@
               </div>
               <button class="secondary-btn" data-personal-add="agenda">＋ Novo compromisso</button>
             </div>
-            <div class="agenda-filters">
-              <button class="secondary-btn" id="agendaTodayBtn">Hoje</button>
-              <button class="secondary-btn" id="agendaWeekBtn">Próximos 7 dias</button>
-              <button class="secondary-btn" id="agendaAllBtn">Todos</button>
+            <div class="calendar-toolbar">
+              <button class="icon-btn" id="calendarPrevBtn" aria-label="Mês anterior">‹</button>
+              <strong id="calendarMonthLabel" class="calendar-month-label"></strong>
+              <button class="icon-btn" id="calendarNextBtn" aria-label="Próximo mês">›</button>
+              <button class="secondary-btn" id="calendarTodayBtn">Hoje</button>
             </div>
-            <div id="personalAgendaList" class="agenda-list"></div>
+            <div class="calendar-weekdays">
+              <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div id="calendarDayDetail" class="agenda-day-card"></div>
           </section>
 
           <section id="personalTodosPane" class="personal-pane">
@@ -1669,6 +1697,17 @@
               <button class="secondary-btn" data-personal-add="inbox">＋ Capturar agora</button>
             </div>
             <div id="personalInboxList" class="personal-item-list"></div>
+          </section>
+
+          <section id="personalHabitsPane" class="personal-pane">
+            <div class="personal-section-intro">
+              <div>
+                <h2>Hábitos</h2>
+                <p>Acompanhe rotinas recorrentes e veja sua sequência de dias seguidos.</p>
+              </div>
+              <button class="secondary-btn" data-personal-add="habit">＋ Novo hábito</button>
+            </div>
+            <div id="personalHabitsList" class="personal-item-list"></div>
           </section>
         </section>
         <section id="doneView" class="view">
@@ -2697,53 +2736,116 @@
         </div>`;
       }
 
+      // ---- Agenda em formato de calendário -------------------------------
+      let calendarCursor = new Date(); // mês/ano exibidos
+      let calendarSelectedDate = localDateISO(); // dia selecionado no grid
+
+      function renderCalendar() {
+        const grid = $("#calendarGrid");
+        const label = $("#calendarMonthLabel");
+        const detail = $("#calendarDayDetail");
+        if (!grid || !label || !detail) return;
+
+        const year = calendarCursor.getFullYear();
+        const month = calendarCursor.getMonth();
+        const todayIso = localDateISO();
+
+        label.textContent = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" }).format(calendarCursor);
+
+        // Conta compromissos por dia (string "YYYY-MM-DD" -> quantidade)
+        const countByDate = {};
+        state.personal.agenda.forEach(item => {
+          if (!item.date) return;
+          countByDate[item.date] = (countByDate[item.date] || 0) + 1;
+        });
+
+        const firstOfMonth = new Date(year, month, 1);
+        const startOffset = firstOfMonth.getDay(); // 0 = domingo
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+        const cells = [];
+        // Dias do fim do mês anterior, para completar a primeira semana
+        for (let i = startOffset - 1; i >= 0; i--) {
+          const d = daysInPrevMonth - i;
+          const dateObj = new Date(year, month - 1, d);
+          cells.push({ iso: localDateISO(dateObj), day: d, outside: true });
+        }
+        // Dias do mês atual
+        for (let d = 1; d <= daysInMonth; d++) {
+          cells.push({ iso: localDateISO(new Date(year, month, d)), day: d, outside: false });
+        }
+        // Dias do início do próximo mês, para completar a última semana (múltiplo de 7)
+        let nextDay = 1;
+        while (cells.length % 7 !== 0) {
+          cells.push({ iso: localDateISO(new Date(year, month + 1, nextDay)), day: nextDay, outside: true });
+          nextDay++;
+        }
+
+        grid.innerHTML = cells.map(c => {
+          const count = countByDate[c.iso] || 0;
+          const classes = ["calendar-cell"];
+          if (c.outside) classes.push("outside");
+          if (c.iso === todayIso) classes.push("today");
+          if (c.iso === calendarSelectedDate) classes.push("selected");
+          return `<button type="button" class="${classes.join(" ")}" data-calendar-day="${c.iso}">
+            ${count ? `<span class="calendar-count">${count}</span>` : ""}
+            <span>${c.day}</span>
+            ${count ? `<span class="calendar-dot"></span>` : ""}
+          </button>`;
+        }).join("");
+
+        // Lista de compromissos do dia selecionado
+        const dayItems = state.personal.agenda
+          .filter(x => x.date === calendarSelectedDate)
+          .sort((a,b) => (a.time||"99:99").localeCompare(b.time||"99:99"));
+
+        detail.innerHTML = `
+          <div class="agenda-day-head"><strong>${escapeHTML(agendaDateLabel(calendarSelectedDate))}</strong><span>${dayItems.length} compromisso${dayItems.length===1?"":"s"}</span></div>
+          ${dayItems.length ? dayItems.map(item => `
+            <div class="agenda-event">
+              <div class="agenda-event-time">${escapeHTML(item.time || "—")}</div>
+              <div class="agenda-event-main">
+                <h3>${escapeHTML(item.title)}</h3>
+                <div class="agenda-event-meta">
+                  ${item.location ? `<span class="badge">📍 ${escapeHTML(item.location)}</span>` : ""}
+                  ${item.notes ? `<span class="badge">📝 ${escapeHTML(item.notes)}</span>` : ""}
+                </div>
+              </div>
+              ${agendaActions(item)}
+            </div>
+          `).join("") : `<div class="finance-empty" style="padding:20px 16px;"><strong>Nenhum compromisso</strong><span>Cadastre reuniões, consultas, aulas e outros compromissos com horário fixo.</span></div>`}
+        `;
+      }
+
       function renderPersonal() {
         const p = state.personal;
 
-        // Agenda: apenas compromissos com data + horário fixos.
+        // Agenda: calendário mensal com compromissos (data + horário fixos).
+        renderCalendar();
+
+        // Hábitos: lista com sequência de dias seguidos e marcação do dia atual.
         {
-          const listEl = $("#personalAgendaList");
+          const listEl = $("#personalHabitsList");
           if (listEl) {
-            const mode = listEl.dataset.mode || "week";
-            const today = new Date();
-            const todayIso = localDateISO(today);
-            const end = new Date(today);
-            end.setDate(end.getDate() + 6);
-            const endIso = localDateISO(end);
-            const source = [...p.agenda]
-              .filter(x => {
-                if (!x.date) return false;
-                if (mode === "today") return x.date === todayIso;
-                if (mode === "week") return x.date >= todayIso && x.date <= endIso;
-                return true; // "all": nenhum compromisso salvo fica de fora da lista
-              })
-              .sort((a,b) => `${a.date} ${a.time||"99:99"}`.localeCompare(`${b.date} ${b.time||"99:99"}`));
-
-            const groups = [];
-            source.forEach(item => {
-              let group = groups.find(g => g.date === item.date);
-              if (!group) { group = { date:item.date, items:[] }; groups.push(group); }
-              group.items.push(item);
-            });
-
-            listEl.innerHTML = groups.length ? groups.map(g => `
-              <section class="agenda-day-card">
-                <div class="agenda-day-head"><strong>${escapeHTML(agendaDateLabel(g.date))}</strong><span>${g.items.length} compromisso${g.items.length===1?"":"s"}</span></div>
-                ${g.items.map(item => `
-                  <div class="agenda-event">
-                    <div class="agenda-event-time">${escapeHTML(item.time || "—")}</div>
-                    <div class="agenda-event-main">
-                      <h3>${escapeHTML(item.title)}</h3>
-                      <div class="agenda-event-meta">
-                        ${item.location ? `<span class="badge">📍 ${escapeHTML(item.location)}</span>` : ""}
-                        ${item.notes ? `<span class="badge">📝 ${escapeHTML(item.notes)}</span>` : ""}
-                      </div>
+            const habits = Array.isArray(p.habits) ? p.habits : [];
+            const todayIso = localDateISO();
+            listEl.innerHTML = habits.length ? habits.map(h => {
+              const done = !!h.completions?.[todayIso];
+              const streak = habitStreak(h);
+              return `
+                <article class="personal-item-card">
+                  <button type="button" class="habit-check ${done ? "done" : ""}" data-habit-toggle="${escapeHTML(h.id)}" title="${done ? "Desmarcar hoje" : "Marcar como feito hoje"}" aria-pressed="${done}">✓</button>
+                  <div class="personal-item-main">
+                    <h3>${escapeHTML(h.name)}</h3>
+                    <div class="personal-item-meta">
+                      <span class="badge">${escapeHTML(h.frequency || "Todos os dias")}</span>
+                      ${streak > 0 ? `<span class="badge today">🔥 ${streak} dia${streak === 1 ? "" : "s"} seguido${streak === 1 ? "" : "s"}</span>` : ""}
                     </div>
-                    ${agendaActions(item)}
                   </div>
-                `).join("")}
-              </section>
-            `).join("") : `<div class="finance-empty"><strong>Nenhum compromisso</strong><span>${mode === "today" ? "Sua agenda de hoje está livre." : "Cadastre reuniões, consultas, aulas e outros compromissos com horário fixo."}</span></div>`;
+                  ${personalRowActions("habit", h.id)}
+                </article>`;
+            }).join("") : `<div class="finance-empty"><strong>Nenhum hábito cadastrado</strong><span>Crie rotinas como "Beber água" ou "Meditar" e acompanhe sua sequência de dias.</span></div>`;
           }
         }
 
@@ -3661,8 +3763,6 @@
         renderFaculty();
         renderTcc();
         renderFinance();
-        const personalAgendaList = $("#personalAgendaList");
-        if (personalAgendaList && !personalAgendaList.dataset.mode) { personalAgendaList.dataset.mode = "week"; $("#agendaWeekBtn")?.classList.add("active"); }
         renderPersonal();
 
         renderTaskList(
@@ -4178,18 +4278,30 @@
       });
 
       $("#clearBoughtBtn")?.addEventListener("click", clearBoughtShopping);
-      function setAgendaMode(mode) {
-        const el = $("#personalAgendaList");
-        if (!el) return;
-        el.dataset.mode = mode;
-        $("#agendaTodayBtn")?.classList.toggle("active", mode === "today");
-        $("#agendaWeekBtn")?.classList.toggle("active", mode === "week");
-        $("#agendaAllBtn")?.classList.toggle("active", mode === "all");
-        renderPersonal();
-      }
-      $("#agendaTodayBtn")?.addEventListener("click", () => setAgendaMode("today"));
-      $("#agendaWeekBtn")?.addEventListener("click", () => setAgendaMode("week"));
-      $("#agendaAllBtn")?.addEventListener("click", () => setAgendaMode("all"));
+      $("#calendarPrevBtn")?.addEventListener("click", () => {
+        calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() - 1, 1);
+        renderCalendar();
+      });
+      $("#calendarNextBtn")?.addEventListener("click", () => {
+        calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() + 1, 1);
+        renderCalendar();
+      });
+      $("#calendarTodayBtn")?.addEventListener("click", () => {
+        calendarCursor = new Date();
+        calendarSelectedDate = localDateISO();
+        renderCalendar();
+      });
+      $("#calendarGrid")?.addEventListener("click", e => {
+        const cell = e.target.closest("[data-calendar-day]");
+        if (!cell) return;
+        const iso = cell.dataset.calendarDay;
+        calendarSelectedDate = iso;
+        const [y, m] = iso.split("-").map(Number);
+        if (y !== calendarCursor.getFullYear() || (m - 1) !== calendarCursor.getMonth()) {
+          calendarCursor = new Date(y, m - 1, 1);
+        }
+        renderCalendar();
+      });
       $("#mediaTypeFilter")?.addEventListener("change", renderPersonal);
       $("#mediaStatusFilter")?.addEventListener("change", renderPersonal);
       $("#personalAddTaskBtn")?.addEventListener("click", () => openModal());
@@ -4217,7 +4329,6 @@
       $$(".nav-btn[data-view]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
       $$("[data-view-link]").forEach(el => el.addEventListener("click", () => setView(el.dataset.viewLink)));
       $("#themeToggleBtn")?.addEventListener("click", toggleTheme);
-      $("#addTopBtn")?.addEventListener("click", () => openModal());
       $("#addAllBtn")?.addEventListener("click", () => openModal());
       $("#openAllBtn")?.addEventListener("click", () => setView("all"));
       $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
