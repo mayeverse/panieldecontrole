@@ -1637,6 +1637,7 @@
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
             <div id="calendarDayDetail" class="agenda-day-card"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;"><button class="primary-btn" id="gcalSyncBtn" type="button">🔄 Sincronizar com Google Calendar</button><button class="secondary-btn" id="gcalConfigBtn" type="button">⚙️ Client ID</button><button class="secondary-btn" id="gcalIcsBtn" type="button">⬇️ Baixar .ics</button></div>
           </section>
 
           <section id="personalTodosPane" class="personal-pane">
@@ -2539,10 +2540,6 @@
 
         // Conta compromissos por dia (string "YYYY-MM-DD" -> quantidade)
         const countByDate = {};
-        state.personal.agenda.forEach(item => {
-          if (!item.date) return;
-          countByDate[item.date] = (countByDate[item.date] || 0) + 1;
-        });
 
         const firstOfMonth = new Date(year, month, 1);
         const startOffset = firstOfMonth.getDay(); // 0 = domingo
@@ -2567,6 +2564,7 @@
           nextDay++;
         }
 
+        unifiedEvents(cells[0].iso, cells[cells.length - 1].iso).forEach(e => { countByDate[e.date] = (countByDate[e.date] || 0) + 1; });
         grid.innerHTML = cells.map(c => {
           const count = countByDate[c.iso] || 0;
           const classes = ["calendar-cell"];
@@ -2581,9 +2579,7 @@
         }).join("");
 
         // Lista de compromissos do dia selecionado
-        const dayItems = state.personal.agenda
-          .filter(x => x.date === calendarSelectedDate)
-          .sort((a,b) => (a.time||"99:99").localeCompare(b.time||"99:99"));
+        const dayItems = unifiedEvents(calendarSelectedDate, calendarSelectedDate);
 
         detail.innerHTML = `
           <div class="agenda-day-head"><strong>${escapeHTML(agendaDateLabel(calendarSelectedDate))}</strong><span>${dayItems.length} compromisso${dayItems.length===1?"":"s"}</span></div>
@@ -2591,15 +2587,15 @@
             <div class="agenda-event">
               <div class="agenda-event-time">${escapeHTML(item.time || "—")}</div>
               <div class="agenda-event-main">
-                <h3>${escapeHTML(item.title)}</h3>
+                <h3>${item.icon} ${escapeHTML(item.title)}</h3>
                 <div class="agenda-event-meta">
-                  ${item.location ? `<span class="badge">📍 ${escapeHTML(item.location)}</span>` : ""}
-                  ${item.notes ? `<span class="badge">📝 ${escapeHTML(item.notes)}</span>` : ""}
+                  <span class="badge">${KIND_LABEL[item.kind]}</span>${item.raw?.location ? `<span class="badge">📍 ${escapeHTML(item.raw.location)}</span>` : ""}
+                  ${item.raw?.notes ? `<span class="badge">📝 ${escapeHTML(item.raw.notes)}</span>` : ""}
                 </div>
               </div>
-              ${agendaActions(item)}
+              ${item.kind === "agenda" ? agendaActions(item.raw) : ""}
             </div>
-          `).join("") : `<div class="finance-empty" style="padding:20px 16px;"><strong>Nenhum compromisso</strong><span>Cadastre reuniões, consultas, aulas e outros compromissos com horário fixo.</span></div>`}
+          `).join("") : `<div class="finance-empty" style="padding:20px 16px;"><strong>Nenhum compromisso</strong><span>Aulas, provas, leituras, contas, tarefas com prazo e compromissos aparecem aqui.</span></div>`}
         `;
       }
 
@@ -3267,10 +3263,12 @@
                 <span class="badge">▤ ${readingsFor.length} leituras</span>
                 ${avg ? `<span class="badge">📊 Média ${avg.avg.toFixed(1)}</span>` : ""}
               </div>
+              ${c.pdfName ? `<div class="course-schedule">📎 Plano de ensino: ${escapeHTML(c.pdfName)}</div>` : ""}
               <div class="course-schedule">${c.schedule ? `<strong>Horário:</strong> ${escapeHTML(c.schedule)}` : "Horário ainda não informado."}</div>
               <div class="course-actions">
                 <button class="mini-btn" data-course-action="open" data-id="${c.id}" title="Selecionar como padrão">☆</button>
                 ${c.planoEnsino ? `<button class="mini-btn" data-course-action="syllabus" data-id="${c.id}" title="Ver plano de ensino">📄</button>` : ""}
+                ${c.pdfName ? `<button class="mini-btn" data-course-action="pdf-open" data-id="${c.id}" title="Abrir PDF do plano de ensino">📕</button><button class="mini-btn" data-course-action="pdf-add" data-id="${c.id}" title="Trocar PDF">🔁</button><button class="mini-btn danger" data-course-action="pdf-remove" data-id="${c.id}" title="Remover PDF">✖</button>` : `<button class="mini-btn" data-course-action="pdf-add" data-id="${c.id}" title="Anexar PDF do plano de ensino">📎</button>`}
                 <button class="mini-btn" data-course-action="edit" data-id="${c.id}" title="Editar disciplina">✎</button>
                 <button class="mini-btn danger" data-course-action="delete" data-id="${c.id}" title="Excluir disciplina">⌫</button>
               </div>
@@ -3462,20 +3460,7 @@
           const d = new Date();
           d.setDate(d.getDate() + offset);
           const iso = localDateISO(d);
-          const items = [];
-
-          state.faculty.exams.filter(e => e.date === iso).forEach(e => {
-            items.push({ time: "", label: `📝 ${e.title}` });
-          });
-
-          state.personal.agenda.filter(a => a.date === iso).forEach(a => {
-            items.push({ time: a.time || "", label: `📅 ${a.title}${a.time ? ` (${a.time.replace(":","h")})` : ""}` });
-          });
-          state.personal.reminders.filter(r => r.date === iso).forEach(r => {
-            const icon = r.group === "aniversarios" ? "🎂" : r.group === "saude" ? "🩺" : r.group === "renovacoes" ? "⏰" : "📌";
-            items.push({ time: r.time || "", label: `${icon} ${r.title}${r.time ? ` (${r.time.replace(":","h")})` : ""}` });
-          });
-
+          const items = unifiedEvents(iso, iso).map(e => ({ time: e.time, label: `${e.icon} ${e.title}${e.time ? ` (${e.time.replace(":","h")})` : ""}` }));
           if (!items.length) continue;
           items.sort((a,b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
           const label = offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : formatDate(iso);
@@ -3906,6 +3891,152 @@
         calendarSelectedDate = localDateISO();
         renderCalendar();
       });
+
+
+      // ---- PDF do plano de ensino (guardado no aparelho, em IndexedDB) ----
+      let planPdfCourseId = null;
+      const pdfDB = () => new Promise((res, rej) => { const r = indexedDB.open("minha-vida-pdf", 1); r.onupgradeneeded = () => r.result.createObjectStore("planos"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+      const pdfTx = async (mode, fn) => { const db = await pdfDB(); return new Promise((res, rej) => { const req = fn(db.transaction("planos", mode).objectStore("planos")); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); };
+      const pdfPut = (id, blob) => pdfTx("readwrite", st => st.put(blob, id));
+      const pdfGet = id => pdfTx("readonly", st => st.get(id));
+      const pdfDelete = id => pdfTx("readwrite", st => st.delete(id));
+      async function openPlanPdf(id) {
+        const w = window.open("", "_blank");
+        try {
+          const blob = await pdfGet(id);
+          if (!blob) { w?.close(); return showToast("PDF não encontrado neste aparelho. Anexe de novo."); }
+          const url = URL.createObjectURL(blob);
+          if (w) w.location.href = url; else location.href = url;
+        } catch { w?.close(); showToast("Não consegui abrir o PDF"); }
+      }
+      {
+        const inp = document.createElement("input");
+        inp.type = "file"; inp.accept = "application/pdf,.pdf"; inp.id = "planPdfInput"; inp.hidden = true;
+        document.body.appendChild(inp);
+        inp.addEventListener("change", async () => {
+          const file = inp.files[0], course = state.faculty.courses.find(c => c.id === planPdfCourseId);
+          if (!file || !course) return;
+          if (!/pdf$/i.test(file.type) && !/\.pdf$/i.test(file.name)) return showToast("Escolha um arquivo PDF");
+          if (file.size > 25 * 1024 * 1024) return showToast("PDF acima de 25 MB");
+          try { await pdfPut(course.id, file); course.pdfName = file.name; saveFaculty("PDF anexado ✓"); render(); }
+          catch { showToast("Não consegui guardar o PDF neste navegador"); }
+        });
+      }
+
+      // ---- Agenda unificada (aulas, provas, leituras, contas, tarefas, compromissos) ----
+      const KIND_LABEL = { aula:"Aula", prova:"Prova/entrega", leitura:"Leitura", conta:"Conta", parcela:"Parcela", fatura:"Fatura", tarefa:"Tarefa", agenda:"Compromisso", lembrete:"Lembrete" };
+      function unifiedEvents(fromISO, toISO) {
+        const ev = [];
+        const add = (date, time, end, title, icon, kind, key, raw) => { if (date >= fromISO && date <= toISO) ev.push({ date, time: time || "", end: end || "", title, icon, kind, key, raw }); };
+        const f = state.faculty, p = state.personal, fin = state.finance;
+        for (let d = new Date(fromISO + "T12:00:00"); localDateISO(d) <= toISO; d.setDate(d.getDate() + 1)) {
+          const iso = localDateISO(d);
+          if (iso < f.semesterStart || iso > f.semesterEnd) continue;
+          f.courses.forEach(c => { if (c.startTime && courseDaysOf(c).includes(d.getDay())) add(iso, c.startTime, c.endTime, c.name, "🎓", "aula", "aula-" + (c.id || c.name) + "-" + iso); });
+        }
+        f.exams.forEach(e => add(e.date, "", "", e.title, "📝", "prova", "prova-" + (e.id || e.title)));
+        f.readings.filter(r => r.status !== "completed").forEach(r => {
+          const m = String(r.lectureDate || "").match(/(\d{1,2})\/(\d{1,2})/);
+          if (m) add(f.semesterStart.slice(0, 4) + "-" + m[2].padStart(2, "0") + "-" + m[1].padStart(2, "0"), "", "", r.title, "📖", "leitura", "leitura-" + (r.id || r.title));
+        });
+        p.todos.filter(t => !t.completed && t.dueDate).forEach(t => add(t.dueDate, "", "", t.title, "✅", "tarefa", "tarefa-" + (t.id || t.title)));
+        p.agenda.forEach(a => a.date && add(a.date, a.time, a.endTime, a.title, "📅", "agenda", "agenda-" + a.id, a));
+        p.reminders.forEach(r => {
+          if (!r.date) return;
+          const icon = r.group === "aniversarios" ? "🎂" : r.group === "saude" ? "🩺" : r.group === "renovacoes" ? "⏰" : "📌";
+          add(r.date, r.time, "", r.title, icon, "lembrete", "lembrete-" + (r.id || r.title));
+        });
+        const [y1, m1] = fromISO.split("-").map(Number), [y2, m2] = toISO.split("-").map(Number);
+        for (let y = y1, m = m1; y < y2 || (y === y2 && m <= m2); m++) {
+          if (m > 12) { m = 1; y++; if (y > y2) break; }
+          const month = `${y}-${String(m).padStart(2, "0")}`;
+          const dim = new Date(y, m, 0).getDate();
+          const dayOf = n => `${month}-${String(Math.min(dim, Math.max(1, Number(n) || 1))).padStart(2, "0")}`;
+          financeFixedOccurrences(month).filter(x => !x.paid).forEach(x => add(x.occurrenceDate, "", "", "Pagar: " + x.name, "💸", "conta", "conta-" + (x.id || x.name) + "-" + month));
+          fin.installments.forEach(item => {
+            const n = financeInstallmentForMonth(item, month);
+            if (!n) return;
+            const card = fin.cards?.[item.creditCard];
+            add(dayOf(card?.dueDay || String(item.date).slice(8, 10)), "", "", `Parcela: ${item.name || "Compra"} (${n}/${item.totalParcels})`, "🧾", "parcela", "parcela-" + (item.id || item.name) + "-" + month);
+          });
+          Object.entries(fin.cards || {}).forEach(([id, c]) => c.dueDay && add(dayOf(c.dueDay), "", "", "Vence fatura: " + c.name, "💳", "fatura", "fatura-" + id + "-" + month));
+        }
+        return ev.sort((a, b) => a.date.localeCompare(b.date) || (a.time || "00:00").localeCompare(b.time || "00:00"));
+      }
+
+      // ---- Sincronização com Google Calendar / arquivo .ics ----
+      const GCAL_KEY = "minha-vida-gcal-client-id";
+      const gcalClientId = () => localStorage.getItem(GCAL_KEY) || "";
+      const hexId = str => "mv" + Array.from(new TextEncoder().encode(str)).map(b => b.toString(16).padStart(2, "0")).join("");
+      const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return localDateISO(d); };
+      const plusHour = t => { const [h, m] = t.split(":").map(Number); return `${String(Math.min(23, h + 1)).padStart(2, "0")}:${String(m).padStart(2, "0")}`; };
+      function syncItems() {
+        const today = localDateISO(), items = [], f = state.faculty, DOW = ["SU","MO","TU","WE","TH","FR","SA"];
+        f.courses.filter(c => c.startTime && courseDaysOf(c).length).forEach(c => {
+          const days = courseDaysOf(c);
+          let start = f.semesterStart > today ? f.semesterStart : today;
+          while (!days.includes(new Date(start + "T12:00:00").getDay())) start = addDays(start, 1);
+          items.push({ id: hexId("aula-" + (c.id || c.name)), title: c.name, icon: "🎓", date: start, time: c.startTime, end: c.endTime || plusHour(c.startTime), rrule: `RRULE:FREQ=WEEKLY;BYDAY=${days.map(d => DOW[d]).join(",")};UNTIL=${f.semesterEnd.replace(/-/g, "")}T235959Z` });
+        });
+        unifiedEvents(today, addDays(today, 120)).filter(e => e.kind !== "aula").forEach(e => items.push({ id: hexId(e.key), title: e.title, icon: e.icon, date: e.date, time: e.time, end: e.end || (e.time ? plusHour(e.time) : ""), desc: e.raw?.notes || "", loc: e.raw?.location || "" }));
+        return items;
+      }
+      function gcalBody(it) {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const body = { id: it.id, summary: `${it.icon} ${it.title}`, description: it.desc || "Criado pelo app Minha Vida", location: it.loc || undefined };
+        if (it.time) { body.start = { dateTime: `${it.date}T${it.time}:00`, timeZone: tz }; body.end = { dateTime: `${it.date}T${it.end}:00`, timeZone: tz }; }
+        else { body.start = { date: it.date }; body.end = { date: addDays(it.date, 1) }; }
+        if (it.rrule) body.recurrence = [it.rrule];
+        return body;
+      }
+      function gcalConfigure() {
+        const v = prompt("Cole o Client ID do Google (OAuth, tipo \"Aplicativo da Web\"):", gcalClientId());
+        if (v !== null) { localStorage.setItem(GCAL_KEY, v.trim()); showToast("Client ID salvo"); }
+      }
+      function gcalToken() {
+        return new Promise(async (res, rej) => {
+          if (!gcalClientId()) return rej(new Error("Configure o Client ID do Google primeiro (botão ⚙️)."));
+          if (!window.google?.accounts?.oauth2) {
+            try { await new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }); }
+            catch { return rej(new Error("Não consegui carregar o login do Google (sem internet ou bloqueado nesta hospedagem).")); }
+          }
+          google.accounts.oauth2.initTokenClient({ client_id: gcalClientId(), scope: "https://www.googleapis.com/auth/calendar.events", callback: r => r.access_token ? res(r.access_token) : rej(new Error(r.error || "Login cancelado")) }).requestAccessToken();
+        });
+      }
+      async function gcalSync() {
+        try {
+          const token = await gcalToken(), items = syncItems(), base = "https://www.googleapis.com/calendar/v3/calendars/primary/events";
+          const h = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
+          let n = 0;
+          for (const it of items) {
+            const body = JSON.stringify(gcalBody(it));
+            let r = await fetch(base, { method: "POST", headers: h, body });
+            if (r.status === 409) r = await fetch(`${base}/${it.id}`, { method: "PUT", headers: h, body });
+            if (!r.ok) throw new Error("Google recusou um evento (" + r.status + ")");
+            showToast(`Sincronizando ${++n}/${items.length}…`);
+          }
+          showToast(`✓ ${n} compromissos enviados ao Google Calendar`);
+        } catch (err) { showToast(err.message || "Falha ao sincronizar"); }
+      }
+      function downloadICS() {
+        const esc = t => String(t).replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n"), compact = (d, t) => d.replace(/-/g, "") + (t ? "T" + t.replace(":", "") + "00" : "");
+        const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Minha Vida//PT-BR"];
+        syncItems().forEach(it => {
+          lines.push("BEGIN:VEVENT", "UID:" + it.id + "@minhavida", "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d+/g, ""), `SUMMARY:${esc(it.icon + " " + it.title)}`);
+          if (it.time) lines.push("DTSTART:" + compact(it.date, it.time), "DTEND:" + compact(it.date, it.end)); else lines.push("DTSTART;VALUE=DATE:" + compact(it.date), "DTEND;VALUE=DATE:" + compact(addDays(it.date, 1)));
+          if (it.rrule) lines.push(it.rrule);
+          if (it.loc) lines.push("LOCATION:" + esc(it.loc));
+          lines.push("END:VEVENT");
+        });
+        lines.push("END:VCALENDAR");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar" }));
+        a.download = "minha-vida.ics"; a.click();
+      }
+      $("#gcalSyncBtn")?.addEventListener("click", gcalSync);
+      $("#gcalConfigBtn")?.addEventListener("click", gcalConfigure);
+      $("#gcalIcsBtn")?.addEventListener("click", downloadICS);
+
       $("#calendarGrid")?.addEventListener("click", e => {
         const cell = e.target.closest("[data-calendar-day]");
         if (!cell) return;
@@ -4189,9 +4320,15 @@
           if (!course) return;
           if (type === "open") selectCourse(id);
           if (type === "syllabus") $(`#syllabus-${CSS.escape(id)}`)?.toggleAttribute("hidden");
+          if (type === "pdf-add") { planPdfCourseId = id; $("#planPdfInput").value = ""; $("#planPdfInput").click(); }
+          if (type === "pdf-open") openPlanPdf(id);
+          if (type === "pdf-remove" && confirm("Remover o PDF do plano de ensino desta disciplina?")) {
+            pdfDelete(id).then(() => { course.pdfName = ""; saveFaculty("PDF removido"); render(); });
+          }
           if (type === "edit") facultyModal("course", course);
           if (type === "delete") {
             if (!confirm(`Excluir a disciplina "${course.name}"? Os registros vinculados também serão removidos.`)) return;
+            pdfDelete(id).catch(() => {});
             state.faculty.courses = state.faculty.courses.filter(x => x.id !== id);
             state.faculty.absences = state.faculty.absences.filter(x => x.courseId !== id);
             state.faculty.exams = state.faculty.exams.filter(x => x.courseId !== id);
