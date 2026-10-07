@@ -2593,9 +2593,9 @@
                   ${item.raw?.notes ? `<span class="badge">📝 ${escapeHTML(item.raw.notes)}</span>` : ""}
                 </div>
               </div>
-              ${item.kind === "agenda" ? agendaActions(item.raw) : ""}
+              ${item.kind === "agenda" ? agendaActions(item.raw) : (item.kind === "prova" || item.kind === "leitura") ? `<div class="personal-item-actions"><button class="mini-btn" data-faculty-edit="${item.kind === "prova" ? "exam" : "reading"}" data-id="${escapeHTML(item.raw.id)}" title="Editar">✎</button><button class="mini-btn danger" data-faculty-delete="${item.kind === "prova" ? "exam" : "reading"}" data-id="${escapeHTML(item.raw.id)}" title="Excluir">⌫</button></div>` : ""}
             </div>
-          `).join("") : `<div class="finance-empty" style="padding:20px 16px;"><strong>Nenhum compromisso</strong><span>Aulas, provas, leituras, contas, tarefas com prazo e compromissos aparecem aqui.</span></div>`}
+          `).join("") : `<div class="finance-empty" style="padding:20px 16px;"><strong>Nenhum compromisso</strong><span>Provas, leituras, contas, tarefas com prazo e compromissos aparecem aqui.</span></div>`}
         `;
       }
 
@@ -3929,15 +3929,10 @@
         const ev = [];
         const add = (date, time, end, title, icon, kind, key, raw) => { if (date >= fromISO && date <= toISO) ev.push({ date, time: time || "", end: end || "", title, icon, kind, key, raw }); };
         const f = state.faculty, p = state.personal, fin = state.finance;
-        for (let d = new Date(fromISO + "T12:00:00"); localDateISO(d) <= toISO; d.setDate(d.getDate() + 1)) {
-          const iso = localDateISO(d);
-          if (iso < f.semesterStart || iso > f.semesterEnd) continue;
-          f.courses.forEach(c => { if (c.startTime && courseDaysOf(c).includes(d.getDay())) add(iso, c.startTime, c.endTime, c.name, "🎓", "aula", "aula-" + (c.id || c.name) + "-" + iso); });
-        }
-        f.exams.forEach(e => add(e.date, "", "", e.title, "📝", "prova", "prova-" + (e.id || e.title)));
+        f.exams.forEach(e => add(e.date, "", "", e.title, "📝", "prova", "prova-" + (e.id || e.title), e));
         f.readings.filter(r => r.status !== "completed").forEach(r => {
           const m = String(r.lectureDate || "").match(/(\d{1,2})\/(\d{1,2})/);
-          if (m) add(f.semesterStart.slice(0, 4) + "-" + m[2].padStart(2, "0") + "-" + m[1].padStart(2, "0"), "", "", r.title, "📖", "leitura", "leitura-" + (r.id || r.title));
+          if (m) add(f.semesterStart.slice(0, 4) + "-" + m[2].padStart(2, "0") + "-" + m[1].padStart(2, "0"), "", "", r.title, "📖", "leitura", "leitura-" + (r.id || r.title), r);
         });
         p.todos.filter(t => !t.completed && t.dueDate).forEach(t => add(t.dueDate, "", "", t.title, "✅", "tarefa", "tarefa-" + (t.id || t.title)));
         p.agenda.forEach(a => a.date && add(a.date, a.time, a.endTime, a.title, "📅", "agenda", "agenda-" + a.id, a));
@@ -3952,14 +3947,20 @@
           const month = `${y}-${String(m).padStart(2, "0")}`;
           const dim = new Date(y, m, 0).getDate();
           const dayOf = n => `${month}-${String(Math.min(dim, Math.max(1, Number(n) || 1))).padStart(2, "0")}`;
-          financeFixedOccurrences(month).filter(x => !x.paid).forEach(x => add(x.occurrenceDate, "", "", "Pagar: " + x.name, "💸", "conta", "conta-" + (x.id || x.name) + "-" + month));
+          financeFixedOccurrences(month).filter(x => !x.paid && !paymentKey(x).startsWith("card:")).forEach(x => add(x.occurrenceDate, "", "", "Pagar: " + x.name, "💸", "conta", "conta-" + (x.id || x.name) + "-" + month));
           fin.installments.forEach(item => {
             const n = financeInstallmentForMonth(item, month);
-            if (!n) return;
-            const card = fin.cards?.[item.creditCard];
-            add(dayOf(card?.dueDay || String(item.date).slice(8, 10)), "", "", `Parcela: ${item.name || "Compra"} (${n}/${item.totalParcels})`, "🧾", "parcela", "parcela-" + (item.id || item.name) + "-" + month);
+            if (!n || paymentKey(item).startsWith("card:")) return;
+            add(dayOf(String(item.date).slice(8, 10)), "", "", `Parcela: ${item.name || "Compra"} (${n}/${item.totalParcels})`, "🧾", "parcela", "parcela-" + (item.id || item.name) + "-" + month);
           });
-          Object.entries(fin.cards || {}).forEach(([id, c]) => c.dueDay && add(dayOf(c.dueDay), "", "", "Vence fatura: " + c.name, "💳", "fatura", "fatura-" + id + "-" + month));
+          Object.entries(fin.cards || {}).forEach(([id, c]) => {
+            if (!c.dueDay) return;
+            const key = "card:" + id, val = x => Number(x.value || 0);
+            const total = fin.expenses.filter(x => paymentKey(x) === key && financeExpensePaymentMonth(x) === month).reduce((a, x) => a + val(x), 0)
+              + financeFixedOccurrences(month).filter(x => paymentKey(x) === key).reduce((a, x) => a + val(x), 0)
+              + fin.installments.filter(x => paymentKey(x) === key && financeInstallmentForMonth(x, month)).reduce((a, x) => a + val(x), 0);
+            add(dayOf(c.dueDay), "", "", `Fatura ${c.name}${total ? " — " + moneyBRL(total) : ""}`, "💳", "fatura", "fatura-" + id + "-" + month);
+          });
         }
         return ev.sort((a, b) => a.date.localeCompare(b.date) || (a.time || "00:00").localeCompare(b.time || "00:00"));
       }
@@ -3971,13 +3972,7 @@
       const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return localDateISO(d); };
       const plusHour = t => { const [h, m] = t.split(":").map(Number); return `${String(Math.min(23, h + 1)).padStart(2, "0")}:${String(m).padStart(2, "0")}`; };
       function syncItems() {
-        const today = localDateISO(), items = [], f = state.faculty, DOW = ["SU","MO","TU","WE","TH","FR","SA"];
-        f.courses.filter(c => c.startTime && courseDaysOf(c).length).forEach(c => {
-          const days = courseDaysOf(c);
-          let start = f.semesterStart > today ? f.semesterStart : today;
-          while (!days.includes(new Date(start + "T12:00:00").getDay())) start = addDays(start, 1);
-          items.push({ id: hexId("aula-" + (c.id || c.name)), title: c.name, icon: "🎓", date: start, time: c.startTime, end: c.endTime || plusHour(c.startTime), rrule: `RRULE:FREQ=WEEKLY;BYDAY=${days.map(d => DOW[d]).join(",")};UNTIL=${f.semesterEnd.replace(/-/g, "")}T235959Z` });
-        });
+        const today = localDateISO(), items = [];
         unifiedEvents(today, addDays(today, 120)).filter(e => e.kind !== "aula").forEach(e => items.push({ id: hexId(e.key), title: e.title, icon: e.icon, date: e.date, time: e.time, end: e.end || (e.time ? plusHour(e.time) : ""), desc: e.raw?.notes || "", loc: e.raw?.location || "" }));
         return items;
       }
