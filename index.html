@@ -407,6 +407,9 @@
       transition:.2s ease; overflow:hidden;
     }
     .course-card:hover { transform:translateY(-2px); box-shadow:0 20px 44px rgba(15,23,42,.10); }
+    .course-syllabus { margin-top:12px; padding-top:12px; border-top:1px solid var(--line); font-size:12.5px; color:var(--text); }
+    .course-syllabus strong { display:block; margin-bottom:6px; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+    .course-syllabus p { margin:0; line-height:1.6; max-height:260px; overflow-y:auto; white-space:pre-wrap; }
     .course-card.selected { outline: 2px solid var(--primary); outline-offset: -1px; }
     .course-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:linear-gradient(180deg,#6366f1,#8b5cf6); }
     .course-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
@@ -1212,7 +1215,6 @@
           <button class="icon-btn" id="exportDataHeaderBtn" title="Exportar backup (JSON)" aria-label="Exportar backup">📥</button>
           <button class="icon-btn" id="importDataHeaderBtn" title="Importar backup (JSON)" aria-label="Importar backup">📤</button>
           <button class="icon-btn" id="themeToggleBtn" title="Alternar tema claro/escuro" aria-label="Alternar tema">🌙</button>
-          <button class="icon-btn" id="clearDoneBtn" title="Limpar concluídas" aria-label="Limpar concluídas">🧹</button>
         </div>
       </header>
 
@@ -1248,9 +1250,8 @@
             <div class="panel-header">
               <div>
                 <h2 class="panel-title">📅 Compromissos & Lembretes da Semana</h2>
-                <div class="panel-subtitle">Compromissos, tarefas, leituras, avaliações e lembretes dos próximos 7 dias.</div>
+                <div class="panel-subtitle">Compromissos, leituras, avaliações e lembretes dos próximos 7 dias.</div>
               </div>
-              <button class="secondary-btn" id="openAllBtn">Ver todas as tarefas</button>
             </div>
             <div class="task-list" id="weekAgendaList"></div>
           </section>
@@ -1271,36 +1272,6 @@
               <div><h2 class="panel-title">📌 Foco do Momento</h2><div class="panel-subtitle">Prioridades para agora.</div></div>
             </div>
             <div class="task-list" id="focusList"></div>
-          </section>
-        </section>
-
-        <section id="allView" class="view">
-          <div class="hero">
-            <div>
-              <div class="eyebrow">Tarefas</div>
-              <h1>Tudo em um só lugar</h1>
-              <p class="subtitle">Edite, priorize e conclua seus planos.</p>
-            </div>
-            <button class="primary-btn" id="addAllBtn">＋ Nova tarefa</button>
-          </div>
-          <div class="filters">
-            <input class="field search" id="searchInput" type="search" placeholder="Buscar tarefa..." />
-            <select class="field" id="statusFilter">
-              <option value="all">Todos os status</option>
-              <option value="pending">Pendentes</option>
-              <option value="overdue">Atrasadas</option>
-              <option value="done">Concluídas</option>
-            </select>
-            <select class="field" id="priorityFilter">
-              <option value="all">Todas as prioridades</option>
-              <option value="high">Alta</option>
-              <option value="medium">Média</option>
-              <option value="low">Baixa</option>
-            </select>
-            <button class="secondary-btn" id="clearFiltersBtn">Limpar</button>
-          </div>
-          <section class="panel">
-            <div class="task-list" id="allList"></div>
           </section>
         </section>
 
@@ -1710,18 +1681,6 @@
             <div id="personalHabitsList" class="personal-item-list"></div>
           </section>
         </section>
-        <section id="doneView" class="view">
-          <div class="hero">
-            <div>
-              <div class="eyebrow">Histórico</div>
-              <h1>Feito ✨</h1>
-              <p class="subtitle">Tudo que você já tirou da frente.</p>
-            </div>
-          </div>
-          <section class="panel">
-            <div class="task-list" id="doneList"></div>
-          </section>
-        </section>
       </div>
     </main>
   </div>
@@ -1742,76 +1701,10 @@
         <button class="icon-btn" id="closeMoreMenuBtn" aria-label="Fechar">×</button>
       </div>
       <div class="more-menu-list">
-        <button class="more-menu-item" data-more-view="all"><span class="nav-icon">🗂️</span> Todas as tarefas</button>
         <button class="more-menu-item" id="moreThemeBtn"><span class="nav-icon">🌙</span> Alternar tema claro/escuro</button>
-        <button class="more-menu-item" id="moreClearDoneBtn"><span class="nav-icon">🧹</span> Limpar tarefas concluídas</button>
         <button class="more-menu-item" id="moreExportBtn"><span class="nav-icon">📥</span> Exportar backup (JSON)</button>
         <button class="more-menu-item" id="moreImportBtn"><span class="nav-icon">📤</span> Importar backup (JSON)</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal Tarefa -->
-  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 class="modal-title" id="modalTitle">Nova tarefa</h2>
-        <button class="icon-btn" id="closeModalBtn" aria-label="Fechar">×</button>
-      </div>
-      <form class="form" id="taskForm">
-        <input type="hidden" id="taskId" />
-        <div class="form-grid">
-          <div class="form-group full">
-            <label for="titleInput">O que precisa ser feito?</label>
-            <input class="field" id="titleInput" required maxlength="120" autocomplete="off" placeholder="Ex.: Marcar consulta" />
-          </div>
-          <div class="form-group">
-            <label for="dateInput">Data</label>
-            <input class="field" id="dateInput" type="date" required />
-          </div>
-          <div class="form-group">
-            <label for="timeInput">Horário <span style="font-weight:500">(opcional)</span></label>
-            <input class="field" id="timeInput" type="time" />
-          </div>
-          <div class="form-group">
-            <label for="priorityInput">Prioridade</label>
-            <select class="field" id="priorityInput">
-              <option value="low">Baixa</option>
-              <option value="medium" selected>Média</option>
-              <option value="high">Alta</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="categoryInput">Categoria</label>
-            <select class="field" id="categoryInput">
-              <option>Casa</option>
-              <option>Trabalho</option>
-              <option>Pessoal</option>
-              <option>Estudos</option>
-              <option>Saúde</option>
-              <option>Financeiro</option>
-              <option>Outro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="recurrenceInput">Repetir <span style="font-weight:500">(opcional)</span></label>
-            <select class="field" id="recurrenceInput">
-              <option value="none" selected>Não repete</option>
-              <option value="daily">Diariamente</option>
-              <option value="weekly">Semanalmente</option>
-              <option value="monthly">Mensalmente</option>
-            </select>
-          </div>
-          <div class="form-group full">
-            <label for="notesInput">Notas <span style="font-weight:500">(opcional)</span></label>
-            <textarea class="field" id="notesInput" maxlength="500" placeholder="Algum detalhe importante..."></textarea>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="secondary-btn" id="cancelModalBtn">Cancelar</button>
-          <button type="submit" class="primary-btn">Salvar tarefa</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -1960,7 +1853,6 @@
     (() => {
       "use strict";
 
-      const STORAGE_KEY_TASKS = "minha-vida-tasks-v1";
       const STORAGE_KEY_FACULTY = "minha-vida-faculdade-v3";
       const STORAGE_KEY_THEME = "minha-vida-theme-v1";
       const STORAGE_KEY_FINANCE = "minha-vida-financeiro-v1";
@@ -1970,7 +1862,6 @@
       const $$ = (selector) => [...document.querySelectorAll(selector)];
 
       const state = {
-        tasks: loadTasks(),
         faculty: loadFaculty(),
         finance: loadFinance(),
         personal: loadPersonal(),
@@ -2018,21 +1909,6 @@
         $("#themeToggleBtn").textContent = isDark ? "☀️" : "🌙";
       }
 
-      function loadTasks() {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY_TASKS);
-          const data = raw ? JSON.parse(raw) : [];
-          return Array.isArray(data) ? data : [];
-        } catch {
-          return [];
-        }
-      }
-
-      function saveTasks(message = "") {
-        localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(state.tasks));
-        if (message) showToast(message);
-      }
-
       function formatDate(dateStr) {
         if (!dateStr) return "";
         const date = new Date(dateStr + "T12:00:00");
@@ -2063,97 +1939,6 @@
         const pct = Math.round(((now - start) / (end - start)) * 100);
         const restam = Math.ceil((end - now) / day);
         return `${pct}% · faltam ${restam} dia${restam === 1 ? "" : "s"}`;
-      }
-
-      function isToday(task) {
-        return task.date === localDateISO();
-      }
-
-      function isOverdue(task) {
-        return !task.completed && task.date < localDateISO();
-      }
-
-      function priorityLabel(priority) {
-        return ({ high: "Alta", medium: "Média", low: "Baixa" })[priority] || "Média";
-      }
-
-      function recurrenceLabel(recurrence) {
-        return ({ daily: "Diária", weekly: "Semanal", monthly: "Mensal" })[recurrence] || "";
-      }
-
-      function nextRecurrenceDate(dateStr, recurrence) {
-        const [y, m, d] = dateStr.split("-").map(Number);
-        const date = new Date(y, m - 1, d, 12);
-        if (recurrence === "daily") date.setDate(date.getDate() + 1);
-        else if (recurrence === "weekly") date.setDate(date.getDate() + 7);
-        else if (recurrence === "monthly") date.setMonth(date.getMonth() + 1);
-        else return null;
-        return localDateISO(date);
-      }
-
-      function taskMatches(task, search, status, priority) {
-        const q = search.trim().toLowerCase();
-        const matchesSearch = !q || [task.title, task.category, task.notes].join(" ").toLowerCase().includes(q);
-        const matchesStatus =
-          status === "all" ||
-          (status === "done" && task.completed) ||
-          (status === "pending" && !task.completed) ||
-          (status === "overdue" && isOverdue(task));
-        const matchesPriority = priority === "all" || task.priority === priority;
-        return matchesSearch && matchesStatus && matchesPriority;
-      }
-
-      function sorted(tasks) {
-        return [...tasks].sort((a, b) => {
-          if (a.completed !== b.completed) return Number(a.completed) - Number(b.completed);
-          const ad = `${a.date} ${a.time || "99:99"}`;
-          const bd = `${b.date} ${b.time || "99:99"}`;
-          if (ad !== bd) return ad.localeCompare(bd);
-          const p = { high: 0, medium: 1, low: 2 };
-          return p[a.priority] - p[b.priority];
-        });
-      }
-
-      function taskHTML(task) {
-        const priorityClass = task.priority === "high" ? "priority-high" : task.priority === "medium" ? "priority-medium" : "";
-        const overdue = isOverdue(task);
-        const dateBadge = overdue
-          ? `<span class="badge overdue">⚠ Atrasada · ${escapeHTML(formatDate(task.date))}</span>`
-          : isToday(task)
-            ? '<span class="badge today">Hoje</span>'
-            : `<span class="badge">📅 ${escapeHTML(formatDate(task.date))}</span>`;
-        const timeBadge = task.time ? `<span class="badge">◷ ${escapeHTML(task.time)}</span>` : "";
-        const recurrenceBadge = task.recurrence && task.recurrence !== "none"
-          ? `<span class="badge">🔁 ${escapeHTML(recurrenceLabel(task.recurrence))}</span>`
-          : "";
-        return `
-          <article class="task ${task.completed ? "completed" : ""} ${overdue ? "overdue" : ""}" data-id="${escapeHTML(task.id)}">
-            <button class="check ${task.completed ? "done" : ""}" data-action="toggle" title="${task.completed ? "Reabrir tarefa" : "Concluir tarefa"}" aria-label="${task.completed ? "Reabrir tarefa" : "Concluir tarefa"}">
-              ${task.completed ? "✓" : ""}
-            </button>
-            <div class="task-main">
-              <p class="task-title" title="${escapeHTML(task.title)}">${escapeHTML(task.title)}</p>
-              <div class="task-meta">
-                ${dateBadge}
-                ${timeBadge}
-                <span class="badge ${priorityClass}">● ${escapeHTML(priorityLabel(task.priority))}</span>
-                <span class="badge">${escapeHTML(task.category || "Outro")}</span>
-                ${recurrenceBadge}
-              </div>
-            </div>
-            <div class="task-actions">
-              <button class="mini-btn" data-action="edit" title="Editar" aria-label="Editar">✎</button>
-              <button class="mini-btn danger" data-action="delete" title="Excluir" aria-label="Excluir">⌫</button>
-            </div>
-          </article>
-        `;
-      }
-
-      function renderTaskList(element, tasks, emptyTitle, emptyText) {
-        const list = sorted(tasks);
-        element.innerHTML = list.length
-          ? list.map(taskHTML).join("")
-          : `<div class="empty"><div class="empty-icon">☁</div><strong>${emptyTitle}</strong><span>${emptyText}</span></div>`;
       }
 
       function tccChapterStatusOptions(selected = "todo") {
@@ -3075,7 +2860,8 @@
               <div class="form-group full"><label>Dias de aula</label><div class="day-checks">${[[1,"Seg"],[2,"Ter"],[3,"Qua"],[4,"Qui"],[5,"Sex"],[6,"Sáb"]].map(([d,n])=>`<label class="day-check"><input type="checkbox" name="days" value="${d}" ${(existing?.days||[]).includes(d)?"checked":""}>${n}</label>`).join("")}</div></div>
               <div class="form-group"><label>Horário Início</label><input class="field" name="startTime" type="time" value="${existing?.startTime || "19:00"}"></div>
               <div class="form-group"><label>Horário Fim</label><input class="field" name="endTime" type="time" value="${existing?.endTime || "20:40"}"></div>
-              <div class="form-group full"><label>Informações da disciplina</label><textarea class="field" name="description" placeholder="Sala, ementa, observações...">${escapeHTML(existing?.description || "")}</textarea></div>`
+              <div class="form-group full"><label>Informações da disciplina</label><textarea class="field" name="description" placeholder="Sala, ementa, observações...">${escapeHTML(existing?.description || "")}</textarea></div>
+              <div class="form-group full"><label>Plano de ensino</label><textarea class="field" name="planoEnsino" rows="7" placeholder="Cole aqui o conteúdo programático, bibliografia, critérios de avaliação...">${escapeHTML(existing?.planoEnsino || "")}</textarea></div>`
           },
           absence: {
             title: existing ? "Editar falta" : "Registrar falta",
@@ -3484,9 +3270,11 @@
               <div class="course-schedule">${c.schedule ? `<strong>Horário:</strong> ${escapeHTML(c.schedule)}` : "Horário ainda não informado."}</div>
               <div class="course-actions">
                 <button class="mini-btn" data-course-action="open" data-id="${c.id}" title="Selecionar como padrão">☆</button>
+                ${c.planoEnsino ? `<button class="mini-btn" data-course-action="syllabus" data-id="${c.id}" title="Ver plano de ensino">📄</button>` : ""}
                 <button class="mini-btn" data-course-action="edit" data-id="${c.id}" title="Editar disciplina">✎</button>
                 <button class="mini-btn danger" data-course-action="delete" data-id="${c.id}" title="Excluir disciplina">⌫</button>
               </div>
+              ${c.planoEnsino ? `<div class="course-syllabus" id="syllabus-${escapeHTML(c.id)}" hidden><strong>Plano de ensino</strong><p>${escapeHTML(c.planoEnsino).replace(/\n/g,"<br>")}</p></div>` : ""}
             </article>`;
         }).join("") : `<div class="faculty-empty" style="grid-column:1/-1"><div class="empty-icon">🎓</div><strong>Sua grade ainda está vazia</strong><span>Cadastre sua primeira disciplina para começar.</span></div>`;
 
@@ -3639,9 +3427,11 @@
             ? `Hábitos hoje: ${habitsDone} / ${habits.length} concluídos`
             : "Nenhum hábito cadastrado";
         }
-        const todayTasksPending = state.tasks.filter(t => isToday(t) && !t.completed).length;
+        const todayPersonalTasks = state.personal.todos.filter(t => !t.completed && t.bucket !== "later").length;
         if ($("#ovPersonalSecondary")) {
-          $("#ovPersonalSecondary").textContent = `Tarefas pendentes: ${todayTasksPending} para hoje`;
+          $("#ovPersonalSecondary").textContent = todayPersonalTasks
+            ? `Lista de tarefas: ${todayPersonalTasks} pendente${todayPersonalTasks === 1 ? "" : "s"} para hoje`
+            : "Lista de tarefas em dia";
         }
 
         // Financeiro
@@ -3674,10 +3464,6 @@
           const iso = localDateISO(d);
           const items = [];
 
-          state.tasks.filter(t => t.date === iso && !t.completed).forEach(t => {
-            items.push({ time: t.time || "", label: `✅ ${t.title}${t.time ? ` (${t.time.replace(":","h")})` : ""}` });
-          });
-
           state.faculty.exams.filter(e => e.date === iso).forEach(e => {
             items.push({ time: "", label: `📝 ${e.title}` });
           });
@@ -3695,7 +3481,7 @@
           const label = offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : formatDate(iso);
           rows.push(`<div class="agenda-day-row"><div class="agenda-day-label">${label}</div><div class="agenda-day-items">${items.map(i => `<span class="badge">${escapeHTML(i.label)}</span>`).join("")}</div></div>`);
         }
-        el.innerHTML = rows.length ? rows.join("") : `<div class="finance-empty"><strong>Nenhum compromisso</strong><span>Sem tarefas, leituras, avaliações ou lembretes nos próximos 7 dias.</span></div>`;
+        el.innerHTML = rows.length ? rows.join("") : `<div class="finance-empty"><strong>Nenhum compromisso</strong><span>Sem compromissos, leituras, avaliações ou lembretes nos próximos 7 dias.</span></div>`;
       }
 
       function renderFocusList() {
@@ -3749,28 +3535,10 @@
         renderOverviewCards();
         renderWeekAgenda();
         renderFocusList();
-
-        const search = $("#searchInput").value || "";
-        const status = $("#statusFilter").value;
-        const priority = $("#priorityFilter").value;
-        renderTaskList(
-          $("#allList"),
-          state.tasks.filter(t => taskMatches(t, search, status, priority)),
-          "Nenhuma tarefa encontrada",
-          "Tente mudar os filtros ou adicionar uma nova tarefa."
-        );
-
         renderFaculty();
         renderTcc();
         renderFinance();
         renderPersonal();
-
-        renderTaskList(
-          $("#doneList"),
-          state.tasks.filter(t => t.completed),
-          "Ainda não há tarefas concluídas",
-          "Quando você concluir algo, aparecerá aqui."
-        );
       }
 
       function setView(view) {
@@ -3781,88 +3549,12 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      function openModal(task = null) {
-        $("#taskForm").reset();
-        $("#taskId").value = task?.id || "";
-        $("#modalTitle").textContent = task ? "Editar tarefa" : "Nova tarefa";
-        $("#titleInput").value = task?.title || "";
-        $("#dateInput").value = task?.date || localDateISO();
-        $("#timeInput").value = task?.time || "";
-        $("#priorityInput").value = task?.priority || "medium";
-        $("#categoryInput").value = task?.category || "Pessoal";
-        $("#recurrenceInput").value = task?.recurrence || "none";
-        $("#notesInput").value = task?.notes || "";
-        $("#modalBackdrop").classList.add("open");
-        setTimeout(() => $("#titleInput").focus(), 40);
-      }
-
-      function closeModal() {
-        $("#modalBackdrop").classList.remove("open");
-      }
-
       function showToast(text) {
         const toast = $("#toast");
         toast.textContent = text;
         toast.classList.add("show");
         clearTimeout(showToast.timer);
         showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
-      }
-
-      function toggleTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        if (!task) return;
-        task.completed = !task.completed;
-        task.completedAt = task.completed ? new Date().toISOString() : null;
-
-        let message = task.completed ? "Tarefa concluída ✓" : "Tarefa reaberta";
-        if (task.completed && task.recurrence && task.recurrence !== "none") {
-          const nextDate = nextRecurrenceDate(task.date, task.recurrence);
-          if (nextDate) {
-            state.tasks.push({
-              id: uid(),
-              title: task.title,
-              date: nextDate,
-              time: task.time,
-              priority: task.priority,
-              category: task.category,
-              notes: task.notes,
-              recurrence: task.recurrence,
-              completed: false,
-              createdAt: new Date().toISOString(),
-              completedAt: null
-            });
-            message = `Tarefa concluída ✓ — próxima em ${formatDate(nextDate)}`;
-          }
-        }
-
-        saveTasks(message);
-        render();
-      }
-
-      function deleteTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        if (!task) return;
-        state.tasks = state.tasks.filter(t => t.id !== id);
-        saveTasks("Tarefa excluída");
-        render();
-      }
-
-      function editTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        if (task) openModal(task);
-      }
-
-      function clearDone() {
-        const count = state.tasks.filter(t => t.completed).length;
-        if (!count) {
-          showToast("Não há tarefas concluídas para limpar.");
-          return;
-        }
-        if (confirm(`Excluir ${count} tarefa${count > 1 ? "s" : ""} concluída${count > 1 ? "s" : ""}?`)) {
-          state.tasks = state.tasks.filter(t => !t.completed);
-          saveTasks("Concluídas removidas");
-          render();
-        }
       }
 
       function setupDateText() {
@@ -3881,7 +3573,6 @@
       // Funções de Backup
       function exportData() {
         const backupData = {
-          tasks: state.tasks,
           faculty: state.faculty,
           finance: state.finance,
           personal: state.personal,
@@ -3904,16 +3595,11 @@
           try {
             const data = JSON.parse(e.target.result);
             if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("Backup inválido");
-            const hasAny = ["tasks","faculty","finance","personal"].some(key => Object.prototype.hasOwnProperty.call(data,key));
+            const hasAny = ["faculty","finance","personal"].some(key => Object.prototype.hasOwnProperty.call(data,key));
             if (!hasAny) throw new Error("Nenhuma seção válida encontrada");
 
             // Cada seção só substitui o estado atual quando o backup traz um valor válido.
             // Campos ausentes, nulos ou com tipo incorreto preservam os dados atuais.
-            if (Array.isArray(data.tasks)) {
-              state.tasks = data.tasks;
-              saveTasks();
-            }
-
             if (data.faculty && typeof data.faculty === "object" && !Array.isArray(data.faculty)) {
               const current = { ...state.faculty, tcc: normalizeTcc(state.faculty.tcc) };
               const incoming = data.faculty;
@@ -3975,84 +3661,13 @@
 
       $("#exportDataHeaderBtn").addEventListener("click", exportData);
       $("#importDataHeaderBtn").addEventListener("click", () => $("#importFileInput").click());
-            $("#importFileInput").addEventListener("change", (e) => importData(e.target.files[0]));
+      $("#importFileInput").addEventListener("change", (e) => importData(e.target.files[0]));
 
-      // Modal
-      $("#closeModalBtn").addEventListener("click", closeModal);
-      $("#cancelModalBtn").addEventListener("click", closeModal);
-      $("#modalBackdrop").addEventListener("click", (e) => {
-        if (e.target === $("#modalBackdrop")) closeModal();
-      });
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          closeModal();
           closeFacultyModal();
         }
       });
-
-      $("#taskForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const id = $("#taskId").value;
-        const payload = {
-          title: $("#titleInput").value.trim(),
-          date: $("#dateInput").value,
-          time: $("#timeInput").value,
-          priority: $("#priorityInput").value,
-          category: $("#categoryInput").value,
-          recurrence: $("#recurrenceInput").value,
-          notes: $("#notesInput").value.trim()
-        };
-
-        if (!payload.title || !payload.date) return;
-
-        if (id) {
-          const task = state.tasks.find(t => t.id === id);
-          if (task) Object.assign(task, payload);
-          saveTasks("Tarefa atualizada");
-        } else {
-          state.tasks.push({
-            id: uid(),
-            ...payload,
-            completed: false,
-            createdAt: new Date().toISOString(),
-            completedAt: null
-          });
-          saveTasks("Tarefa adicionada");
-        }
-
-        closeModal();
-        render();
-      });
-
-      // Ações dos cards
-      document.addEventListener("click", (e) => {
-        const actionButton = e.target.closest("[data-action]");
-        if (!actionButton) return;
-        const task = e.target.closest(".task");
-        if (!task) return;
-        const id = task.dataset.id;
-        const action = actionButton.dataset.action;
-        if (action === "toggle") toggleTask(id);
-        if (action === "edit") editTask(id);
-        if (action === "delete") {
-          if (confirm("Excluir esta tarefa?")) deleteTask(id);
-        }
-      });
-
-      // Filtros
-      ["searchInput", "statusFilter", "priorityFilter"].forEach(id => {
-        $(`#${id}`).addEventListener("input", render);
-        $(`#${id}`).addEventListener("change", render);
-      });
-      $("#clearFiltersBtn").addEventListener("click", () => {
-        $("#searchInput").value = "";
-        $("#statusFilter").value = "all";
-        $("#priorityFilter").value = "all";
-        render();
-      });
-      $("#clearDoneBtn").addEventListener("click", clearDone);
-
 
       // Financeiro
       $$(".finance-tab").forEach(btn => btn.addEventListener("click", () => {
@@ -4304,7 +3919,6 @@
       });
       $("#mediaTypeFilter")?.addEventListener("change", renderPersonal);
       $("#mediaStatusFilter")?.addEventListener("change", renderPersonal);
-      $("#personalAddTaskBtn")?.addEventListener("click", () => openModal());
 
       $("#closePersonalModalBtn")?.addEventListener("click", personalCloseModal);
       $("#cancelPersonalModalBtn")?.addEventListener("click", personalCloseModal);
@@ -4318,7 +3932,6 @@
         $("#moreMenuBackdrop")?.classList.remove("open");
       }));
       $("#moreThemeBtn")?.addEventListener("click", () => { toggleTheme(); $("#moreMenuBackdrop")?.classList.remove("open"); });
-      $("#moreClearDoneBtn")?.addEventListener("click", () => { clearDone(); $("#moreMenuBackdrop")?.classList.remove("open"); });
       $("#moreExportBtn")?.addEventListener("click", () => { exportData(); $("#moreMenuBackdrop")?.classList.remove("open"); });
       $("#moreImportBtn")?.addEventListener("click", () => { $("#importFileInput")?.click(); $("#moreMenuBackdrop")?.classList.remove("open"); });
 
@@ -4329,8 +3942,6 @@
       $$(".nav-btn[data-view]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
       $$("[data-view-link]").forEach(el => el.addEventListener("click", () => setView(el.dataset.viewLink)));
       $("#themeToggleBtn")?.addEventListener("click", toggleTheme);
-      $("#addAllBtn")?.addEventListener("click", () => openModal());
-      $("#openAllBtn")?.addEventListener("click", () => setView("all"));
       $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
       $("#quickInboxBtn")?.addEventListener("click", () => goToPersonalPane("inbox"));
 
@@ -4577,6 +4188,7 @@
           const course = state.faculty.courses.find(x => x.id === id);
           if (!course) return;
           if (type === "open") selectCourse(id);
+          if (type === "syllabus") $(`#syllabus-${CSS.escape(id)}`)?.toggleAttribute("hidden");
           if (type === "edit") facultyModal("course", course);
           if (type === "delete") {
             if (!confirm(`Excluir a disciplina "${course.name}"? Os registros vinculados também serão removidos.`)) return;
@@ -4651,7 +4263,8 @@
             startTime, 
             endTime, 
             schedule: scheduleText, 
-            description: (data.description || "").trim() 
+            description: (data.description || "").trim(),
+            planoEnsino: (data.planoEnsino || "").trim()
           };
 
           if (id) {
@@ -4732,11 +4345,11 @@
       setupDateText();
       render();
 
-      // Atalho útil: Ctrl/Cmd + K
+      // Atalho útil: Ctrl/Cmd + K — adiciona rápido na Lista de Tarefas (Pessoal)
       document.addEventListener("keydown", e => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
           e.preventDefault();
-          openModal();
+          personalModal("todo");
         }
       });
     })();
