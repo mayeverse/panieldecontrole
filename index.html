@@ -3329,12 +3329,12 @@
             ? `${escapeHTML(x.grade)}/10`
             : '<span class="badge today">Pendente</span>';
           return `<tr>
-            <td><strong>${escapeHTML(x.title)}</strong></td>
+            <td><strong>${escapeHTML(x.title)}</strong>${(x.link || x.pdfName) ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${x.link ? `<a class="badge" href="${escapeHTML(x.link)}" target="_blank" rel="noopener" style="text-decoration:none;cursor:pointer">🔗 Abrir link</a>` : ""}${x.pdfName ? `<button type="button" class="badge" data-exam-pdf="${x.id}" style="border:0;cursor:pointer" title="${escapeHTML(x.pdfName)}">📕 Abrir PDF</button>` : ""}</div>` : ""}</td>
             <td>${escapeHTML(courseName(x.courseId))}</td>
             <td>${formatDate(x.date)}</td>
             <td><span class="badge ${deliveryInfo.cls}">${deliveryInfo.label}</span></td>
             <td>${gradeLabel}</td>
-            <td>${x.link ? `<a class="mini-btn" href="${escapeHTML(x.link)}" target="_blank" rel="noopener" title="Abrir link" style="text-decoration:none">🔗</a>` : ""}${x.pdfName ? `<button class="mini-btn" data-exam-pdf="${x.id}" title="Abrir PDF: ${escapeHTML(x.pdfName)}">📕</button>` : ""}<button class="mini-btn" data-faculty-edit="exam" data-id="${x.id}" title="Editar avaliação">✎</button><button class="mini-btn danger" data-faculty-delete="exam" data-id="${x.id}" title="Excluir avaliação">⌫</button></td>
+            <td><button class="mini-btn" data-faculty-edit="exam" data-id="${x.id}" title="Editar avaliação">✎</button><button class="mini-btn danger" data-faculty-delete="exam" data-id="${x.id}" title="Excluir avaliação">⌫</button></td>
           </tr>`;
         }).join("") : `<tr><td colspan="6"><div class="grade-empty">Nenhuma avaliação cadastrada.</div></td></tr>`;
 
