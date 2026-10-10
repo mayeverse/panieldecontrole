@@ -2593,7 +2593,7 @@
                 <h3>${item.icon} ${escapeHTML(item.title)}</h3>
                 <div class="agenda-event-meta">
                   <span class="badge">${KIND_LABEL[item.kind]}</span>${item.raw?.location ? `<span class="badge">📍 ${escapeHTML(item.raw.location)}</span>` : ""}
-                  ${item.raw?.notes ? `<span class="badge">📝 ${escapeHTML(item.raw.notes)}</span>` : ""}
+                  ${item.raw?.notes ? `<span class="badge">📝 ${escapeHTML(item.raw.notes)}</span>` : ""}${item.kind === "prova" && item.raw?.link ? `<a class="badge" href="${escapeHTML(item.raw.link)}" target="_blank" rel="noopener">🔗 Link</a>` : ""}${item.kind === "prova" && item.raw?.pdfName ? `<button class="badge" type="button" data-exam-pdf="${escapeHTML(item.raw.id)}">📕 PDF</button>` : ""}
                 </div>
               </div>
               ${item.kind === "agenda" ? agendaActions(item.raw) : (item.kind === "prova" || item.kind === "leitura") ? `<div class="personal-item-actions"><button class="mini-btn" data-faculty-edit="${item.kind === "prova" ? "exam" : "reading"}" data-id="${escapeHTML(item.raw.id)}" title="Editar">✎</button><button class="mini-btn danger" data-faculty-delete="${item.kind === "prova" ? "exam" : "reading"}" data-id="${escapeHTML(item.raw.id)}" title="Excluir">⌫</button></div>` : ""}
@@ -2889,7 +2889,9 @@
                 <option value="done" ${existing?.deliveryStatus === "done" ? "selected" : ""}>Entregue</option>
                 <option value="not_delivered" ${existing?.deliveryStatus === "not_delivered" ? "selected" : ""}>Não entregue</option>
               </select></div>
-              <div class="form-group"><label>Nota <span style="font-weight:500">(opcional)</span></label><input class="field" name="grade" type="number" min="0" max="10" step=".1" value="${existing?.grade ?? ""}" placeholder="—"></div>`
+              <div class="form-group"><label>Nota <span style="font-weight:500">(opcional)</span></label><input class="field" name="grade" type="number" min="0" max="10" step=".1" value="${existing?.grade ?? ""}" placeholder="—"></div>
+              <div class="form-group"><label>Link <span style="font-weight:500">(opcional)</span></label><input class="field" name="link" type="text" inputmode="url" value="${escapeHTML(existing?.link || "")}" placeholder="https://..."></div>
+              <div class="form-group"><label>PDF <span style="font-weight:500">(opcional)</span></label><input class="field" name="pdfFile" type="file" accept="application/pdf,.pdf">${existing?.pdfName ? `<div class="finance-mini-note">Atual: ${escapeHTML(existing.pdfName)}. Escolher outro arquivo substitui.</div><label style="display:flex;gap:8px;align-items:center;margin-top:6px;font-weight:500"><input type="checkbox" name="removePdf" value="1"> Remover o PDF atual</label>` : ""}</div>`
           },
           reading: {
             title: existing ? "Editar leitura" : "Nova leitura",
@@ -3332,7 +3334,7 @@
             <td>${formatDate(x.date)}</td>
             <td><span class="badge ${deliveryInfo.cls}">${deliveryInfo.label}</span></td>
             <td>${gradeLabel}</td>
-            <td><button class="mini-btn" data-faculty-edit="exam" data-id="${x.id}" title="Editar avaliação">✎</button><button class="mini-btn danger" data-faculty-delete="exam" data-id="${x.id}" title="Excluir avaliação">⌫</button></td>
+            <td>${x.link ? `<a class="mini-btn" href="${escapeHTML(x.link)}" target="_blank" rel="noopener" title="Abrir link" style="text-decoration:none">🔗</a>` : ""}${x.pdfName ? `<button class="mini-btn" data-exam-pdf="${x.id}" title="Abrir PDF: ${escapeHTML(x.pdfName)}">📕</button>` : ""}<button class="mini-btn" data-faculty-edit="exam" data-id="${x.id}" title="Editar avaliação">✎</button><button class="mini-btn danger" data-faculty-delete="exam" data-id="${x.id}" title="Excluir avaliação">⌫</button></td>
           </tr>`;
         }).join("") : `<tr><td colspan="6"><div class="grade-empty">Nenhuma avaliação cadastrada.</div></td></tr>`;
 
@@ -3912,6 +3914,7 @@
 
       // ---- PDF do plano de ensino (guardado no aparelho, em IndexedDB) ----
       let planPdfCourseId = null;
+      document.addEventListener("click", e => { const b = e.target.closest("[data-exam-pdf]"); if (b) openPlanPdf("exam-" + b.dataset.examPdf); });
       const pdfDB = () => new Promise((res, rej) => { const r = indexedDB.open("minha-vida-pdf", 1); r.onupgradeneeded = () => r.result.createObjectStore("planos"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
       const pdfTx = async (mode, fn) => { const db = await pdfDB(); return new Promise((res, rej) => { const req = fn(db.transaction("planos", mode).objectStore("planos")); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); };
       const pdfPut = (id, blob) => pdfTx("readwrite", st => st.put(blob, id));
@@ -4373,6 +4376,7 @@
           if (!confirm("Excluir este registro?")) return;
           const type = del.dataset.facultyDelete, id = del.dataset.id;
           const key = type === "absence" ? "absences" : type === "exam" ? "exams" : "readings";
+          if (type === "exam") pdfDelete("exam-" + id).catch(() => {});
           state.faculty[key] = state.faculty[key].filter(x => x.id !== id);
           saveFaculty("Registro excluído");
           render();
@@ -4441,7 +4445,18 @@
             deliveryStatus: data.deliveryStatus || "na",
             grade: data.grade
           };
-          const item = state.faculty.exams.find(x => x.id === id);
+          const oldExam = state.faculty.exams.find(x => x.id === id);
+          let link = (data.link || "").trim();
+          if (link && !/^https?:\/\//i.test(link)) link = "https://" + link;
+          payload.link = link;
+          payload.pdfName = oldExam?.pdfName || "";
+          const pdf = data.pdfFile;
+          if (data.removePdf === "1") { pdfDelete("exam-" + payload.id).catch(() => {}); payload.pdfName = ""; }
+          if (pdf && pdf.size) {
+            if (pdf.size > 25 * 1024 * 1024) showToast("PDF acima de 25 MB: não foi anexado");
+            else { payload.pdfName = pdf.name; pdfPut("exam-" + payload.id, pdf).catch(() => showToast("Não consegui guardar o PDF neste navegador")); }
+          }
+          const item = oldExam;
           if (item) Object.assign(item, payload); else state.faculty.exams.push(payload);
         }
 
