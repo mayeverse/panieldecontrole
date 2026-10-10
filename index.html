@@ -1431,7 +1431,7 @@
             </div>
 
             <section class="tcc-section">
-              <div class="tcc-section-head"><div><h3>📝 Quadro Kanban de redação</h3><p>Seções do artigo por status de escrita.</p></div><button class="primary-btn" type="button" data-faculty-add="tccChapter">＋ Nova seção</button></div>
+              <div class="tcc-section-head"><div><h3>📝 Quadro de evolução</h3><p>Seções do artigo por status de escrita.</p></div><button class="primary-btn" type="button" data-faculty-add="tccChapter">＋ Nova seção</button></div>
               <div style="padding:0 18px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
                 <span class="badge">Fase atual</span>
                 <div class="tcc-phase-selector" id="tccPhaseSelector" role="tablist" aria-label="Fase atual do TCC" style="margin-top:0;">
@@ -1943,7 +1943,7 @@
       }
 
       function tccChapterStatusOptions(selected = "todo") {
-        return [["todo","Não iniciado"],["draft","Em rascunho"],["review","Em revisão (Orientador)"],["done","Concluído"]]
+        return [["todo","Não iniciado"],["draft","Em andamento"],["review","Em revisão (Orientador)"],["done","Concluído"]]
           .map(([v,l]) => `<option value="${v}" ${selected===v?"selected":""}>${l}</option>`).join("");
       }
       function normalizeTcc(tcc = {}) {
@@ -3177,7 +3177,7 @@
           }
         }
 
-        const chapterStatuses=[["todo","Não iniciado"],["draft","Em rascunho"],["review","Em revisão (Orientador)"],["done","Concluído"]];
+        const chapterStatuses=[["todo","Não iniciado"],["draft","Em andamento"],["review","Em revisão (Orientador)"],["done","Concluído"]];
         if($("#tccChapterKanban")) $("#tccChapterKanban").innerHTML=chapterStatuses.map(([status,label])=>{
           const items=chapters.filter(c=>c.status===status);
           return `<div class="tcc-kanban-col"><div class="tcc-kanban-head"><strong>${label}</strong><span class="badge">${items.length}</span></div>${items.map(c=>`<article class="tcc-chapter-card"><h4>${escapeHTML(c.title)}</h4>${c.dueDate?`<span class="badge" style="margin-top:6px;">📅 ${escapeHTML(formatDate(c.dueDate))}</span>`:""}${c.notes?`<p>${escapeHTML(c.notes)}</p>`:""}<div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;">${items.indexOf(c) > 0 ? `<button class="mini-btn" data-tcc-move="up" data-id="${escapeHTML(c.id)}" title="Subir">↑</button>` : ""}${items.indexOf(c) < items.length - 1 ? `<button class="mini-btn" data-tcc-move="down" data-id="${escapeHTML(c.id)}" title="Descer">↓</button>` : ""}<button class="mini-btn" data-tcc-edit="chapter" data-id="${escapeHTML(c.id)}" title="Editar seção">✎</button><button class="mini-btn danger" data-tcc-delete="chapter" data-id="${escapeHTML(c.id)}" title="Excluir seção">⌫</button></div></article>`).join("") || `<div style="padding:14px 4px;text-align:center;color:var(--muted);font-size:10px;">Nenhum item</div>`}</div>`;
