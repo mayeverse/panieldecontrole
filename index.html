@@ -2133,11 +2133,14 @@
         return start <= month;
       }
 
-      function financeFixedOccurrences(month) {
-        return state.finance.fixed.filter(x => financeFixedInMonth(x, month)).map(x => {
-          const day = String(x.date||"").slice(8,10) || "01";
-          return { ...x, occurrenceDate: `${month}-${day}`, paid: financeFixedPaidForMonth(x, month) };
-        });
+      function financeFixedOccurrences(month, withSkipped = false) {
+        const [y, m] = month.split("-").map(Number), dim = new Date(y, m, 0).getDate();
+        return state.finance.fixed
+          .filter(x => financeFixedInMonth(x, month) && (withSkipped || !(x.skippedMonths || []).includes(month)))
+          .map(x => {
+            const day = Math.min(dim, Math.max(1, Number(String(x.date || "").slice(8, 10)) || 1));
+            return { ...x, occurrenceDate: `${month}-${String(day).padStart(2, "0")}`, paid: financeFixedPaidForMonth(x, month), skipped: (x.skippedMonths || []).includes(month) };
+          });
       }
 
       function financeInstallmentForMonth(item, month) {
@@ -2824,7 +2827,7 @@
         $("#financeExpenseTotalLabel").textContent = filterActive ? "filtrado" : "de gastos do mês";
         $("#financeExpenseFilterCount").textContent = filterActive ? `${filteredExpenses.length} de ${t.expenses.length} gasto${t.expenses.length===1?"":"s"}` : "";
 
-        renderFinanceTableBody("#financeFixedTable", t.fixed.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td><button class="paid-toggle ${x.paid?"paid":""}" data-finance-toggle-paid="${x.id}">${x.paid?"✓ Pago":"Pendente"}</button></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("fixed",x.id)}</td></tr>`).join(""), "Nenhum gasto fixo neste mês.");
+        renderFinanceTableBody("#financeFixedTable", financeFixedOccurrences(month, true).sort((a,b)=>a.occurrenceDate.localeCompare(b.occurrenceDate)).map(x=>`<tr style="${x.skipped?"opacity:.55":""}"><td><strong>${escapeHTML(x.name)}</strong></td><td>${x.skipped?`<span class="badge">Pulado neste mês</span>`:`<button class="paid-toggle ${x.paid?"paid":""}" data-finance-toggle-paid="${x.id}">${x.paid?"✓ Pago":"Pendente"}</button>`}</td><td>${formatDate(x.occurrenceDate)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td><div class="finance-actions"><button class="mini-btn" data-finance-skip="${x.id}" title="${x.skipped?"Voltar a cobrar neste mês":"Não pagar só neste mês"}">${x.skipped?"↩":"⏭"}</button></div>${financeRowActions("fixed",x.id)}</td></tr>`).join(""), "Nenhum gasto fixo neste mês.");
         $("#financeFixedTotal").textContent = moneyBRL(t.fixedTotal);
 
         renderFinanceTableBody("#financeInstallmentTable", t.installments.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>{
@@ -3672,6 +3675,20 @@
         const del = e.target.closest("[data-finance-delete]");
         if (del) {
           if (confirm("Excluir este registro financeiro?")) financeDelete(del.dataset.financeDelete, del.dataset.id);
+          return;
+        }
+
+        const skip = e.target.closest("[data-finance-skip]");
+        if (skip) {
+          const month = state.finance.selectedMonth || localDateISO().slice(0,7);
+          const item = state.finance.fixed.find(x => x.id === skip.dataset.financeSkip);
+          if (item) {
+            const list = Array.isArray(item.skippedMonths) ? item.skippedMonths : [];
+            const skipped = list.includes(month);
+            item.skippedMonths = skipped ? list.filter(m => m !== month) : [...list, month];
+            saveFinance(skipped ? "Gasto volta a contar neste mês" : "Gasto pulado só neste mês — continua nos outros");
+            render();
+          }
           return;
         }
 
