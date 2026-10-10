@@ -1375,7 +1375,7 @@
             <div class="weekly-schedule" id="weeklySchedule"></div>
             <div class="weekly-legend" id="weeklyLegend"></div>
             <div class="panel-header" style="padding:18px 0 12px;">
-              <div><h2 class="panel-title">Disciplinas cadastradas</h2><div class="panel-subtitle">Os cartões abaixo já mostram faltas, avaliações, leituras e média.</div></div>
+              <div><h2 class="panel-title">Disciplinas cadastradas</h2><div class="panel-subtitle">Os cartões abaixo já mostram faltas, avaliações e leituras.</div></div>
             </div>
             <div id="courseGrid" class="course-grid"></div>
           </section>
@@ -1431,7 +1431,7 @@
             </div>
 
             <section class="tcc-section">
-              <div class="tcc-section-head"><div><h3>📝 Quadro Kanban de redação</h3><p>Seções fixas do artigo por status de escrita.</p></div></div>
+              <div class="tcc-section-head"><div><h3>📝 Quadro Kanban de redação</h3><p>Seções do artigo por status de escrita.</p></div><button class="primary-btn" type="button" data-faculty-add="tccChapter">＋ Nova seção</button></div>
               <div style="padding:0 18px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
                 <span class="badge">Fase atual</span>
                 <div class="tcc-phase-selector" id="tccPhaseSelector" role="tablist" aria-label="Fase atual do TCC" style="margin-top:0;">
@@ -1976,7 +1976,9 @@
           };
         });
 
-        const chapters = defaultChapters.map((def, index) => {
+        const validStatus = st => ["todo","draft","review","done"].includes(st) ? st : "todo";
+        const customChapters = Boolean(tcc.customChapters);
+        const chapters = customChapters ? normalizedIncoming.map(x => ({ ...x, title: x.title || "Seção sem nome", status: validStatus(x.status) })) : defaultChapters.map((def, index) => {
           const matches = normalizedIncoming.filter(x => x.title.toLowerCase() === def.title.toLowerCase());
           let item = matches[0];
           if (!item && def.title === "Metodologia & Análise") {
@@ -2008,6 +2010,7 @@
           currentPhase: Math.max(0, Math.min(2, Number(tcc.currentPhase || 0))),
           meetings: Array.isArray(tcc.meetings) ? tcc.meetings.map(x => ({...x, adjustmentsDone:Boolean(x.adjustmentsDone)})) : [],
           chapters,
+          customChapters,
           bureaucracy
         };
       }
@@ -2918,8 +2921,8 @@
             <div class="form-group"><label>Data da reunião</label><input class="field" name="meetingDate" type="date" required value="${escapeHTML(existing?.date||localDateISO())}"></div>
             <div class="form-group full"><label>Feedback da Professora</label><textarea class="field" name="discussion" required maxlength="1500" placeholder="O que foi pedido para alterar, aprofundar ou revisar?">${escapeHTML(existing?.discussion||"")}</textarea></div>
             <div class="form-group full"><label class="day-check"><input type="checkbox" name="adjustmentsDone" value="1" ${existing?.adjustmentsDone?"checked":""}> Ajustes solicitados nesta reunião já foram feitos</label></div>` },
-          tccChapter: { title:"Atualizar seção do artigo", fields:`
-            <div class="form-group full"><label>Seção</label><div class="info-chip" style="padding:11px 13px;"><strong>${escapeHTML(existing?.title||"")}</strong></div></div>
+          tccChapter: { title: existing ? "Editar seção do artigo" : "Nova seção do artigo", fields:`
+            <div class="form-group full"><label>Nome da seção</label><input class="field" name="title" required maxlength="80" value="${escapeHTML(existing?.title||"")}" placeholder="Ex.: Introdução"></div>
             <div class="form-group"><label>Status</label><select class="field" name="status">${tccChapterStatusOptions(existing?.status||"todo")}</select></div>
             <div class="form-group"><label>Prazo</label><input class="field" name="dueDate" type="date" value="${escapeHTML(existing?.dueDate||"")}"></div>
             <div class="form-group full"><label>Notas / escopo</label><textarea class="field" name="notes" maxlength="800" placeholder="O que precisa entrar nesta parte?">${escapeHTML(existing?.notes||"")}</textarea></div>` }
@@ -3177,7 +3180,7 @@
         const chapterStatuses=[["todo","Não iniciado"],["draft","Em rascunho"],["review","Em revisão (Orientador)"],["done","Concluído"]];
         if($("#tccChapterKanban")) $("#tccChapterKanban").innerHTML=chapterStatuses.map(([status,label])=>{
           const items=chapters.filter(c=>c.status===status);
-          return `<div class="tcc-kanban-col"><div class="tcc-kanban-head"><strong>${label}</strong><span class="badge">${items.length}</span></div>${items.map(c=>`<article class="tcc-chapter-card"><h4>${escapeHTML(c.title)}</h4>${c.dueDate?`<span class="badge" style="margin-top:6px;">📅 ${escapeHTML(formatDate(c.dueDate))}</span>`:""}${c.notes?`<p>${escapeHTML(c.notes)}</p>`:""}<div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;"><button class="mini-btn" data-tcc-edit="chapter" data-id="${escapeHTML(c.id)}" title="Atualizar status / prazo / notas">✎</button></div></article>`).join("") || `<div style="padding:14px 4px;text-align:center;color:var(--muted);font-size:10px;">Nenhum item</div>`}</div>`;
+          return `<div class="tcc-kanban-col"><div class="tcc-kanban-head"><strong>${label}</strong><span class="badge">${items.length}</span></div>${items.map(c=>`<article class="tcc-chapter-card"><h4>${escapeHTML(c.title)}</h4>${c.dueDate?`<span class="badge" style="margin-top:6px;">📅 ${escapeHTML(formatDate(c.dueDate))}</span>`:""}${c.notes?`<p>${escapeHTML(c.notes)}</p>`:""}<div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;">${items.indexOf(c) > 0 ? `<button class="mini-btn" data-tcc-move="up" data-id="${escapeHTML(c.id)}" title="Subir">↑</button>` : ""}${items.indexOf(c) < items.length - 1 ? `<button class="mini-btn" data-tcc-move="down" data-id="${escapeHTML(c.id)}" title="Descer">↓</button>` : ""}<button class="mini-btn" data-tcc-edit="chapter" data-id="${escapeHTML(c.id)}" title="Editar seção">✎</button><button class="mini-btn danger" data-tcc-delete="chapter" data-id="${escapeHTML(c.id)}" title="Excluir seção">⌫</button></div></article>`).join("") || `<div style="padding:14px 4px;text-align:center;color:var(--muted);font-size:10px;">Nenhum item</div>`}</div>`;
         }).join("");
 
         if($("#tccBureauList")) $("#tccBureauList").innerHTML = t.bureaucracy.map(item=>`<label class="tcc-bureau-item ${item.done?"checked":""}"><input type="checkbox" data-tcc-bureau="${escapeHTML(item.id)}" ${item.done?"checked":""}><span>${escapeHTML(item.label)}</span></label>`).join("");
@@ -3266,7 +3269,6 @@
                 <span class="badge ${att.statusClass}">✓ ${att.totalFaltas}/${att.limit} faltas</span>
                 <span class="badge">★ ${examsFor.length} avaliações</span>
                 <span class="badge">▤ ${readingsFor.length} leituras</span>
-                ${avg ? `<span class="badge">📊 Média ${avg.avg.toFixed(1)}</span>` : ""}
               </div>
               ${c.pdfName ? `<div class="course-schedule">📎 Plano de ensino: ${escapeHTML(c.pdfName)}</div>` : ""}
               <div class="course-schedule">${c.schedule ? `<strong>Horário:</strong> ${escapeHTML(c.schedule)}` : "Horário ainda não informado."}</div>
@@ -3609,7 +3611,7 @@
                   const value = incomingTcc[key];
                   if ((typeof value === "string" && value.trim() !== "") || (key === "currentPhase" && Number.isFinite(Number(value)))) tccMerged[key] = value;
                 });
-                if (Array.isArray(incomingTcc.chapters)) tccMerged.chapters = incomingTcc.chapters;
+                if (Array.isArray(incomingTcc.chapters)) { tccMerged.chapters = incomingTcc.chapters; tccMerged.customChapters = Boolean(incomingTcc.customChapters); }
                 if (Array.isArray(incomingTcc.meetings)) tccMerged.meetings = incomingTcc.meetings;
                 if (Array.isArray(incomingTcc.bureaucracy)) tccMerged.bureaucracy = incomingTcc.bureaucracy;
                 merged.tcc = normalizeTcc(tccMerged);
@@ -4266,12 +4268,29 @@
           return;
         }
 
+        const mv = e.target.closest("[data-tcc-move]");
+        if (mv) {
+          const t = state.faculty.tcc = normalizeTcc(state.faculty.tcc);
+          t.customChapters = true;
+          const i = t.chapters.findIndex(x => x.id === mv.dataset.id);
+          if (i < 0) return;
+          const dir = mv.dataset.tccMove === "up" ? -1 : 1;
+          let j = i + dir;
+          while (j >= 0 && j < t.chapters.length && t.chapters[j].status !== t.chapters[i].status) j += dir;
+          if (j < 0 || j >= t.chapters.length) return;
+          [t.chapters[i], t.chapters[j]] = [t.chapters[j], t.chapters[i]];
+          saveFaculty("Ordem das seções atualizada");
+          render();
+          return;
+        }
+
         const del = e.target.closest("[data-tcc-delete]");
         if (del) {
           if (!confirm("Excluir este registro do TCC?")) return;
           state.faculty.tcc=normalizeTcc(state.faculty.tcc);
           const type=del.dataset.tccDelete, id=del.dataset.id;
           const key=type==="meeting"?"meetings":"chapters";
+          if (type==="chapter") state.faculty.tcc.customChapters = true;
           state.faculty.tcc[key]=state.faculty.tcc[key].filter(x=>x.id!==id);
           saveFaculty("Registro do TCC excluído");
           render();
@@ -4477,12 +4496,10 @@
         }
         if (type === "tccChapter") {
           state.faculty.tcc=normalizeTcc(state.faculty.tcc);
+          state.faculty.tcc.customChapters = true;
           const item=state.faculty.tcc.chapters.find(x=>x.id===id);
-          if (item) {
-            item.status=data.status||"todo";
-            item.dueDate=data.dueDate||"";
-            item.notes=(data.notes||"").trim();
-          }
+          const fields = { title:(data.title||"").trim()||"Seção sem nome", status:data.status||"todo", dueDate:data.dueDate||"", notes:(data.notes||"").trim() };
+          if (item) Object.assign(item, fields); else state.faculty.tcc.chapters.push({ id: uid(), ...fields });
         }
 
         if (type === "reading") {
