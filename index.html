@@ -1472,7 +1472,6 @@
               <h1>💰 Seu dinheiro, sob controle</h1>
               <p class="subtitle">Acompanhe entradas, gastos, saídas e investimentos em um só lugar.</p>
             </div>
-            <button class="primary-btn" id="addFinanceBtn">＋ Nova movimentação</button>
           </div>
 
           <div class="finance-monthbar">
@@ -2137,13 +2136,36 @@
       }
 
       function financeFixedOccurrences(month, withSkipped = false) {
-        const [y, m] = month.split("-").map(Number), dim = new Date(y, m, 0).getDate();
-        return state.finance.fixed
-          .filter(x => financeFixedInMonth(x, month) && (withSkipped || !(x.skippedMonths || []).includes(month)))
-          .map(x => {
-            const day = Math.min(dim, Math.max(1, Number(String(x.date || "").slice(8, 10)) || 1));
-            return { ...x, occurrenceDate: `${month}-${String(day).padStart(2, "0")}`, paid: financeFixedPaidForMonth(x, month), skipped: (x.skippedMonths || []).includes(month) };
-          });
+        // Gasto fixo no cartão de crédito: cada cobrança vai para a fatura do ciclo (dia de fechamento).
+        // Gasto fixo sem cartão: cobrança no próprio mês.
+        const pad = n => String(n).padStart(2, "0");
+        const [y, m] = month.split("-").map(Number);
+        const monthOf = (yy, mm) => { const d = new Date(yy, mm - 1, 1); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; };
+        const chargeDate = (x, mon) => {
+          const [cy, cm] = mon.split("-").map(Number), cdim = new Date(cy, cm, 0).getDate();
+          const day = Math.min(cdim, Math.max(1, Number(String(x.date || "").slice(8, 10)) || 1));
+          return `${mon}-${pad(day)}`;
+        };
+        const out = [];
+        state.finance.fixed.forEach(x => {
+          const skipped = (x.skippedMonths || []).includes(month);
+          if (skipped && !withSkipped) return;
+          let occurrenceDate = null;
+          const cardId = x.creditCard || (String(x.payment || "").startsWith("card:") ? String(x.payment).slice(5) : "");
+          if (cardId && state.finance.cards?.[cardId]) {
+            for (const mon of [month, monthOf(y, m - 1)]) {
+              if (!financeFixedInMonth(x, mon)) continue;
+              const cd = chargeDate(x, mon);
+              const inv = financeInstallmentInvoiceDate(cd, cardId, 1);
+              if (inv && inv.getFullYear() === y && inv.getMonth() === m - 1) { occurrenceDate = cd; break; }
+            }
+          } else if (financeFixedInMonth(x, month)) {
+            occurrenceDate = chargeDate(x, month);
+          }
+          if (!occurrenceDate) return;
+          out.push({ ...x, occurrenceDate, paid: financeFixedPaidForMonth(x, month), skipped });
+        });
+        return out;
       }
 
       function financeInstallmentForMonth(item, month) {
