@@ -2031,6 +2031,7 @@
       function formatDate(dateStr) {
         if (!dateStr) return "";
         const date = new Date(dateStr + "T12:00:00");
+        if (isNaN(date)) return String(dateStr);
         return new Intl.DateTimeFormat("pt-BR", {
           day: "2-digit", month: "short"
         }).format(date).replace(".", "");
@@ -4789,3 +4790,4 @@
   </script>
 </body>
 </html>
+  
