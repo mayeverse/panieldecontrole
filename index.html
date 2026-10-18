@@ -1263,6 +1263,36 @@
     .cc-open { width:100%; padding:12px; font-size:14px; }
     .cc-name { font-size:16px; }
   }
+
+  /* ===== Janela da disciplina: botões organizados ===== */
+  .course-card.compact { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 20px; }
+  .cc-chev { font-size:26px; line-height:1; color:var(--muted); text-align:right; }
+  .course-card.compact:hover .cc-chev { color:var(--primary); }
+  .course-card.compact:focus-visible { outline:2px solid var(--primary); }
+  @media (max-width:700px) { .course-card.compact { grid-template-columns:minmax(0,1fr) 16px; } .course-card.compact .cc-side { grid-column:1 / 2; } .course-card.compact .cc-chev { grid-column:2; grid-row:1; align-self:center; } }
+  .cd-tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0 4px; }
+  .cd-tile { border:1px solid var(--line); background:var(--surface-2); border-radius:14px; padding:11px 10px; display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .cd-tile-label { font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+  .cd-tile-value { font-size:24px; font-weight:800; letter-spacing:-.03em; line-height:1.1; }
+  .cd-tile-value small { font-size:13px; font-weight:700; color:var(--muted); }
+  .cd-tile-sub { font-size:11px; color:var(--muted); min-height:14px; }
+  .cd-tile-btn { margin-top:6px; padding:8px 4px; border:0; border-radius:9px; background:var(--primary); color:#fff; font-weight:800; font-size:12px; cursor:pointer; }
+  .cd-tile-btn:hover { filter:brightness(1.08); }
+  .cd-item { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:9px 2px; cursor:pointer; color:var(--text); font:inherit; }
+  .cd-item:last-child { border-bottom:0; }
+  .cd-item strong { display:block; font-size:13px; }
+  .cd-item em { display:block; font-style:normal; font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .cd-item i { font-style:normal; font-size:20px; color:var(--muted); }
+  .cd-plan-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .cd-links { display:flex; gap:12px; }
+  .cd-links button { background:none; border:0; padding:4px 0; font-size:12.5px; font-weight:700; color:var(--primary); cursor:pointer; }
+  .cd-links button.danger { color:#dc2626; }
+  .cd-btn { padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface-2); color:var(--text); font-weight:700; font-size:13px; cursor:pointer; }
+  .cd-btn.primary { background:var(--primary-soft); border-color:var(--primary); color:var(--primary); }
+  .cd-btn.danger { color:#dc2626; background:none; }
+  .cd-block details summary { cursor:pointer; font-size:12.5px; font-weight:700; margin-top:10px; color:var(--muted); }
+  .cd-foot { display:flex; justify-content:space-between; gap:8px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+  .cd-foot .cd-btn:first-child { flex:1; }
 </style>
 </head>
 <body>
@@ -1454,7 +1484,7 @@
             <div class="weekly-schedule" id="weeklySchedule"></div>
             <div class="weekly-legend" id="weeklyLegend"></div>
             <div class="panel-header" style="padding:18px 0 12px;">
-              <div><h2 class="panel-title">Disciplinas cadastradas</h2><div class="panel-subtitle">Toque em uma disciplina (ou no bloco da grade) para ver detalhes e registrar faltas, avaliações e leituras.</div></div>
+              <div><h2 class="panel-title">Disciplinas cadastradas</h2><div class="panel-subtitle">Toque em uma disciplina para ver detalhes e registrar faltas, avaliações e leituras.</div></div>
             </div>
             <div id="courseGrid" class="course-grid"></div>
           </section>
@@ -3373,7 +3403,7 @@
             ? [1,2,3,4,5,6].filter(d => cDays.includes(d)).map(d => `<span class="cc-day ${d===jsToday?"on":""}">${dayLabelsShort[d]}</span>`).join("") + (timeTxt ? `<span class="cc-time">${timeTxt}</span>` : "")
             : `<span class="cc-teacher">Horário não informado</span>`;
           return `
-            <article class="course-card compact ${c.id === state.faculty.selectedCourseId ? "selected" : ""} ${isToday ? "is-today" : ""}" data-course-id="${escapeHTML(c.id)}">
+            <article class="course-card compact ${c.id === state.faculty.selectedCourseId ? "selected" : ""} ${isToday ? "is-today" : ""}" data-course-id="${escapeHTML(c.id)}" role="button" tabindex="0" aria-label="Abrir ${escapeHTML(c.name)}">
               <div class="cc-main">
                 <div class="cc-name">${escapeHTML(c.name)}${isToday ? ' <span class="cc-todaytag">Hoje</span>' : ""}</div>
                 <div class="cc-teacher">${escapeHTML(c.teacher || "Professor não informado")} · ${att.workload}h</div>
@@ -3386,7 +3416,7 @@
                 </div>
                 <div class="cc-counts"><span>★ ${examsFor.length} avaliaç${examsFor.length===1?"ão":"ões"}</span><span>▤ ${readingsFor.length} leitura${readingsFor.length===1?"":"s"}</span>${c.pdfName ? "<span>📎 plano</span>" : ""}</div>
               </div>
-              <button class="cc-open" data-course-action="detail" data-id="${escapeHTML(c.id)}">Abrir ›</button>
+              <span class="cc-chev" aria-hidden="true">›</span>
             </article>`;
         }).join("") : `<div class="faculty-empty" style="grid-column:1/-1"><div class="empty-icon">🎓</div><strong>Sua grade ainda está vazia</strong><span>Cadastre sua primeira disciplina para começar.</span></div>`;
 
@@ -4438,54 +4468,78 @@
       // ---- Detalhe da disciplina (abre ao tocar no cartão ou no bloco da grade) ----
       function closeCourseDetail() { $("#courseDetailBackdrop")?.classList.remove("open"); }
       function openCourseDetail(id) {
-        const c = state.faculty.courses.find(x => x.id === id);
-        if (!c) return;
-        if (state.faculty.selectedCourseId !== id) { state.faculty.selectedCourseId = id; saveFaculty(); renderFaculty(); }
-        const att = attendanceSummary(id);
-        const cDays = courseDaysOf(c);
-        const names = {1:"Seg",2:"Ter",3:"Qua",4:"Qui",5:"Sex",6:"Sáb"};
-        const jsToday = new Date().getDay() === 0 ? 7 : new Date().getDay();
-        const exams = sortedFacultyExams(state.faculty.exams.filter(x => x.courseId === id));
-        const readings = state.faculty.readings.filter(x => x.courseId === id);
-        const pendingReadings = readings.filter(r => r.status !== "completed");
-        const avg = courseAverage(id);
-        $("#courseDetailTitle").textContent = c.name;
-        $("#courseDetailBody").innerHTML = `
-          <div class="course-teacher" style="margin:0">${escapeHTML(c.teacher || "Professor não informado")} · ${escapeHTML(c.semester || "")} · ${att.workload}h</div>
-          <div class="cd-days">
-            ${cDays.length ? [1,2,3,4,5,6].filter(d => cDays.includes(d)).map(d => `<span class="cc-day ${d===jsToday?"on":""}">${names[d]}</span>`).join("") + (c.startTime ? `<span class="cc-time">${escapeHTML(c.startTime)}–${escapeHTML(c.endTime)}</span>` : "") : `<span class="cc-teacher">Horário não informado</span>`}
-          </div>
-          ${c.description ? `<div class="cc-teacher" style="margin-top:6px">${escapeHTML(c.description)}</div>` : ""}
-          <div class="cd-quick">
-            <button data-faculty-add="absence">✓ Falta</button>
-            <button data-faculty-add="exam">★ Avaliação</button>
-            <button data-faculty-add="reading">▤ Leitura</button>
-          </div>
-          <div class="cd-block">
-            <h4>Faltas</h4>
-            <div class="cd-row"><span><strong>${att.totalFaltas}</strong> de ${att.limit} permitidas</span><span class="badge ${att.statusClass}">${escapeHTML(att.status)}</span></div>
-            <div class="cc-bar"><span class="${att.barClass}" style="width:${Math.min(att.ratio * 100, 100)}%"></span></div>
-            <div class="cd-sub cc-teacher" style="margin-top:5px">Faltar 1 dia = ${att.faltasPerDay} faltas · restam ${att.remaining}</div>
-          </div>
-          <div class="cd-block">
-            <h4>Avaliações${avg ? ` · média ${avg.avg.toFixed(1)}` : ""}</h4>
-            ${exams.length ? exams.slice(0, 5).map(x => `<div class="cd-row"><span>${escapeHTML(x.title)}<div class="cd-sub">${formatDate(x.date)}${x.grade !== "" && x.grade != null ? ` · nota ${escapeHTML(x.grade)}` : ""}</div></span><button class="mini-btn" data-faculty-edit="exam" data-id="${escapeHTML(x.id)}" title="Editar">✎</button></div>`).join("") : `<div class="cc-teacher">Nenhuma avaliação cadastrada.</div>`}
-          </div>
-          <div class="cd-block">
-            <h4>Leituras · ${readings.length - pendingReadings.length}/${readings.length} concluídas</h4>
-            ${pendingReadings.length ? pendingReadings.slice(0, 5).map(r => `<div class="cd-row"><span>${escapeHTML(r.title)}${r.lectureDate ? `<div class="cd-sub">${escapeHTML(r.lectureDate)}</div>` : ""}</span><button class="mini-btn" data-faculty-edit="reading" data-id="${escapeHTML(r.id)}" title="Editar">✎</button></div>`).join("") : `<div class="cc-teacher">${readings.length ? "Tudo lido ✓" : "Nenhuma leitura cadastrada."}</div>`}
-          </div>
-          ${c.planoEnsino ? `<div class="cd-block"><details><summary style="cursor:pointer;font-weight:700;font-size:12.5px">📄 Plano de ensino</summary><div class="cd-plan">${escapeHTML(c.planoEnsino)}</div></details></div>` : ""}
-          <div class="cd-foot">
-            ${c.pdfName ? `<button class="mini-btn" data-course-action="pdf-open" data-id="${escapeHTML(id)}">📕 Abrir PDF</button><button class="mini-btn" data-course-action="pdf-add" data-id="${escapeHTML(id)}">🔁 Trocar PDF</button><button class="mini-btn danger" data-course-action="pdf-remove" data-id="${escapeHTML(id)}">✖ PDF</button>` : `<button class="mini-btn" data-course-action="pdf-add" data-id="${escapeHTML(id)}">📎 Anexar plano (PDF)</button>`}
-            <button class="mini-btn" data-course-action="edit" data-id="${escapeHTML(id)}">✎ Editar</button>
-            <button class="mini-btn danger" data-course-action="delete" data-id="${escapeHTML(id)}">⌫ Excluir</button>
-          </div>`;
-        $("#courseDetailBackdrop").classList.add("open");
+        try {
+          const c = state.faculty.courses.find(x => x.id === id);
+          if (!c) return;
+          if (state.faculty.selectedCourseId !== id) { state.faculty.selectedCourseId = id; saveFaculty(); renderFaculty(); }
+          const att = attendanceSummary(id);
+          const cDays = courseDaysOf(c);
+          const names = {1:"Seg",2:"Ter",3:"Qua",4:"Qui",5:"Sex",6:"Sáb"};
+          const jsToday = new Date().getDay() === 0 ? 7 : new Date().getDay();
+          const exams = sortedFacultyExams(state.faculty.exams.filter(x => x.courseId === id));
+          const readings = state.faculty.readings.filter(x => x.courseId === id);
+          const pendingReadings = readings.filter(r => r.status !== "completed");
+          const avg = courseAverage(id);
+          const eid = escapeHTML(id);
+          $("#courseDetailTitle").textContent = c.name;
+          $("#courseDetailBody").innerHTML = `
+            <div class="cc-teacher" style="margin:0">${escapeHTML(c.teacher || "Professor não informado")} · ${escapeHTML(c.semester || "")} · ${att.workload}h</div>
+            <div class="cd-days">
+              ${cDays.length ? [1,2,3,4,5,6].filter(d => cDays.includes(d)).map(d => `<span class="cc-day ${d===jsToday?"on":""}">${names[d]}</span>`).join("") + (c.startTime ? `<span class="cc-time">${escapeHTML(c.startTime)}–${escapeHTML(c.endTime)}</span>` : "") : `<span class="cc-teacher">Horário não informado</span>`}
+            </div>
+            ${c.description ? `<div class="cc-teacher" style="margin-top:8px">${escapeHTML(c.description)}</div>` : ""}
+
+            <div class="cd-tiles">
+              <div class="cd-tile">
+                <div class="cd-tile-label">Faltas</div>
+                <div class="cd-tile-value">${att.totalFaltas}<small>/${att.limit}</small></div>
+                <div class="cc-bar"><span class="${att.barClass}" style="width:${Math.max(att.totalFaltas ? 6 : 0, Math.min(att.ratio * 100, 100))}%"></span></div>
+                <div class="cd-tile-sub">1 dia = ${att.faltasPerDay} faltas</div>
+                <button class="cd-tile-btn" data-faculty-add="absence">＋ Registrar</button>
+              </div>
+              <div class="cd-tile">
+                <div class="cd-tile-label">Avaliações</div>
+                <div class="cd-tile-value">${exams.length}</div>
+                <div class="cd-tile-sub">${avg ? `média ${avg.avg.toFixed(1)}` : "sem notas"}</div>
+                <button class="cd-tile-btn" data-faculty-add="exam">＋ Nova</button>
+              </div>
+              <div class="cd-tile">
+                <div class="cd-tile-label">Leituras</div>
+                <div class="cd-tile-value">${readings.length - pendingReadings.length}<small>/${readings.length}</small></div>
+                <div class="cd-tile-sub">${pendingReadings.length ? `${pendingReadings.length} pendente${pendingReadings.length===1?"":"s"}` : (readings.length ? "tudo lido ✓" : "nenhuma")}</div>
+                <button class="cd-tile-btn" data-faculty-add="reading">＋ Nova</button>
+              </div>
+            </div>
+
+            ${exams.length ? `<div class="cd-block"><h4>Avaliações</h4>${exams.slice(0, 4).map(x => `<button class="cd-item" data-faculty-edit="exam" data-id="${escapeHTML(x.id)}"><span><strong>${escapeHTML(x.title)}</strong><em>${formatDate(x.date)}${x.grade !== "" && x.grade != null ? ` · nota ${escapeHTML(x.grade)}` : ""}</em></span><i>›</i></button>`).join("")}</div>` : ""}
+            ${pendingReadings.length ? `<div class="cd-block"><h4>Leituras pendentes</h4>${pendingReadings.slice(0, 4).map(r => `<button class="cd-item" data-faculty-edit="reading" data-id="${escapeHTML(r.id)}"><span><strong>${escapeHTML(r.title)}</strong>${r.lectureDate ? `<em>${escapeHTML(r.lectureDate)}</em>` : ""}</span><i>›</i></button>`).join("")}</div>` : ""}
+
+            <div class="cd-block">
+              <h4>Plano de ensino</h4>
+              <div class="cd-plan-row">
+                ${c.pdfName
+                  ? `<button class="cd-btn primary" data-course-action="pdf-open" data-id="${eid}">📕 Abrir PDF</button><span class="cd-links"><button data-course-action="pdf-add" data-id="${eid}">Trocar</button><button class="danger" data-course-action="pdf-remove" data-id="${eid}">Remover</button></span>`
+                  : `<button class="cd-btn" data-course-action="pdf-add" data-id="${eid}">📎 Anexar PDF</button>`}
+              </div>
+              ${c.planoEnsino ? `<details><summary>Ver texto do plano</summary><div class="cd-plan">${escapeHTML(c.planoEnsino)}</div></details>` : ""}
+            </div>
+
+            <div class="cd-foot">
+              <button class="cd-btn" data-course-action="edit" data-id="${eid}">✎ Editar disciplina</button>
+              <button class="cd-btn danger" data-course-action="delete" data-id="${eid}">Excluir</button>
+            </div>`;
+          $("#courseDetailBackdrop").classList.add("open");
+        } catch (err) {
+          console.error("openCourseDetail", err);
+          showToast("Não consegui abrir esta disciplina. Tente recarregar a página.");
+        }
       }
       $("#closeCourseDetailBtn").addEventListener("click", closeCourseDetail);
       $("#courseDetailBackdrop").addEventListener("click", e => { if (e.target === $("#courseDetailBackdrop")) closeCourseDetail(); });
-      document.addEventListener("keydown", e => { if (e.key === "Escape") closeCourseDetail(); });
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") closeCourseDetail();
+        if ((e.key === "Enter" || e.key === " ") && e.target.classList?.contains("course-card")) { e.preventDefault(); openCourseDetail(e.target.dataset.courseId); }
+      });
 
       // Faculdade Handlers
       $("#addCourseBtn").addEventListener("click", () => facultyModal("course"));
@@ -4546,7 +4600,7 @@
         }
 
         const card = e.target.closest(".course-card");
-        if (card && !e.target.closest("button")) openCourseDetail(card.dataset.courseId);
+        if (card) { openCourseDetail(card.dataset.courseId); return; }
 
         const toggleRd = e.target.closest("[data-faculty-toggle-reading]");
         if (toggleRd) {
