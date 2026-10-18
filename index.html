@@ -2136,11 +2136,35 @@
         if(!dateStr) return null; const target=new Date(dateStr+"T12:00:00"); const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12); if(isNaN(target)) return null; return Math.ceil((target-today)/86400000);
       }
 
+      // Garante que toda disciplina tenha um id único (texto) e que os registros apontem para ele.
+      function normalizeFacultyIds(f) {
+        let changed = false;
+        const seen = new Set();
+        f.courses = f.courses.filter(c => c && typeof c === "object").map(c => {
+          let id = (c.id === undefined || c.id === null || c.id === "") ? "" : String(c.id);
+          if (!id || seen.has(id)) { id = uid(); changed = true; }
+          else if (c.id !== id) changed = true;
+          seen.add(id);
+          return { ...c, id };
+        });
+        const sid = v => (v === undefined || v === null) ? v : String(v);
+        ["absences", "exams", "readings"].forEach(k => {
+          f[k] = f[k].filter(x => x && typeof x === "object").map(x => {
+            if (x.courseId !== undefined && x.courseId !== null && typeof x.courseId !== "string") changed = true;
+            return { ...x, courseId: sid(x.courseId) };
+          });
+        });
+        if (f.selectedCourseId != null && typeof f.selectedCourseId !== "string") f.selectedCourseId = String(f.selectedCourseId);
+        if (f.selectedCourseId && !f.courses.some(c => c.id === f.selectedCourseId)) f.selectedCourseId = f.courses[0]?.id || null;
+        if (changed) { try { localStorage.setItem(STORAGE_KEY_FACULTY, JSON.stringify(f)); } catch {} }
+        return f;
+      }
+
       function loadFaculty() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY_FACULTY);
           const data = raw ? JSON.parse(raw) : {};
-          return {
+          return normalizeFacultyIds({
             courseName: data.courseName || "História",
             courseSubtitle: data.courseSubtitle ?? "Seu semestre, sob controle.",
             currentSemester: data.currentSemester || "2026.2",
@@ -2161,7 +2185,7 @@
             readings: Array.isArray(data.readings) ? data.readings : [],
             selectedCourseId: data.selectedCourseId || null,
             tcc: normalizeTcc(data.tcc)
-          };
+          });
         } catch {
           return { courseName: "História", courseSubtitle: "Seu semestre, sob controle.", currentSemester: "2026.2", semesterStart: "2026-08-10", semesterEnd: "2026-12-14", obrigTotal: 2055, obrigDone: 1425, optTotal: 960, optDone: 420, compTotal: 210, compDone: 0, courses: [], absences: [], exams: [], readings: [], selectedCourseId: null , tcc: normalizeTcc({}) };
         }
