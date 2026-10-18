@@ -1240,6 +1240,29 @@
   .cd-plan { white-space:pre-wrap; max-height:200px; overflow:auto; font-size:12.5px; line-height:1.55; margin:8px 0 0; }
   #examTable tr.row-flash td { animation:rowFlash 2.4s ease; }
   @keyframes rowFlash { 0%,60% { background:var(--primary-soft); } 100% { background:transparent; } }
+
+  /* ===== Disciplinas cadastradas: lista legível ===== */
+  .course-grid { grid-template-columns:1fr; gap:10px; }
+  .course-card.compact { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto; align-items:center; gap:16px; padding:16px 18px 16px 22px; border-radius:16px; }
+  .course-card.compact.selected { outline:2px solid var(--primary); }
+  .cc-name { font-size:17px; font-weight:800; letter-spacing:-.02em; line-height:1.25; }
+  .cc-teacher { margin-top:3px; color:var(--muted); font-size:13px; }
+  .cc-days { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px; }
+  .cc-day { font-size:12px; font-weight:800; padding:4px 10px; border-radius:999px; }
+  .cc-time { margin-left:4px; font-size:13px; font-weight:800; color:var(--text); }
+  .cc-todaytag { display:inline-block; vertical-align:middle; margin-left:6px; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; background:var(--primary); color:#fff; letter-spacing:.03em; text-transform:uppercase; }
+  .cc-side { display:flex; flex-direction:column; gap:10px; min-width:0; }
+  .cc-att-top { font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .cc-att-top strong { font-size:18px; color:var(--text); }
+  .cc-bar { height:8px; background:var(--line); }
+  .cc-counts { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; color:var(--muted); }
+  .cc-open { font-size:13px; font-weight:800; color:#fff; background:var(--primary); border:0; border-radius:10px; padding:10px 16px; cursor:pointer; white-space:nowrap; }
+  .cc-open:hover { filter:brightness(1.08); }
+  @media (max-width:700px) {
+    .course-card.compact { grid-template-columns:1fr; gap:12px; padding:15px 16px 15px 20px; }
+    .cc-open { width:100%; padding:12px; font-size:14px; }
+    .cc-name { font-size:16px; }
+  }
 </style>
 </head>
 <body>
@@ -3351,16 +3374,19 @@
             : `<span class="cc-teacher">Horário não informado</span>`;
           return `
             <article class="course-card compact ${c.id === state.faculty.selectedCourseId ? "selected" : ""} ${isToday ? "is-today" : ""}" data-course-id="${escapeHTML(c.id)}">
-              <div class="cc-head">
-                <div><div class="cc-name">${escapeHTML(c.name)}</div><div class="cc-teacher">${escapeHTML(c.teacher || "Professor não informado")}</div></div>
-                <span class="badge ${att.statusClass}" title="Faltas / limite">✓ ${att.totalFaltas}/${att.limit}</span>
+              <div class="cc-main">
+                <div class="cc-name">${escapeHTML(c.name)}${isToday ? ' <span class="cc-todaytag">Hoje</span>' : ""}</div>
+                <div class="cc-teacher">${escapeHTML(c.teacher || "Professor não informado")} · ${att.workload}h</div>
+                <div class="cc-days">${dayChips}</div>
               </div>
-              <div class="cc-days">${dayChips}</div>
-              <div class="cc-bar" title="Uso do limite de faltas"><span class="${att.barClass}" style="width:${Math.min(att.ratio * 100, 100)}%"></span></div>
-              <div class="cc-foot">
-                <div class="cc-counts"><span>★ ${examsFor.length}</span><span>▤ ${readingsFor.length}</span>${c.pdfName ? "<span>📎</span>" : ""}${c.id === state.faculty.selectedCourseId ? '<span class="cc-default">padrão</span>' : ""}</div>
-                <button class="cc-open" data-course-action="detail" data-id="${escapeHTML(c.id)}">Abrir ›</button>
+              <div class="cc-side">
+                <div class="cc-att">
+                  <div class="cc-att-top"><strong>${att.totalFaltas}</strong><span> de ${att.limit} faltas</span></div>
+                  <div class="cc-bar"><span class="${att.barClass}" style="width:${Math.max(att.totalFaltas ? 6 : 0, Math.min(att.ratio * 100, 100))}%"></span></div>
+                </div>
+                <div class="cc-counts"><span>★ ${examsFor.length} avaliaç${examsFor.length===1?"ão":"ões"}</span><span>▤ ${readingsFor.length} leitura${readingsFor.length===1?"":"s"}</span>${c.pdfName ? "<span>📎 plano</span>" : ""}</div>
               </div>
+              <button class="cc-open" data-course-action="detail" data-id="${escapeHTML(c.id)}">Abrir ›</button>
             </article>`;
         }).join("") : `<div class="faculty-empty" style="grid-column:1/-1"><div class="empty-icon">🎓</div><strong>Sua grade ainda está vazia</strong><span>Cadastre sua primeira disciplina para começar.</span></div>`;
 
