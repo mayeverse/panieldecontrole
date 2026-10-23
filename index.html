@@ -30,6 +30,9 @@
       --danger-soft: #fbecea;
       --warning: #a8741a;
       --warning-soft: #faf2de;
+      --fac: #c0392b; --fac-soft: #fbebe8; --fac-ink: #9b2c20;
+      --pes: #e0a800; --pes-soft: #fdf4d3; --pes-ink: #7a5a00;
+      --fin: #3b8a4d; --fin-soft: #e6f3e8; --fin-ink: #2a6a39;
       --hero-from: #123a36;
       --hero-to: #0b2421;
       --hero-ink: #b5ddd7;
@@ -60,6 +63,9 @@
       --danger-soft: #3a1b17;
       --warning: #e6b95c;
       --warning-soft: #3a2f12;
+      --fac: #f08a7a; --fac-soft: #3a1b17; --fac-ink: #f5b0a4;
+      --pes: #f0c24a; --pes-soft: #3a3010; --pes-ink: #f3d77f;
+      --fin: #72cf88; --fin-soft: #15301b; --fin-ink: #a2e3b3;
       --hero-from: #17413c;
       --hero-to: #0e2623;
       --hero-ink: #a8d8d2;
@@ -1398,6 +1404,44 @@
     .ov-finance .ov-value { font-family: var(--font-head); font-size: 22px; }
     .ov-sub { font-size: 14px; font-weight: 600; color: var(--text); }
     @media (hover: none) { .overview-card:hover { transform: none; } }
+
+    /* ===== Início: cores por área, topo e "Essa semana" ===== */
+    .overview-card.ov-faculty  { --acc: var(--fac); --acc-soft: var(--fac-soft); --acc-ink: var(--fac-ink); }
+    .overview-card.ov-personal { --acc: var(--pes); --acc-soft: var(--pes-soft); --acc-ink: var(--pes-ink); }
+    .overview-card.ov-finance  { --acc: var(--fin); --acc-soft: var(--fin-soft); --acc-ink: var(--fin-ink); }
+    .overview-card:hover .ov-arrow, .overview-card:focus-visible .ov-arrow { color: var(--acc-ink); }
+
+    .hero { align-items: center; flex-wrap: wrap; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-actions .secondary-btn { height: 36px; padding: 0 13px; font-size: 13px; font-weight: 600; border-radius: var(--radius-md); }
+
+    .wk-fac { --c: var(--fac); --cs: var(--fac-soft); --ci: var(--fac-ink); }
+    .wk-pes { --c: var(--pes); --cs: var(--pes-soft); --ci: var(--pes-ink); }
+    .wk-fin { --c: var(--fin); --cs: var(--fin-soft); --ci: var(--fin-ink); }
+    .wk-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: flex-end; }
+    .wk-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--muted); }
+    .wk-chip::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+    .week-list { padding: 0 12px 12px; }
+    .wk-day { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: start; padding: 12px 10px; border-top: 1px solid var(--line); }
+    .wk-day:first-child { border-top-color: transparent; }
+    .wk-day.today { background: var(--primary-soft); border-radius: var(--radius-md); border-top-color: transparent; }
+    .wk-day.today + .wk-day { border-top-color: transparent; }
+    .wk-date strong { display: block; font-family: var(--font-head); font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+    .wk-date span { font-size: 12px; color: var(--muted); }
+    .wk-day.today .wk-date strong { color: var(--primary); }
+    .wk-day.free .wk-date strong { color: var(--muted); font-weight: 600; }
+    .wk-items { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .wk-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); background: var(--cs); border-left: 4px solid var(--c); font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+    .wk-ico { flex-shrink: 0; }
+    .wk-title { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .wk-time { flex-shrink: 0; font-size: 12px; font-weight: 700; color: var(--ci); white-space: nowrap; }
+    .wk-free { font-size: 13px; color: var(--muted); padding: 5px 0; }
+    @media (max-width: 560px) {
+      .wk-day { grid-template-columns: 1fr; gap: 8px; }
+      .wk-date { display: flex; align-items: baseline; gap: 8px; }
+      .wk-legend { justify-content: flex-start; }
+      .panel-header:has(.wk-legend) { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -1440,6 +1484,10 @@
               <h1 id="greeting">Bom dia 👋</h1>
               <p class="subtitle" id="dateSubtitle"></p>
             </div>
+            <div class="hero-actions">
+              <button class="secondary-btn" data-finance-add="expense">＋ Registrar gasto</button>
+              <button class="secondary-btn" id="quickAgendaBtn">📅 Abrir agenda</button>
+            </div>
           </div>
 
           <div class="overview-grid" id="overviewGrid">
@@ -1460,32 +1508,19 @@
             </article>
           </div>
 
-          <section class="panel" style="margin-bottom:18px;">
+          <section class="panel">
             <div class="panel-header">
               <div>
-                <h2 class="panel-title">📅 Compromissos & Lembretes da Semana</h2>
-                <div class="panel-subtitle">Compromissos, leituras, avaliações e lembretes dos próximos 7 dias.</div>
+                <h2 class="panel-title">Essa semana</h2>
+                <div class="panel-subtitle">O que você tem para fazer nos próximos 7 dias.</div>
+              </div>
+              <div class="wk-legend" aria-label="Legenda de cores">
+                <span class="wk-chip wk-fac">Faculdade</span>
+                <span class="wk-chip wk-pes">Pessoal</span>
+                <span class="wk-chip wk-fin">Financeiro</span>
               </div>
             </div>
-            <div class="task-list" id="weekAgendaList"></div>
-          </section>
-
-          <section class="panel" style="margin-bottom:18px;">
-            <div class="panel-header">
-              <div><h2 class="panel-title">⚡ Acesso Rápido & Atalhos</h2></div>
-            </div>
-            <div class="quick-actions">
-              <button class="secondary-btn" data-finance-add="expense">＋ Registrar Gasto</button>
-              <button class="secondary-btn" id="quickAgendaBtn">📅 Abrir Agenda</button>
-              <button class="secondary-btn" id="quickInboxBtn">📥 Caixa de entrada</button>
-            </div>
-          </section>
-
-          <section class="panel focus-panel">
-            <div class="panel-header">
-              <div><h2 class="panel-title">📌 Foco do Momento</h2><div class="panel-subtitle">Prioridades para agora.</div></div>
-            </div>
-            <div class="task-list" id="focusList"></div>
+            <div class="week-list" id="weekAgendaList"></div>
           </section>
         </section>
 
@@ -3722,67 +3757,35 @@
       function renderWeekAgenda() {
         const el = $("#weekAgendaList");
         if (!el) return;
+        const AREA = { prova:"fac", leitura:"fac", aula:"fac", tarefa:"pes", agenda:"pes", lembrete:"pes", conta:"fin", parcela:"fin", fatura:"fin" };
+        const itemHTML = (area, icon, title, time) => `<div class="wk-item wk-${area}"><span class="wk-ico">${icon}</span><span class="wk-title">${escapeHTML(title)}</span>${time ? `<span class="wk-time">${escapeHTML(String(time).replace(":", "h"))}</span>` : ""}</div>`;
         const rows = [];
-
-        const pendingReadings = state.faculty.readings.filter(r => r.status !== "completed");
-        if (pendingReadings.length) {
-          const items = pendingReadings.map(r => `<span class="badge">📖 ${escapeHTML(r.title)}${r.lectureDate ? ` (${escapeHTML(r.lectureDate)})` : ""}</span>`).join("");
-          rows.push(`<div class="agenda-day-row"><div class="agenda-day-label">Leituras</div><div class="agenda-day-items">${items}</div></div>`);
-        }
+        let total = 0;
 
         for (let offset = 0; offset < 7; offset++) {
           const d = new Date();
           d.setDate(d.getDate() + offset);
           const iso = localDateISO(d);
-          const items = unifiedEvents(iso, iso).map(e => ({ time: e.time, label: `${e.icon} ${e.title}${e.time ? ` (${e.time.replace(":","h")})` : ""}` }));
-          if (!items.length) continue;
-          items.sort((a,b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
-          const label = offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : formatDate(iso);
-          rows.push(`<div class="agenda-day-row"><div class="agenda-day-label">${label}</div><div class="agenda-day-items">${items.map(i => `<span class="badge">${escapeHTML(i.label)}</span>`).join("")}</div></div>`);
+          const items = unifiedEvents(iso, iso).sort((x, y) => (x.time || "99:99").localeCompare(y.time || "99:99"));
+          total += items.length;
+          const weekday = d.toLocaleDateString("pt-BR", { weekday: "long" }).split("-")[0];
+          const name = offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : weekday.charAt(0).toUpperCase() + weekday.slice(1);
+          const short = String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0");
+          const body = items.length
+            ? `<div class="wk-items">${items.map(e => itemHTML(AREA[e.kind] || "pes", e.icon, e.title, e.time)).join("")}</div>`
+            : `<span class="wk-free">Nada marcado</span>`;
+          rows.push(`<div class="wk-day${offset === 0 ? " today" : ""}${items.length ? "" : " free"}"><div class="wk-date"><strong>${name}</strong><span>${short}</span></div>${body}</div>`);
         }
-        el.innerHTML = rows.length ? rows.join("") : `<div class="finance-empty"><strong>Nenhum compromisso</strong><span>Sem compromissos, leituras, avaliações ou lembretes nos próximos 7 dias.</span></div>`;
-      }
 
-      function renderFocusList() {
-        const el = $("#focusList");
-        if (!el) return;
-        const rows = [];
+        const undated = state.faculty.readings.filter(r => r.status !== "completed" && !String(r.lectureDate || "").match(/(\d{1,2})\/(\d{1,2})/));
+        if (undated.length) {
+          total += undated.length;
+          rows.push(`<div class="wk-day"><div class="wk-date"><strong>Sem data</strong><span>leituras</span></div><div class="wk-items">${undated.map(r => itemHTML("fac", "📖", r.title, "")).join("")}</div></div>`);
+        }
 
-        const pendingReading = state.faculty.readings.find(r => r.status !== "completed");
-        const nextExam = [...state.faculty.exams].filter(e => e.date >= localDateISO()).sort((a,b) => a.date.localeCompare(b.date))[0];
-        let academicText = "Nenhuma pendência acadêmica";
-        if (pendingReading) academicText = `Ler: ${pendingReading.title}`;
-        else if (nextExam) academicText = `${nextExam.title} em ${formatDate(nextExam.date)}`;
-        rows.push({ icon: "🎓", label: "Acadêmico", text: academicText });
-
-        const nextPersonalTask = [...state.personal.todos].filter(t => !t.completed && t.bucket !== "later").sort((a,b) => String(a.dueDate||"9999-99-99").localeCompare(String(b.dueDate||"9999-99-99")))[0];
-        const priorityTask = state.personal.priorities.map(id => state.personal.todos.find(t => t.id === id)).find(Boolean);
-        const nextAgenda = [...state.personal.agenda].filter(a => `${a.date} ${a.time||""}` >= `${localDateISO()} 00:00`).sort((a,b) => `${a.date} ${a.time||"99:99"}`.localeCompare(`${b.date} ${b.time||"99:99"}`))[0];
-        const pendingShopping = state.personal.shopping.find(x => !x.bought);
-        let personalText = "Nenhuma pendência pessoal";
-        if (priorityTask) personalText = `Prioridade: ${priorityTask.title}`;
-        else if (nextPersonalTask) personalText = nextPersonalTask.title;
-        else if (nextAgenda) personalText = `${nextAgenda.title} · ${formatDate(nextAgenda.date)}${nextAgenda.time ? ` às ${nextAgenda.time.replace(":","h")}` : ""}`;
-        else if (pendingShopping) personalText = `Comprar: ${pendingShopping.name}`;
-        rows.push({ icon: "👤", label: "Pessoal", text: personalText });
-
-        const curMonth = localDateISO().slice(0,7);
-        const todayDate = localDateISO();
-        const fixedBills = financeFixedOccurrences(curMonth).filter(x => !x.paid).map(x => ({
-          date:x.occurrenceDate, text:`Pagar: ${x.name} (${formatDate(x.occurrenceDate)})`
-        }));
-        const cardInstallments = state.finance.installments.flatMap(item => {
-          if (!item?.date || !item?.totalParcels) return [];
-          return financeInstallmentRows(item)
-            .filter(r => r.invoiceDate && r.invoiceYear === Number(curMonth.slice(0,4)) && r.invoiceMonth === Number(curMonth.slice(5,7))-1)
-            .map(r => ({ date:curMonth+"-01", text:`Parcela: ${item.name || "Compra no cartão"} (${r.number}/${r.total})` }));
-        });
-        const financePending = [...fixedBills, ...cardInstallments].sort((a,b) => a.date.localeCompare(b.date));
-        let financeText = "Nenhuma conta pendente";
-        if (financePending.length) financeText = financePending[0].text;
-        rows.push({ icon: "💰", label: "Financeiro", text: financeText });
-
-        el.innerHTML = rows.map(r => `<div class="focus-row"><span class="badge">${r.icon} ${escapeHTML(r.label)}</span><span class="focus-text">${escapeHTML(r.text)}</span></div>`).join("");
+        el.innerHTML = total
+          ? rows.join("")
+          : `<div class="finance-empty"><strong>Semana livre</strong><span>Sem compromissos, leituras, avaliações, contas ou lembretes nos próximos 7 dias.</span></div>`;
       }
 
       function goToPersonalPane(pane) {
@@ -3791,7 +3794,7 @@
       }
 
       function render() {
-        [renderOverviewCards, renderWeekAgenda, renderFocusList, renderFaculty, renderTcc, renderFinance, renderPersonal].forEach(fn => {
+        [renderOverviewCards, renderWeekAgenda, renderFaculty, renderTcc, renderFinance, renderPersonal].forEach(fn => {
           try { fn(); } catch (err) { console.error("Erro em " + fn.name, err); }
         });
       }
@@ -4370,7 +4373,6 @@
       });
       $("#themeToggleBtn")?.addEventListener("click", toggleTheme);
       $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
-      $("#quickInboxBtn")?.addEventListener("click", () => goToPersonalPane("inbox"));
 
       $("#personalForm")?.addEventListener("submit", e => {
         e.preventDefault();
