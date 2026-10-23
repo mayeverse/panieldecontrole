@@ -1442,6 +1442,123 @@
       .wk-legend { justify-content: flex-start; }
       .panel-header:has(.wk-legend) { flex-direction: column; align-items: flex-start; }
     }
+
+    /* ===== Início: "Essa semana" em destaque + itens clicáveis ===== */
+    .home-layout { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(250px, 1fr); gap: 18px; align-items: start; margin-bottom: 18px; }
+    .home-layout .overview-grid { grid-template-columns: 1fr; margin-bottom: 0; gap: 14px; }
+    .home-layout .week-panel { margin-bottom: 0; }
+    @media (max-width: 1100px) {
+      .home-layout { grid-template-columns: 1fr; }
+      .home-layout .overview-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+    }
+    .week-panel { border-color: var(--line-strong); border-top: 4px solid var(--primary); box-shadow: var(--shadow); }
+    .week-panel .panel-title { font-size: 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .wk-count { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0; padding: 4px 10px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); }
+    .week-panel .wk-item { padding: 11px 14px; font-size: 14.5px; }
+    .week-panel .wk-day { padding: 14px 10px; }
+    .week-panel .wk-date strong { font-size: 16px; }
+    .wk-day.today .wk-item { box-shadow: 0 0 0 1px var(--c); }
+
+    button.wk-item { width: 100%; border-top: 0; border-right: 0; border-bottom: 0; font-family: inherit; color: var(--text); text-align: left; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, filter .15s ease; }
+    button.wk-item:hover { transform: translateX(3px); box-shadow: 0 0 0 1px var(--c), var(--shadow-sm); }
+    button.wk-item:active { transform: translateX(1px); }
+    button.wk-item:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+    .wk-go { flex-shrink: 0; color: var(--ci); opacity: .45; transition: opacity .15s ease, transform .15s ease; }
+    button.wk-item:hover .wk-go, button.wk-item:focus-visible .wk-go { opacity: 1; transform: translateX(2px); }
+    @media (hover: none) { button.wk-item:hover { transform: none; } .wk-go { opacity: .7; } }
+
+    /* ===== Faculdade: tema vermelho, semestre e grade em destaque ===== */
+    #facultyView {
+      --primary: #c0392b; --primary-dark: #9b2c20; --primary-2: #e2705f; --primary-soft: #fbebe8;
+      --ev0:#c0392b; --ev0i:#9b2c20; --ev0s:#fbebe8;  --ev1:#1f7a74; --ev1i:#155c57; --ev1s:#e0f1ef;
+      --ev2:#3b6fb0; --ev2i:#2b5489; --ev2s:#e4edf8;  --ev3:#7a4fa3; --ev3i:#5d3a80; --ev3s:#eee6f6;
+      --ev4:#b7791f; --ev4i:#8a5a12; --ev4s:#faf0db;  --ev5:#5a8a3c; --ev5i:#416a28; --ev5s:#e9f2e1;
+    }
+    body.dark-mode #facultyView {
+      --primary: #f08a7a; --primary-dark: #e06e5d; --primary-2: #f5b0a4; --primary-soft: #3a1b17;
+      --ev0:#f08a7a; --ev0i:#f5b0a4; --ev0s:#3a1b17;  --ev1:#5fc4b8; --ev1i:#a8e0d6; --ev1s:#12302d;
+      --ev2:#7fa8e0; --ev2i:#b3cdf0; --ev2s:#1a2a40;  --ev3:#b794dc; --ev3i:#d6c0ee; --ev3s:#2a1f3a;
+      --ev4:#e6b95c; --ev4i:#f3d77f; --ev4s:#3a2f12;  --ev5:#9cc97f; --ev5i:#c4e3ae; --ev5s:#1f301a;
+    }
+    #facultyView .ev-c0 { --ev: var(--ev0); --evi: var(--ev0i); --evs: var(--ev0s); }
+    #facultyView .ev-c1 { --ev: var(--ev1); --evi: var(--ev1i); --evs: var(--ev1s); }
+    #facultyView .ev-c2 { --ev: var(--ev2); --evi: var(--ev2i); --evs: var(--ev2s); }
+    #facultyView .ev-c3 { --ev: var(--ev3); --evi: var(--ev3i); --evs: var(--ev3s); }
+    #facultyView .ev-c4 { --ev: var(--ev4); --evi: var(--ev4i); --evs: var(--ev4s); }
+    #facultyView .ev-c5 { --ev: var(--ev5); --evi: var(--ev5i); --evs: var(--ev5s); }
+    #facultyView .primary-btn { background: var(--primary); }
+    #facultyView .primary-btn:hover { background: var(--primary-dark); }
+    #facultyView .hero-actions .primary-btn { height: 36px; padding: 0 14px; font-size: 13px; border-radius: var(--radius-md); }
+
+    /* cartão do semestre */
+    .sem-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 26px; align-items: center; padding: 22px 26px; margin-bottom: 18px; background: var(--surface); border: 1px solid var(--line-strong); border-top: 4px solid var(--primary); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .sem-ring { --size: 132px; width: var(--size); height: var(--size); border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--primary) calc(var(--p) * 1%), var(--line) 0); }
+    .sem-ring > div { width: calc(var(--size) - 24px); height: calc(var(--size) - 24px); border-radius: 50%; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .sem-ring strong { font-family: var(--font-head); font-size: 32px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--primary); }
+    .sem-ring span { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .sem-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 14px; }
+    .sem-head .panel-title { font-size: 20px; }
+    .sem-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+    .sem-bar { height: 12px; margin-top: 12px; }
+    .sem-bar > span { background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
+    .sem-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .sem-stat { padding: 10px 14px; border-radius: var(--radius-md); background: var(--surface-2); }
+    .sem-stat small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .sem-stat strong { display: block; margin-top: 2px; font-family: var(--font-head); font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+    .sem-stat.sem-left { background: var(--primary-soft); }
+    .sem-stat.sem-left strong { color: var(--primary); }
+    .sem-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+    .sem-chips .info-chip { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 9px 12px; box-shadow: none; }
+    .sem-chips .info-chip small { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 600; }
+    .sem-chips .info-chip strong { font-size: 13.5px; }
+    .semester-info .info-chip.editable { padding-right: 30px; }
+    .sem-chips .info-chip.editable { position: relative; cursor: pointer; text-align: left; font: inherit; color: inherit; padding-right: 30px; transition: border-color .18s ease; }
+    .sem-chips .info-chip.editable:hover, .sem-chips .info-chip.editable:focus-visible { border-color: var(--primary); }
+    .sem-chips .info-chip.editable::after { content: "✎"; position: absolute; top: 9px; right: 11px; color: var(--muted); font-size: 12px; }
+
+    /* grade em destaque */
+    .fac-schedule { padding: 22px 22px 18px; margin-bottom: 18px; box-shadow: var(--shadow); }
+    .fac-schedule .panel-title { font-size: 22px; }
+    .fac-schedule .weekly-schedule { border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: none; }
+    .weekly-grid { grid-template-columns: 64px repeat(6, minmax(130px, 1fr)); }
+    .weekly-day-head { padding: 12px 8px; }
+    .weekly-day-head strong { font-size: 14px; font-family: var(--font-head); }
+    .weekly-day-head span { font-size: 11px; font-weight: 600; }
+    .weekly-day-head.today { background: var(--primary); color: #fff; }
+    .weekly-day-head.today span { color: rgba(255,255,255,.85); }
+    body.dark-mode .weekly-day-head.today { color: #0d1514; }
+    body.dark-mode .weekly-day-head.today span { color: rgba(13,21,20,.75); }
+    .weekly-time-label { font-size: 11px; }
+    .weekly-day-col { background-image: linear-gradient(to bottom, transparent calc(var(--hour) - 1px), var(--line) calc(var(--hour) - 1px)); background-size: 100% var(--hour); background-position: 0 8px; }
+    .weekly-day-col.today { background-color: var(--primary-soft); }
+    .weekly-event { left: 6px; right: 6px; padding: 8px 10px; border-radius: var(--radius-sm); border: 0; border-left: 4px solid var(--ev); background: var(--evs); color: var(--evi); text-align: left; box-shadow: none; font-family: inherit; transition: transform .15s ease, box-shadow .15s ease; }
+    .weekly-event:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px var(--ev), 0 6px 14px rgba(16,40,36,.12); }
+    .weekly-event strong { font-size: 13px; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .weekly-event span { font-size: 11.5px; font-weight: 700; opacity: .9; }
+    .weekly-now { position: absolute; left: 0; right: 0; height: 2px; background: var(--primary); z-index: 2; pointer-events: none; }
+    .weekly-now::before { content: ""; position: absolute; left: -1px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+    .weekly-legend { gap: 8px; margin: 14px 0 0; }
+    .wl-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+    .wl-chip i { width: 10px; height: 10px; border-radius: 3px; background: var(--ev); }
+    .wl-chip:hover { border-color: var(--ev); background: var(--evs); }
+
+    /* harmonia do restante */
+    #facultyView .course-card::before { background: var(--ev, var(--primary)); }
+    #facultyView .faculty-kpi { border-radius: var(--radius); box-shadow: var(--shadow-sm); border-top: 3px solid var(--primary); }
+    #facultyView .faculty-kpi .kpi-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 600; }
+    #facultyView .faculty-kpi .kpi-value { font-family: var(--font-head); font-weight: 800; }
+    #facultyView .faculty-summary { margin-bottom: 18px; }
+    #facultyView .side-card { border-radius: var(--radius); margin-bottom: 20px !important; }
+    #facultyView .side-card .progress > span, #facultyView .faculty-pane .progress > span { background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
+    #facultyView .faculty-table-card, #facultyView .tcc-section { border-radius: var(--radius); }
+    @media (max-width: 760px) {
+      .sem-card { grid-template-columns: 1fr; justify-items: stretch; gap: 18px; padding: 18px; }
+      .sem-ring { --size: 116px; justify-self: center; }
+      .sem-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .sem-stat { padding: 9px 10px; }
+      .sem-stat strong { font-size: 18px; }
+      .fac-schedule { padding: 16px 14px 14px; }
+    }
   </style>
 </head>
 <body>
@@ -1490,6 +1607,22 @@
             </div>
           </div>
 
+          <div class="home-layout">
+          <section class="panel week-panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">Essa semana <span class="wk-count" id="weekCount"></span></h2>
+                <div class="panel-subtitle">O que você tem para fazer nos próximos 7 dias.</div>
+              </div>
+              <div class="wk-legend" aria-label="Legenda de cores">
+                <span class="wk-chip wk-fac">Faculdade</span>
+                <span class="wk-chip wk-pes">Pessoal</span>
+                <span class="wk-chip wk-fin">Financeiro</span>
+              </div>
+            </div>
+            <div class="week-list" id="weekAgendaList"></div>
+          </section>
+
           <div class="overview-grid" id="overviewGrid">
             <article class="overview-card ov-faculty" data-view-link="faculty" role="link" tabindex="0" aria-label="Abrir Faculdade">
               <div class="ov-head"><span class="ov-icon">📚</span><h3>Faculdade</h3><svg class="ov-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
@@ -1507,21 +1640,7 @@
               <div class="ov-row"><span class="ov-label">Contas da semana</span><span class="ov-sub" id="ovFinanceSecondary">—</span></div>
             </article>
           </div>
-
-          <section class="panel">
-            <div class="panel-header">
-              <div>
-                <h2 class="panel-title">Essa semana</h2>
-                <div class="panel-subtitle">O que você tem para fazer nos próximos 7 dias.</div>
-              </div>
-              <div class="wk-legend" aria-label="Legenda de cores">
-                <span class="wk-chip wk-fac">Faculdade</span>
-                <span class="wk-chip wk-pes">Pessoal</span>
-                <span class="wk-chip wk-fin">Financeiro</span>
-              </div>
-            </div>
-            <div class="week-list" id="weekAgendaList"></div>
-          </section>
+        </div>
         </section>
 
         <section id="facultyView" class="view">
@@ -1537,11 +1656,40 @@
             </div>
           </div>
 
-          <div class="semester-info" style="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));">
-            <button type="button" class="info-chip editable" data-open-grad="1"><small>Semestre Atual</small><strong id="facultyCurrentSemester">2026.2</strong></button>
-            <button type="button" class="info-chip editable" data-open-grad="1"><small>Início das aulas</small><strong id="facultySemesterStart">—</strong></button>
-            <button type="button" class="info-chip editable" data-open-grad="1"><small>Término das aulas</small><strong id="facultySemesterEnd">—</strong></button>
-            <button type="button" class="info-chip editable" data-open-grad="1"><small>Andamento do semestre</small><strong id="facultySemesterProgress">—</strong></button>
+          <section class="sem-card" aria-label="Andamento do semestre">
+            <div class="sem-ring" id="semRing" style="--p:0"><div><strong id="semPct">—</strong><span>concluído</span></div></div>
+            <div class="sem-body">
+              <div class="sem-head">
+                <h2 class="panel-title">Andamento do semestre</h2>
+                <span class="sem-label" id="facultySemesterProgress">—</span>
+              </div>
+              <div class="progress sem-bar"><span id="semBar" style="width:0%"></span></div>
+              <div class="sem-stats">
+                <div class="sem-stat"><small>Já passou</small><strong id="semDone">—</strong></div>
+                <div class="sem-stat sem-left"><small>Falta</small><strong id="semLeftPct">—</strong></div>
+                <div class="sem-stat"><small id="semDaysLabel">Dias restantes</small><strong id="semDays">—</strong></div>
+              </div>
+              <div class="sem-chips">
+                <button type="button" class="info-chip editable" data-open-grad="1"><small>Semestre</small><strong id="facultyCurrentSemester">2026.2</strong></button>
+                <button type="button" class="info-chip editable" data-open-grad="1"><small>Início das aulas</small><strong id="facultySemesterStart">—</strong></button>
+                <button type="button" class="info-chip editable" data-open-grad="1"><small>Término das aulas</small><strong id="facultySemesterEnd">—</strong></button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel fac-schedule">
+            <div class="panel-header" style="padding:0 0 14px;">
+              <div><h2 class="panel-title">Minha grade</h2><div class="panel-subtitle">Seus horários da semana. Toque em um bloco para abrir a disciplina.</div></div>
+            </div>
+            <div class="weekly-schedule" id="weeklySchedule"></div>
+            <div class="weekly-legend" id="weeklyLegend"></div>
+          </section>
+
+          <div class="faculty-summary">
+            <article class="faculty-kpi"><div class="kpi-label">Disciplinas</div><div class="kpi-value" id="facultyCourses">0</div><div class="kpi-note">na sua grade</div></article>
+            <article class="faculty-kpi"><div class="kpi-label">Faltas</div><div class="kpi-value" id="facultyAbsences">0</div><div class="kpi-note">registradas</div></article>
+            <article class="faculty-kpi"><div class="kpi-label">Avaliações</div><div class="kpi-value" id="facultyExams">0</div><div class="kpi-note">pendentes</div></article>
+            <article class="faculty-kpi"><div class="kpi-label">Leituras</div><div class="kpi-value" id="facultyReading">0%</div><div class="kpi-note">progresso geral</div></article>
           </div>
 
           <!-- Card de Progresso da Formação / Graduação -->
@@ -1602,15 +1750,8 @@
             </div>
           </div>
 
-          <div class="faculty-summary">
-            <article class="faculty-kpi"><div class="kpi-label">Disciplinas</div><div class="kpi-value" id="facultyCourses">0</div><div class="kpi-note">na sua grade</div></article>
-            <article class="faculty-kpi"><div class="kpi-label">Faltas</div><div class="kpi-value" id="facultyAbsences">0</div><div class="kpi-note">registradas</div></article>
-            <article class="faculty-kpi"><div class="kpi-label">Avaliações</div><div class="kpi-value" id="facultyExams">0</div><div class="kpi-note">pendentes</div></article>
-            <article class="faculty-kpi"><div class="kpi-label">Leituras</div><div class="kpi-value" id="facultyReading">0%</div><div class="kpi-note">progresso geral</div></article>
-          </div>
-
           <div class="faculty-nav" role="tablist">
-            <button class="faculty-tab active" data-faculty-pane="courses">▦ Minha grade</button>
+            <button class="faculty-tab active" data-faculty-pane="courses">▦ Disciplinas</button>
             <button class="faculty-tab" data-faculty-pane="attendance">✓ Faltas</button>
             <button class="faculty-tab" data-faculty-pane="exams">★ Avaliações</button>
             <button class="faculty-tab" data-faculty-pane="readings">▤ Leituras</button>
@@ -1619,11 +1760,6 @@
 
           <section id="facultyCoursesPane" class="faculty-pane active">
             <div class="panel-header" style="padding:0 0 12px;">
-              <div><h2 class="panel-title">Minha grade</h2><div class="panel-subtitle">Toque em um bloco para abrir a disciplina.</div></div>
-            </div>
-            <div class="weekly-schedule" id="weeklySchedule"></div>
-            <div class="weekly-legend" id="weeklyLegend"></div>
-            <div class="panel-header" style="padding:18px 0 12px;">
               <div><h2 class="panel-title">Disciplinas cadastradas</h2><div class="panel-subtitle">Toque em uma disciplina para ver detalhes e registrar faltas, avaliações e leituras.</div></div>
             </div>
             <div id="courseGrid" class="course-grid"></div>
@@ -3424,32 +3560,58 @@
           $("#weeklyLegend").innerHTML = "";
           return;
         }
-        // Faixa de horas ajustada às aulas cadastradas (antes era fixa e muito alta)
+        const colorOf = c => Math.max(0, courses.findIndex(x => x.id === c.id)) % 6;
         const start = Math.floor(Math.min(...scheduled.map(c => timeToMinutes(c.startTime))) / 60) * 60;
         const end = Math.ceil(Math.max(...scheduled.map(c => timeToMinutes(c.endTime))) / 60) * 60;
-        const pxPerHour = 56, pad = 6;
+        const pxPerHour = 72, pad = 8;
         const height = Math.round((end - start) / 60 * pxPerHour) + pad * 2;
-        const today = new Date().getDay();
+        const now = new Date();
+        const today = now.getDay();
         const todayFacultyDay = today === 0 ? 7 : today;
+        const nowMin = now.getHours() * 60 + now.getMinutes();
+        const monday = new Date(now); monday.setHours(12, 0, 0, 0);
+        monday.setDate(monday.getDate() + (today === 0 ? 1 : 1 - today));
         const timeHTML = [];
         for (let t = start; t <= end; t += 60) timeHTML.push(`<span class="weekly-time-label" style="top:${pad + (t-start)/60*pxPerHour}px">${String(Math.floor(t/60)).padStart(2,"0")}:00</span>`);
         const dayCols = days.map(d => {
           const events = scheduled.filter(c => courseDaysOf(c).includes(d));
           const eventHTML = events.map(c => {
             const top = pad + Math.max(0, (timeToMinutes(c.startTime) - start) / 60 * pxPerHour);
-            const h = Math.max(32, hoursBetween(c.startTime, c.endTime) * pxPerHour - 3);
-            return `<button class="weekly-event" data-course-action="detail" data-id="${escapeHTML(c.id)}" style="top:${top}px;height:${h}px" title="${escapeHTML(c.name)} — ${escapeHTML(c.startTime)}–${escapeHTML(c.endTime)}">
+            const h = Math.max(40, hoursBetween(c.startTime, c.endTime) * pxPerHour - 4);
+            return `<button class="weekly-event ev-c${colorOf(c)}" data-course-action="detail" data-id="${escapeHTML(c.id)}" style="top:${top}px;height:${h}px" title="${escapeHTML(c.name)} — ${escapeHTML(c.startTime)}–${escapeHTML(c.endTime)}">
               <strong>${escapeHTML(c.name)}</strong><span>${escapeHTML(c.startTime)}–${escapeHTML(c.endTime)}</span>
             </button>`;
           }).join("");
-          return `<div class="weekly-day-col" style="height:${height}px;--hour:${pxPerHour}px">${eventHTML}</div>`;
+          const nowLine = d === todayFacultyDay && nowMin >= start && nowMin <= end
+            ? `<div class="weekly-now" style="top:${pad + (nowMin - start) / 60 * pxPerHour}px"></div>` : "";
+          return `<div class="weekly-day-col${d === todayFacultyDay ? " today" : ""}" style="height:${height}px;--hour:${pxPerHour}px">${nowLine}${eventHTML}</div>`;
         }).join("");
         $("#weeklySchedule").innerHTML = `<div class="weekly-grid">
           <div class="weekly-corner"></div>
-          ${days.map(d => `<div class="weekly-day-head ${d===todayFacultyDay?"today":""}"><strong>${labels[d]}</strong><span>${d===todayFacultyDay?"Hoje":""}</span></div>`).join("")}
+          ${days.map(d => { const dt = new Date(monday); dt.setDate(monday.getDate() + d - 1); return `<div class="weekly-day-head ${d===todayFacultyDay?"today":""}"><strong>${labels[d]}</strong><span>${d===todayFacultyDay?"Hoje · ":""}${String(dt.getDate()).padStart(2,"0")}/${String(dt.getMonth()+1).padStart(2,"0")}</span></div>`; }).join("")}
           <div class="weekly-time-col" style="height:${height}px">${timeHTML.join("")}</div>${dayCols}
         </div>`;
-        $("#weeklyLegend").innerHTML = "";
+        $("#weeklyLegend").innerHTML = scheduled.map(c => `<button type="button" class="wl-chip ev-c${colorOf(c)}" data-course-action="detail" data-id="${escapeHTML(c.id)}"><i></i>${escapeHTML(c.name)}</button>`).join("");
+      }
+
+      function updateSemesterCard(startStr, endStr) {
+        const ring = $("#semRing"); if (!ring) return;
+        const set = (id, t) => { const el = $(id); if (el) el.textContent = t; };
+        const start = new Date(startStr + "T12:00:00"), end = new Date(endStr + "T12:00:00");
+        let pct = null, days = "—", label = "Dias restantes";
+        if (startStr && endStr && !isNaN(start) && !isNaN(end) && end > start) {
+          const now = new Date(), day = 86400000;
+          if (now < start) { pct = 0; days = String(Math.ceil((start - now) / day)); label = "Começa em (dias)"; }
+          else if (now > end) { pct = 100; days = "0"; }
+          else { pct = Math.round(((now - start) / (end - start)) * 100); days = String(Math.ceil((end - now) / day)); }
+        }
+        ring.style.setProperty("--p", pct ?? 0);
+        set("#semPct", pct === null ? "—" : pct + "%");
+        set("#semDone", pct === null ? "—" : pct + "%");
+        set("#semLeftPct", pct === null ? "—" : (100 - pct) + "%");
+        set("#semDays", days);
+        set("#semDaysLabel", label);
+        const bar = $("#semBar"); if (bar) bar.style.width = (pct ?? 0) + "%";
       }
 
       function renderTcc() {
@@ -3508,6 +3670,7 @@
         if ($("#facultySemesterStart")) $("#facultySemesterStart").textContent = formatLongDate(semesterStart);
         if ($("#facultySemesterEnd")) $("#facultySemesterEnd").textContent = formatLongDate(semesterEnd);
         if ($("#facultySemesterProgress")) $("#facultySemesterProgress").textContent = semesterProgressLabel(semesterStart, semesterEnd);
+        updateSemesterCard(semesterStart, semesterEnd);
 
         // Cálculo Obrigatórias
         const obrigRest = Math.max(0, obrigTotal - obrigDone);
@@ -3568,7 +3731,7 @@
             ? [1,2,3,4,5,6].filter(d => cDays.includes(d)).map(d => `<span class="cc-day ${d===jsToday?"on":""}">${dayLabelsShort[d]}</span>`).join("") + (timeTxt ? `<span class="cc-time">${timeTxt}</span>` : "")
             : `<span class="cc-teacher">Horário não informado</span>`;
           return `
-            <article class="course-card compact ${c.id === state.faculty.selectedCourseId ? "selected" : ""} ${isToday ? "is-today" : ""}" data-course-id="${escapeHTML(c.id)}" role="button" tabindex="0" aria-label="Abrir ${escapeHTML(c.name)}">
+            <article class="course-card compact ev-c${Math.max(0, courses.findIndex(x => x.id === c.id)) % 6} ${c.id === state.faculty.selectedCourseId ? "selected" : ""} ${isToday ? "is-today" : ""}" data-course-id="${escapeHTML(c.id)}" role="button" tabindex="0" aria-label="Abrir ${escapeHTML(c.name)}">
               <div class="cc-main">
                 <div class="cc-name">${escapeHTML(c.name)}${isToday ? ' <span class="cc-todaytag">Hoje</span>' : ""}</div>
                 <div class="cc-teacher">${escapeHTML(c.teacher || "Professor não informado")} · ${att.workload}h</div>
@@ -3758,7 +3921,8 @@
         const el = $("#weekAgendaList");
         if (!el) return;
         const AREA = { prova:"fac", leitura:"fac", aula:"fac", tarefa:"pes", agenda:"pes", lembrete:"pes", conta:"fin", parcela:"fin", fatura:"fin" };
-        const itemHTML = (area, icon, title, time) => `<div class="wk-item wk-${area}"><span class="wk-ico">${icon}</span><span class="wk-title">${escapeHTML(title)}</span>${time ? `<span class="wk-time">${escapeHTML(String(time).replace(":", "h"))}</span>` : ""}</div>`;
+        const DEST = { prova:"faculty:exams", leitura:"faculty:readings", aula:"faculty:courses", tarefa:"personal:todos", agenda:"personal:agenda", lembrete:"personal:agenda", conta:"finance:fixed", parcela:"finance:installments", fatura:"finance:cards" };
+        const itemHTML = (area, icon, title, time, kind) => `<button type="button" class="wk-item wk-${area}" data-wk-go="${DEST[kind] || "personal:agenda"}" title="Abrir"><span class="wk-ico">${icon}</span><span class="wk-title">${escapeHTML(title)}</span>${time ? `<span class="wk-time">${escapeHTML(String(time).replace(":", "h"))}</span>` : ""}<svg class="wk-go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>`;
         const rows = [];
         let total = 0;
 
@@ -3772,7 +3936,7 @@
           const name = offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : weekday.charAt(0).toUpperCase() + weekday.slice(1);
           const short = String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0");
           const body = items.length
-            ? `<div class="wk-items">${items.map(e => itemHTML(AREA[e.kind] || "pes", e.icon, e.title, e.time)).join("")}</div>`
+            ? `<div class="wk-items">${items.map(e => itemHTML(AREA[e.kind] || "pes", e.icon, e.title, e.time, e.kind)).join("")}</div>`
             : `<span class="wk-free">Nada marcado</span>`;
           rows.push(`<div class="wk-day${offset === 0 ? " today" : ""}${items.length ? "" : " free"}"><div class="wk-date"><strong>${name}</strong><span>${short}</span></div>${body}</div>`);
         }
@@ -3780,12 +3944,21 @@
         const undated = state.faculty.readings.filter(r => r.status !== "completed" && !String(r.lectureDate || "").match(/(\d{1,2})\/(\d{1,2})/));
         if (undated.length) {
           total += undated.length;
-          rows.push(`<div class="wk-day"><div class="wk-date"><strong>Sem data</strong><span>leituras</span></div><div class="wk-items">${undated.map(r => itemHTML("fac", "📖", r.title, "")).join("")}</div></div>`);
+          rows.push(`<div class="wk-day"><div class="wk-date"><strong>Sem data</strong><span>leituras</span></div><div class="wk-items">${undated.map(r => itemHTML("fac", "📖", r.title, "", "leitura")).join("")}</div></div>`);
         }
 
+        const cnt = $("#weekCount");
+        if (cnt) cnt.textContent = total ? `${total} compromisso${total === 1 ? "" : "s"}` : "";
         el.innerHTML = total
           ? rows.join("")
           : `<div class="finance-empty"><strong>Semana livre</strong><span>Sem compromissos, leituras, avaliações, contas ou lembretes nos próximos 7 dias.</span></div>`;
+      }
+
+      function goToWeekItem(dest) {
+        const [view, pane] = String(dest).split(":");
+        if (view === "faculty") { setView("faculty"); setFacultyPane(pane); }
+        else if (view === "finance") { setView("finance"); $(`.finance-tab[data-finance-pane="${pane}"]`)?.click(); }
+        else goToPersonalPane(pane);
       }
 
       function goToPersonalPane(pane) {
@@ -4372,6 +4545,10 @@
         });
       });
       $("#themeToggleBtn")?.addEventListener("click", toggleTheme);
+      $("#weekAgendaList")?.addEventListener("click", e => {
+        const btn = e.target.closest("[data-wk-go]");
+        if (btn) goToWeekItem(btn.dataset.wkGo);
+      });
       $("#quickAgendaBtn")?.addEventListener("click", () => goToPersonalPane("agenda"));
 
       $("#personalForm")?.addEventListener("submit", e => {
