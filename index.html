@@ -30,7 +30,7 @@
       --danger-soft: #fbecea;
       --warning: #a8741a;
       --warning-soft: #faf2de;
-      --fac: #c0392b; --fac-soft: #fbebe8; --fac-ink: #9b2c20;
+      --fac: #b5604a; --fac-soft: #f7ebe6; --fac-ink: #8a4332;
       --pes: #e0a800; --pes-soft: #fdf4d3; --pes-ink: #7a5a00;
       --fin: #3b8a4d; --fin-soft: #e6f3e8; --fin-ink: #2a6a39;
       --hero-from: #123a36;
@@ -63,7 +63,7 @@
       --danger-soft: #3a1b17;
       --warning: #e6b95c;
       --warning-soft: #3a2f12;
-      --fac: #f08a7a; --fac-soft: #3a1b17; --fac-ink: #f5b0a4;
+      --fac: #e0957f; --fac-soft: #3a2420; --fac-ink: #efb9a8;
       --pes: #f0c24a; --pes-soft: #3a3010; --pes-ink: #f3d77f;
       --fin: #72cf88; --fin-soft: #15301b; --fin-ink: #a2e3b3;
       --hero-from: #17413c;
@@ -1469,16 +1469,14 @@
 
     /* ===== Faculdade: tema vermelho, semestre e grade em destaque ===== */
     #facultyView {
-      --primary: #c0392b; --primary-dark: #9b2c20; --primary-2: #e2705f; --primary-soft: #fbebe8;
-      --ev0:#c0392b; --ev0i:#9b2c20; --ev0s:#fbebe8;  --ev1:#1f7a74; --ev1i:#155c57; --ev1s:#e0f1ef;
-      --ev2:#3b6fb0; --ev2i:#2b5489; --ev2s:#e4edf8;  --ev3:#7a4fa3; --ev3i:#5d3a80; --ev3s:#eee6f6;
-      --ev4:#b7791f; --ev4i:#8a5a12; --ev4s:#faf0db;  --ev5:#5a8a3c; --ev5i:#416a28; --ev5s:#e9f2e1;
+      --ev0:#2f7f78; --ev0i:#1f5e58; --ev0s:#e1f0ee;  --ev1:#6b8f5e; --ev1i:#4b6b40; --ev1s:#eaf1e5;
+      --ev2:#b88a3e; --ev2i:#8a6420; --ev2s:#f9efd9;  --ev3:#b5604a; --ev3i:#8a4332; --ev3s:#f7ebe6;
+      --ev4:#5b7894; --ev4i:#3f5973; --ev4s:#e7edf3;  --ev5:#8a6f8f; --ev5i:#66506b; --ev5s:#efe9f0;
     }
     body.dark-mode #facultyView {
-      --primary: #f08a7a; --primary-dark: #e06e5d; --primary-2: #f5b0a4; --primary-soft: #3a1b17;
-      --ev0:#f08a7a; --ev0i:#f5b0a4; --ev0s:#3a1b17;  --ev1:#5fc4b8; --ev1i:#a8e0d6; --ev1s:#12302d;
-      --ev2:#7fa8e0; --ev2i:#b3cdf0; --ev2s:#1a2a40;  --ev3:#b794dc; --ev3i:#d6c0ee; --ev3s:#2a1f3a;
-      --ev4:#e6b95c; --ev4i:#f3d77f; --ev4s:#3a2f12;  --ev5:#9cc97f; --ev5i:#c4e3ae; --ev5s:#1f301a;
+      --ev0:#5fc4b8; --ev0i:#a8e0d6; --ev0s:#12302d;  --ev1:#9cc58a; --ev1i:#c4e0b6; --ev1s:#1c2e19;
+      --ev2:#e0b35e; --ev2i:#f0d28f; --ev2s:#342a12;  --ev3:#e0957f; --ev3i:#efb9a8; --ev3s:#3a2420;
+      --ev4:#86a7c7; --ev4i:#b5cde3; --ev4s:#1b2a3a;  --ev5:#b79bbd; --ev5i:#d6c3da; --ev5s:#2c2133;
     }
     #facultyView .ev-c0 { --ev: var(--ev0); --evi: var(--ev0i); --evs: var(--ev0s); }
     #facultyView .ev-c1 { --ev: var(--ev1); --evi: var(--ev1i); --evs: var(--ev1s); }
@@ -1486,35 +1484,21 @@
     #facultyView .ev-c3 { --ev: var(--ev3); --evi: var(--ev3i); --evs: var(--ev3s); }
     #facultyView .ev-c4 { --ev: var(--ev4); --evi: var(--ev4i); --evs: var(--ev4s); }
     #facultyView .ev-c5 { --ev: var(--ev5); --evi: var(--ev5i); --evs: var(--ev5s); }
-    #facultyView .primary-btn { background: var(--primary); }
-    #facultyView .primary-btn:hover { background: var(--primary-dark); }
     #facultyView .hero-actions .primary-btn { height: 36px; padding: 0 14px; font-size: 13px; border-radius: var(--radius-md); }
 
-    /* cartão do semestre */
-    .sem-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 26px; align-items: center; padding: 22px 26px; margin-bottom: 18px; background: var(--surface); border: 1px solid var(--line-strong); border-top: 4px solid var(--primary); border-radius: var(--radius); box-shadow: var(--shadow); }
-    .sem-ring { --size: 132px; width: var(--size); height: var(--size); border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--primary) calc(var(--p) * 1%), var(--line) 0); }
-    .sem-ring > div { width: calc(var(--size) - 24px); height: calc(var(--size) - 24px); border-radius: 50%; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .sem-ring strong { font-family: var(--font-head); font-size: 32px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--primary); }
-    .sem-ring span { margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--muted); }
-    .sem-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 14px; }
-    .sem-head .panel-title { font-size: 20px; }
-    .sem-label { font-size: 13px; font-weight: 700; color: var(--muted); }
-    .sem-bar { height: 12px; margin-top: 12px; }
-    .sem-bar > span { background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
-    .sem-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
-    .sem-stat { padding: 10px 14px; border-radius: var(--radius-md); background: var(--surface-2); }
-    .sem-stat small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
-    .sem-stat strong { display: block; margin-top: 2px; font-family: var(--font-head); font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
-    .sem-stat.sem-left { background: var(--primary-soft); }
-    .sem-stat.sem-left strong { color: var(--primary); }
-    .sem-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
-    .sem-chips .info-chip { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 9px 12px; box-shadow: none; }
-    .sem-chips .info-chip small { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 600; }
-    .sem-chips .info-chip strong { font-size: 13.5px; }
-    .semester-info .info-chip.editable { padding-right: 30px; }
-    .sem-chips .info-chip.editable { position: relative; cursor: pointer; text-align: left; font: inherit; color: inherit; padding-right: 30px; transition: border-color .18s ease; }
-    .sem-chips .info-chip.editable:hover, .sem-chips .info-chip.editable:focus-visible { border-color: var(--primary); }
-    .sem-chips .info-chip.editable::after { content: "✎"; position: absolute; top: 9px; right: 11px; color: var(--muted); font-size: 12px; }
+    /* cartão do semestre (compacto) */
+    .sem-card { padding: 16px 22px 18px; margin-bottom: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+    .sem-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 24px; }
+    .sem-ident .panel-title { font-size: 18px; }
+    .sem-dates { margin-top: 3px; padding: 0; border: 0; background: none; font: inherit; font-size: 13px; color: var(--muted); cursor: pointer; text-align: left; }
+    .sem-dates b { font-weight: 700; color: var(--text); }
+    .sem-dates:hover, .sem-dates:focus-visible { color: var(--primary); }
+    .sem-figures { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+    .sem-pct { font-family: var(--font-head); font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--text); }
+    .sem-left-pill { padding: 3px 10px; border-radius: 999px; background: var(--fac-soft); color: var(--fac-ink); font-size: 13px; font-weight: 700; }
+    .sem-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+    .sem-bar { height: 10px; margin-top: 12px; }
+    .sem-bar > span { background: var(--primary); }
 
     /* grade em destaque */
     .fac-schedule { padding: 22px 22px 18px; margin-bottom: 18px; box-shadow: var(--shadow); }
@@ -1524,16 +1508,13 @@
     .weekly-day-head { padding: 12px 8px; }
     .weekly-day-head strong { font-size: 14px; font-family: var(--font-head); }
     .weekly-day-head span { font-size: 11px; font-weight: 600; }
-    .weekly-day-head.today { background: var(--primary); color: #fff; }
-    .weekly-day-head.today span { color: rgba(255,255,255,.85); }
-    body.dark-mode .weekly-day-head.today { color: #0d1514; }
-    body.dark-mode .weekly-day-head.today span { color: rgba(13,21,20,.75); }
+    .weekly-day-head.today { background: var(--primary-soft); color: var(--primary); box-shadow: inset 0 -3px 0 var(--primary); }
     .weekly-time-label { font-size: 11px; }
     .weekly-day-col { background-image: linear-gradient(to bottom, transparent calc(var(--hour) - 1px), var(--line) calc(var(--hour) - 1px)); background-size: 100% var(--hour); background-position: 0 8px; }
-    .weekly-day-col.today { background-color: var(--primary-soft); }
+    .weekly-day-col.today { background-color: color-mix(in srgb, var(--primary-soft) 45%, transparent); }
     .weekly-event { left: 6px; right: 6px; padding: 8px 10px; border-radius: var(--radius-sm); border: 0; border-left: 4px solid var(--ev); background: var(--evs); color: var(--evi); text-align: left; box-shadow: none; font-family: inherit; transition: transform .15s ease, box-shadow .15s ease; }
     .weekly-event:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px var(--ev), 0 6px 14px rgba(16,40,36,.12); }
-    .weekly-event strong { font-size: 13px; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .weekly-event strong { font-size: 13px; font-weight: 700; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .weekly-event span { font-size: 11.5px; font-weight: 700; opacity: .9; }
     .weekly-now { position: absolute; left: 0; right: 0; height: 2px; background: var(--primary); z-index: 2; pointer-events: none; }
     .weekly-now::before { content: ""; position: absolute; left: -1px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
@@ -1544,7 +1525,7 @@
 
     /* harmonia do restante */
     #facultyView .course-card::before { background: var(--ev, var(--primary)); }
-    #facultyView .faculty-kpi { border-radius: var(--radius); box-shadow: var(--shadow-sm); border-top: 3px solid var(--primary); }
+    #facultyView .faculty-kpi { border-radius: var(--radius); box-shadow: var(--shadow-sm); }
     #facultyView .faculty-kpi .kpi-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 600; }
     #facultyView .faculty-kpi .kpi-value { font-family: var(--font-head); font-weight: 800; }
     #facultyView .faculty-summary { margin-bottom: 18px; }
@@ -1552,11 +1533,8 @@
     #facultyView .side-card .progress > span, #facultyView .faculty-pane .progress > span { background: linear-gradient(90deg, var(--primary), var(--primary-2)); }
     #facultyView .faculty-table-card, #facultyView .tcc-section { border-radius: var(--radius); }
     @media (max-width: 760px) {
-      .sem-card { grid-template-columns: 1fr; justify-items: stretch; gap: 18px; padding: 18px; }
-      .sem-ring { --size: 116px; justify-self: center; }
-      .sem-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-      .sem-stat { padding: 9px 10px; }
-      .sem-stat strong { font-size: 18px; }
+      .sem-card { padding: 14px 16px 16px; }
+      .sem-pct { font-size: 28px; }
       .fac-schedule { padding: 16px 14px 14px; }
     }
   </style>
@@ -1657,24 +1635,18 @@
           </div>
 
           <section class="sem-card" aria-label="Andamento do semestre">
-            <div class="sem-ring" id="semRing" style="--p:0"><div><strong id="semPct">—</strong><span>concluído</span></div></div>
-            <div class="sem-body">
-              <div class="sem-head">
-                <h2 class="panel-title">Andamento do semestre</h2>
+            <div class="sem-top">
+              <div class="sem-ident">
+                <h2 class="panel-title">Semestre <span id="facultyCurrentSemester">2026.2</span></h2>
+                <button type="button" class="sem-dates" data-open-grad="1" title="Editar datas">Início <b id="facultySemesterStart">—</b> · Término <b id="facultySemesterEnd">—</b> <span aria-hidden="true">✎</span></button>
+              </div>
+              <div class="sem-figures">
+                <strong class="sem-pct" id="semPct">—</strong>
+                <span class="sem-left-pill">Falta <b id="semLeftPct">—</b></span>
                 <span class="sem-label" id="facultySemesterProgress">—</span>
               </div>
-              <div class="progress sem-bar"><span id="semBar" style="width:0%"></span></div>
-              <div class="sem-stats">
-                <div class="sem-stat"><small>Já passou</small><strong id="semDone">—</strong></div>
-                <div class="sem-stat sem-left"><small>Falta</small><strong id="semLeftPct">—</strong></div>
-                <div class="sem-stat"><small id="semDaysLabel">Dias restantes</small><strong id="semDays">—</strong></div>
-              </div>
-              <div class="sem-chips">
-                <button type="button" class="info-chip editable" data-open-grad="1"><small>Semestre</small><strong id="facultyCurrentSemester">2026.2</strong></button>
-                <button type="button" class="info-chip editable" data-open-grad="1"><small>Início das aulas</small><strong id="facultySemesterStart">—</strong></button>
-                <button type="button" class="info-chip editable" data-open-grad="1"><small>Término das aulas</small><strong id="facultySemesterEnd">—</strong></button>
-              </div>
             </div>
+            <div class="progress sem-bar"><span id="semBar" style="width:0%"></span></div>
           </section>
 
           <section class="panel fac-schedule">
@@ -3595,23 +3567,20 @@
       }
 
       function updateSemesterCard(startStr, endStr) {
-        const ring = $("#semRing"); if (!ring) return;
+        const bar = $("#semBar"); if (!bar) return;
         const set = (id, t) => { const el = $(id); if (el) el.textContent = t; };
         const start = new Date(startStr + "T12:00:00"), end = new Date(endStr + "T12:00:00");
-        let pct = null, days = "—", label = "Dias restantes";
+        let pct = null, note = "—";
         if (startStr && endStr && !isNaN(start) && !isNaN(end) && end > start) {
           const now = new Date(), day = 86400000;
-          if (now < start) { pct = 0; days = String(Math.ceil((start - now) / day)); label = "Começa em (dias)"; }
-          else if (now > end) { pct = 100; days = "0"; }
-          else { pct = Math.round(((now - start) / (end - start)) * 100); days = String(Math.ceil((end - now) / day)); }
+          if (now < start) { pct = 0; const n = Math.ceil((start - now) / day); note = `começa em ${n} dia${n === 1 ? "" : "s"}`; }
+          else if (now > end) { pct = 100; note = "encerrado"; }
+          else { pct = Math.round(((now - start) / (end - start)) * 100); const n = Math.ceil((end - now) / day); note = `${n} dia${n === 1 ? "" : "s"} restantes`; }
         }
-        ring.style.setProperty("--p", pct ?? 0);
         set("#semPct", pct === null ? "—" : pct + "%");
-        set("#semDone", pct === null ? "—" : pct + "%");
         set("#semLeftPct", pct === null ? "—" : (100 - pct) + "%");
-        set("#semDays", days);
-        set("#semDaysLabel", label);
-        const bar = $("#semBar"); if (bar) bar.style.width = (pct ?? 0) + "%";
+        set("#facultySemesterProgress", note);
+        bar.style.width = (pct ?? 0) + "%";
       }
 
       function renderTcc() {
