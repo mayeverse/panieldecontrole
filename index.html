@@ -7,9 +7,6 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300..800&display=swap" rel="stylesheet" />
   <title>Painel de Controle — Organizador Pessoal & Acadêmico</title>
   <style>
         :root {
@@ -42,8 +39,8 @@
       --radius: 18px;
       --radius-md: 14px;
       --radius-sm: 10px;
-      --font-body: "Lexend", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-      --font-head: "Lexend", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-head: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body.dark-mode {
@@ -1678,7 +1675,7 @@
     .finance-summary-row.fsr-total { margin-top: 4px; border-top: 2px solid var(--line-strong); font-size: 15px; }
     .finance-summary-row.fsr-total span:first-child { color: var(--text); font-weight: 700; }
 
-    /* ===== Lexend em todo o site ===== */
+    /* ===== Inter em todo o site ===== */
     body, button, input, select, textarea { font-family: var(--font-body); }
     body { font-size: 14.5px; }
     h1 { letter-spacing: -.02em; }
@@ -1727,6 +1724,13 @@
       .finance-monthbar .month-picker .field { flex: 1 1 140px; width: auto !important; min-width: 0; }
       #openStatementBtn { flex: 1 1 100%; }
     }
+
+
+    /* ===== Tipo de pagamento colorido ===== */
+    .pay-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 3px 10px 3px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 700; line-height: 1.3; white-space: nowrap;
+      background: color-mix(in srgb, var(--pc) 14%, transparent); border: 1px solid color-mix(in srgb, var(--pc) 38%, transparent); color: color-mix(in srgb, var(--pc) 78%, var(--text)); }
+    .pay-chip::before { content: ""; flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--pc); }
+    body.dark-mode .pay-chip { color: color-mix(in srgb, var(--pc) 62%, #fff); }
 
     /* extrato */
     #openStatementBtn { height: 40px; white-space: nowrap; }
@@ -2141,11 +2145,12 @@
 
             <section class="finance-card fchart-card" style="margin-top:16px;">
               <div class="finance-card-head">
-                <div><h2>Comparativo por mês</h2><p>Entradas, saídas e investimentos mês a mês. Toque em um mês para ver os detalhes dele.</p></div>
+                <div><h2>Comparativo por mês</h2><p>Entradas, saídas e investimentos mês a mês, por categoria ou por tipo de pagamento. Toque em um mês para ver os detalhes dele.</p></div>
                 <div class="fchart-controls">
                   <div class="fchart-range" role="group" aria-label="Tipo de comparação">
                     <button type="button" class="active" data-fchart-mode="flow">Entradas × saídas</button>
                     <button type="button" data-fchart-mode="cat">Por categoria</button>
+                    <button type="button" data-fchart-mode="pay">Por pagamento</button>
                   </div>
                   <select class="field fchart-catsel" id="financeChartCatSelect" aria-label="Escolher categoria" hidden></select>
                   <div class="fchart-range" role="group" aria-label="Período do gráfico">
@@ -3586,15 +3591,29 @@
         });
       }
 
+      // Cores por tipo de pagamento: Pix verde, débito azul, crédito Mamis vermelho, crédito Nubank roxo
       function paymentColor(key) {
-        if (key === "Pix") return "var(--cat0)";
-        if (key === "Cartão de débito") return "var(--cat4)";
+        if (key === "Pix") return "#2e9d5a";
+        if (key === "Cartão de débito") return "#2f6fd0";
         if (String(key).startsWith("card:")) {
-          const ids = Object.keys(state.finance.cards || {});
-          const i = Math.max(0, ids.indexOf(String(key).slice(5)));
-          return `var(--cat${[1, 2, 3, 5, 6][i % 5]})`;
+          const id = String(key).slice(5);
+          const name = String(state.finance.cards?.[id]?.name || "").toLowerCase();
+          if (name.includes("mami")) return "#d23f3f";
+          if (name.includes("nubank") || /\bnu\b/.test(name)) return "#8a2be2";
+          const others = ["#e08a1e", "#0f8f94", "#c2478b", "#7a6a55"];
+          const ids = Object.keys(state.finance.cards || {}).filter(k => {
+            const n = String(state.finance.cards[k]?.name || "").toLowerCase();
+            return !(n.includes("mami") || n.includes("nubank") || /\bnu\b/.test(n));
+          });
+          return others[Math.max(0, ids.indexOf(id)) % others.length];
         }
         return "var(--cat7)";
+      }
+      // selo colorido do tipo de pagamento (usado nas tabelas)
+      function payChip(item) {
+        const k = paymentKey(item);
+        if (!k) return "—";
+        return `<span class="pay-chip" style="--pc:${paymentColor(k)}">${escapeHTML(paymentLabel(k))}</span>`;
       }
       // ranking de categorias (últimos 12 meses) para manter a mesma cor da categoria em todos os gráficos
       function financeCatRanking(month) {
@@ -3774,7 +3793,51 @@
         const empty = () => { el.innerHTML = `<div class="finance-empty"><strong>Sem movimentações neste período</strong><span>Registre entradas, gastos ou investimentos para comparar os meses.</span></div>`; if (statsEl) statsEl.innerHTML = ""; };
         const stat = (k, v, cls) => `<div class="fchart-stat"><small>${k}</small><strong class="${cls || ""}">${v}</strong></div>`;
 
-        const catSelEl = $("#financeChartCatSelect"); if (catSelEl && financeChartMode !== "cat") catSelEl.hidden = true;
+        const catSelEl = $("#financeChartCatSelect"); if (catSelEl && financeChartMode !== "cat" && financeChartMode !== "pay") catSelEl.hidden = true;
+        if (financeChartMode === "pay") {
+          const baseKeys = ["Pix", "Cartão de débito", ...Object.keys(state.finance.cards || {}).map(id => "card:" + id)];
+          const nameOf = k => k ? paymentLabel(k) : "Não informado";
+          const rows = data.map(x => {
+            const map = {};
+            [...x.t.expenses, ...x.t.fixed, ...x.t.installments].forEach(e => { const k = paymentKey(e) || ""; map[k] = (map[k] || 0) + Number(e.value || 0); });
+            return { x, map };
+          });
+          const extra = [...new Set(rows.flatMap(r => Object.keys(r.map)))].filter(k => !baseKeys.includes(k));
+          const allKeys = [...baseKeys, ...extra];
+          if (financeChartCat && !allKeys.includes(financeChartCat)) financeChartCat = null;
+          const paySel = $("#financeChartCatSelect");
+          if (paySel) {
+            paySel.hidden = false;
+            paySel.setAttribute("aria-label", "Escolher tipo de pagamento");
+            paySel.innerHTML = `<option value="">Todos os pagamentos</option>` + allKeys.map(k => `<option value="${escapeHTML(k)}"${k === financeChartCat ? " selected" : ""}>${escapeHTML(nameOf(k))}</option>`).join("");
+          }
+          const view = rows.map(r => ({ ...r, show: (financeChartCat ? [financeChartCat] : allKeys).map(k => ({ name: k, val: r.map[k] || 0 })) }));
+          const sumOf = r => r.show.reduce((a, sg) => a + sg.val, 0);
+          const maxV = Math.max(0, ...view.map(sumOf));
+          const legKeys = allKeys.filter(k => baseKeys.includes(k) || rows.some(r => r.map[k] > 0));
+          if (legEl) legEl.innerHTML = legKeys.map(k => `<button type="button" class="lg-cat${financeChartCat === k ? " on" : ""}${financeChartCat && financeChartCat !== k ? " dim" : ""}" data-fchart-cat="${escapeHTML(k)}"><i style="background:${paymentColor(k)}"></i>${escapeHTML(nameOf(k))}</button>`).join("") + `<span class="lg-note">${financeChartCat ? "Toque de novo no tipo para voltar" : "Toque num tipo de pagamento para comparar só ele"}</span>`;
+          if (!maxV) { empty(); return; }
+          const top = nice(maxV);
+          const cols = view.map(r => `<button type="button" class="fchart-col${r.x.mo === month ? " sel" : ""}" data-fchart-month="${r.x.mo}" title="${escapeHTML(financeMonthLabel(r.x.mo))}">
+            <span class="fchart-bars"><span class="fb-stack">${r.show.filter(sg => sg.val > 0).map(sg => `<i class="fs" style="height:${sg.val / top * 100}%;background:${paymentColor(sg.name)}" title="${escapeHTML(nameOf(sg.name))}: ${moneyBRL(sg.val)}"></i>`).join("")}</span></span>
+            ${label(r.x)}
+            <span class="fchart-bal neutral">${short(sumOf(r))}</span>
+          </button>`).join("");
+          el.innerHTML = frame(top, cols); { const sc = el.querySelector(".fchart-scroll"); if (sc) sc.scrollLeft = sc.scrollWidth; }
+          if (statsEl) {
+            const totals = view.map(sumOf);
+            const sum = totals.reduce((a, v) => a + v, 0);
+            const iMax = totals.indexOf(Math.max(...totals));
+            const tot = {}; rows.forEach(r => Object.entries(r.map).forEach(([k, v]) => { tot[k] = (tot[k] || 0) + v; }));
+            const lead = Object.entries(tot).sort((a, b) => b[1] - a[1])[0];
+            statsEl.innerHTML =
+              (financeChartCat ? stat("Tipo comparado", escapeHTML(nameOf(financeChartCat))) : stat("Mais usado no período", lead ? escapeHTML(nameOf(lead[0])) + " · " + moneyBRL(lead[1]) : "—")) +
+              stat(financeChartCat ? "Média por mês" : "Média de gastos por mês", moneyBRL(sum / n)) +
+              stat("Mês mais alto", totals[iMax] > 0 ? escapeHTML(financeMonthLabel(view[iMax].x.mo)) + " · " + moneyBRL(totals[iMax]) : "—");
+          }
+          return;
+        }
+
         if (financeChartMode === "cat") {
           const rank = financeCatRanking(month), top7 = rank.slice(0, 7);
           const rows = data.map(x => {
@@ -3791,6 +3854,7 @@
           const catSel = $("#financeChartCatSelect");
           if (catSel) {
             catSel.hidden = false;
+            catSel.setAttribute("aria-label", "Escolher categoria");
             catSel.innerHTML = `<option value="">Todas as categorias</option>` + allCats.map(c => `<option value="${escapeHTML(c)}"${c === financeChartCat ? " selected" : ""}>${escapeHTML(c)}</option>`).join("");
           }
           const view = rows.map(r => ({ ...r, show: financeChartCat
@@ -3896,25 +3960,25 @@
         populateFinanceExpenseFilters();
         const filterActive = !!(financeExpenseFilter.q || financeExpenseFilter.category || financeExpenseFilter.payment);
         const filteredExpenses = applyFinanceExpenseFilter(t.expenses);
-        renderFinanceTableBody("#financeExpenseTable", filteredExpenses.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("expense",x.id)}</td></tr>`).join(""), filterActive ? "Nenhum gasto encontrado com esse filtro." : "Nenhum gasto avulso neste mês.");
+        renderFinanceTableBody("#financeExpenseTable", filteredExpenses.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${payChip(x)}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("expense",x.id)}</td></tr>`).join(""), filterActive ? "Nenhum gasto encontrado com esse filtro." : "Nenhum gasto avulso neste mês.");
         const filteredExpenseTotal = filteredExpenses.reduce((s,x)=>s+Number(x.value||0),0);
         $("#financeExpenseTotal").textContent = moneyBRL(filterActive ? filteredExpenseTotal : t.expenseTotal);
         $("#financeExpenseTotalLabel").textContent = filterActive ? "filtrado" : "de gastos do mês";
         $("#financeExpenseFilterCount").textContent = filterActive ? `${filteredExpenses.length} de ${t.expenses.length} gasto${t.expenses.length===1?"":"s"}` : "";
 
-        renderFinanceTableBody("#financeFixedTable", financeFixedOccurrences(month, true).sort((a,b)=>a.occurrenceDate.localeCompare(b.occurrenceDate)).map(x=>`<tr style="${x.skipped?"opacity:.55":""}"><td><strong>${escapeHTML(x.name)}</strong></td><td>${x.skipped?`<span class="badge">Pulado neste mês</span>`:`<button class="paid-toggle ${x.paid?"paid":""}" data-finance-toggle-paid="${x.id}">${x.paid?"✓ Pago":"Pendente"}</button>`}</td><td>${formatDate(x.occurrenceDate)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td><div class="finance-actions"><button class="mini-btn" data-finance-skip="${x.id}" title="${x.skipped?"Voltar a cobrar neste mês":"Não pagar só neste mês"}">${x.skipped?"↩":"⏭"}</button></div>${financeRowActions("fixed",x.id)}</td></tr>`).join(""), "Nenhum gasto fixo neste mês.");
+        renderFinanceTableBody("#financeFixedTable", financeFixedOccurrences(month, true).sort((a,b)=>a.occurrenceDate.localeCompare(b.occurrenceDate)).map(x=>`<tr style="${x.skipped?"opacity:.55":""}"><td><strong>${escapeHTML(x.name)}</strong></td><td>${x.skipped?`<span class="badge">Pulado neste mês</span>`:`<button class="paid-toggle ${x.paid?"paid":""}" data-finance-toggle-paid="${x.id}">${x.paid?"✓ Pago":"Pendente"}</button>`}</td><td>${formatDate(x.occurrenceDate)}</td><td>${payChip(x)}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td><div class="finance-actions"><button class="mini-btn" data-finance-skip="${x.id}" title="${x.skipped?"Voltar a cobrar neste mês":"Não pagar só neste mês"}">${x.skipped?"↩":"⏭"}</button></div>${financeRowActions("fixed",x.id)}</td></tr>`).join(""), "Nenhum gasto fixo neste mês.");
         $("#financeFixedTotal").textContent = moneyBRL(t.fixedTotal);
 
         renderFinanceTableBody("#financeInstallmentTable", t.installments.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>{
           const remaining = Math.max(0, Number(x.totalParcels)-Number(x.parcel));
-          return `<tr><td><strong>${escapeHTML(x.name)}</strong></td><td><span class="badge installment-badge">${x.parcel}/${x.totalParcels}</span><div class="finance-mini-note">${remaining} parcela${remaining===1?"":"s"} depois desta</div></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("installment",x.id)}</td></tr>`;
+          return `<tr><td><strong>${escapeHTML(x.name)}</strong></td><td><span class="badge installment-badge">${x.parcel}/${x.totalParcels}</span><div class="finance-mini-note">${remaining} parcela${remaining===1?"":"s"} depois desta</div></td><td>${formatDate(x.date)}</td><td>${payChip(x)}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("installment",x.id)}</td></tr>`;
         }).join(""), "Nenhum parcelamento ativo neste mês.");
         if ($("#financeInstallmentTotal")) $("#financeInstallmentTotal").textContent = moneyBRL(t.installmentTotal);
 
         renderFinanceTableBody("#financeIncomeTable", t.income.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money in">${moneyBRL(x.value)}</td><td>${financeRowActions("income",x.id)}</td></tr>`).join(""), "Nenhuma entrada neste mês.");
         $("#financeIncomeTotal").textContent = moneyBRL(t.incomeTotal);
 
-        renderFinanceTableBody("#financeOutflowTable", t.outflow.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(paymentLabel(paymentKey(x))||"—")}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("outflow",x.id)}</td></tr>`).join(""), "Nenhuma saída neste mês.");
+        renderFinanceTableBody("#financeOutflowTable", t.outflow.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${payChip(x)}</td><td>${escapeHTML(x.category||"Outros")}</td><td class="money out">${moneyBRL(x.value)}</td><td>${financeRowActions("outflow",x.id)}</td></tr>`).join(""), "Nenhuma saída neste mês.");
         if ($("#financeOutflowTotal")) $("#financeOutflowTotal").textContent = moneyBRL(t.outflowTotal);
 
         renderFinanceTableBody("#financeInvestmentTable", t.investments.sort((a,b)=>a.date.localeCompare(b.date)).map(x=>`<tr><td><strong>${escapeHTML(x.name)}</strong></td><td>${formatDate(x.date)}</td><td>${escapeHTML(x.category||"—")}</td><td class="money invest">${moneyBRL(x.value)}</td><td>${financeRowActions("investment",x.id)}</td></tr>`).join(""), "Nenhum investimento neste mês.");
