@@ -2826,6 +2826,17 @@
         return false;
       }
 
+      // Valor de um gasto fixo em determinado mês: usa a última alteração feita até aquele mês;
+      // meses anteriores à alteração continuam com o valor antigo.
+      function financeFixedValueForMonth(item, month) {
+        const ch = item && item.valueChanges;
+        if (ch && typeof ch === "object") {
+          const keys = Object.keys(ch).filter(k => k <= month).sort();
+          if (keys.length) return Number(ch[keys[keys.length - 1]]) || 0;
+        }
+        return Number(item?.value || 0);
+      }
+
       function financeFixedInMonth(item, month) {
         const start = String(item.date || "").slice(0,7);
         if (!start) return false;
@@ -2861,7 +2872,7 @@
             occurrenceDate = chargeDate(x, month);
           }
           if (!occurrenceDate) return;
-          out.push({ ...x, occurrenceDate, paid: financeFixedPaidForMonth(x, month), skipped });
+          out.push({ ...x, value: financeFixedValueForMonth(x, month), occurrenceDate, paid: financeFixedPaidForMonth(x, month), skipped });
         });
         return out;
       }
@@ -2984,7 +2995,7 @@
             <div class="form-group"><label>Tipo de pagamento</label><select class="field" name="payment">${paymentOptions(paymentSelectValue(existing))}</select></div>
             <div class="form-group"><label>Categoria</label><select class="field" name="category">${categoryOptions(existing?.category)}</select></div>
             <div class="form-group"><label>Valor</label><input class="field" name="value" type="number" min="0" step=".01" required value="${existing?.value??""}"></div>
-            <div class="form-group full"><p class="finance-mini-note">Deixando em "Sim, repetir todo mês", esse gasto aparece automaticamente nos meses seguintes, sem precisar cadastrar de novo. O status de pago é controlado mês a mês pelo botão na tabela.</p></div>`},
+            <div class="form-group full"><p class="finance-mini-note">Deixando em "Sim, repetir todo mês", esse gasto aparece automaticamente nos meses seguintes, sem precisar cadastrar de novo. O status de pago é controlado mês a mês pelo botão na tabela.${existing ? ` Se você mudar o valor, a mudança vale a partir de ${escapeHTML(financeMonthLabel(state.finance.selectedMonth || localDateISO().slice(0,7)))}; os meses anteriores continuam com o valor que tinham.` : ""}</p></div>`},
           installment: { title:"Novo parcelamento", fields:`
             <div class="form-group full"><label>Nome</label><input class="field" name="name" required value="${escapeHTML(existing?.name||"")}" placeholder="Ex.: Notebook"></div>
             <div class="form-group"><label>Total de parcelas</label><input class="field" name="totalParcels" type="number" min="1" required value="${existing?.totalParcels||2}"></div>
@@ -3119,7 +3130,9 @@
       function financeEdit(type,id) {
         const key = ({expense:"expenses",fixed:"fixed",installment:"installments",income:"income",outflow:"outflow",investment:"investments"})[type];
         const item = state.finance[key]?.find(x=>x.id===id);
-        if (item) financeModal(type,item);
+        if (!item) return;
+        if (type === "fixed") financeModal(type, { ...item, value: financeFixedValueForMonth(item, state.finance.selectedMonth || localDateISO().slice(0,7)) });
+        else financeModal(type, item);
       }
 
       function financeRowActions(type,id) {
@@ -4937,6 +4950,25 @@
           const fmonth = state.finance.selectedMonth || localDateISO().slice(0,7);
           const existingFixed = id ? state.finance.fixed.find(x=>x.id===id) : null;
           payload.paidMonths = { ...(existingFixed?.paidMonths||{}), [fmonth]: data.paid === "true" };
+          if (existingFixed) {
+            const newVal = payload.value;
+            const cur = financeFixedValueForMonth(existingFixed, fmonth);
+            const changes = { ...(existingFixed.valueChanges || {}) };
+            const startM = String(payload.date || existingFixed.date || "").slice(0, 7);
+            if (Math.abs(newVal - cur) > 0.004) {
+              if (payload.recurring === false || fmonth <= startM) {
+                // não repete, ou está editando o mês de início: vale para todos os meses
+                payload.value = newVal;
+                Object.keys(changes).forEach(k => { if (k <= fmonth) delete changes[k]; });
+              } else {
+                changes[fmonth] = newVal;            // vale deste mês em diante
+                payload.value = Number(existingFixed.value || 0); // valor original dos meses anteriores
+              }
+            } else {
+              payload.value = Number(existingFixed.value || 0); // sem mudança: preserva o valor-base
+            }
+            payload.valueChanges = changes;
+          }
         }
         if (type==="installment") {
           payload.totalParcels = Math.max(1,Number(data.totalParcels||1));
