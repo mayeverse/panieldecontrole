@@ -1537,6 +1537,73 @@
       .sem-pct { font-size: 28px; }
       .fac-schedule { padding: 16px 14px 14px; }
     }
+
+    /* ===== Financeiro: comparativo por mês ===== */
+    .fchart-range { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; }
+    .fchart-range button { border: 0; background: none; padding: 6px 13px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 700; color: var(--muted); cursor: pointer; }
+    .fchart-range button.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow-sm); }
+    .fchart-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 4px 0 14px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+    .fchart-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; border-radius: 3px; background: var(--c); vertical-align: -1px; }
+    .fchart-legend .lg-in { --c: var(--fin); } .fchart-legend .lg-out { --c: var(--fac); } .fchart-legend .lg-inv { --c: var(--primary); }
+    .fchart-legend .lg-note { margin-left: auto; font-weight: 500; } .fchart-legend .lg-note::before { display: none; }
+    .fchart-wrap { display: flex; gap: 8px; align-items: flex-start; }
+    .fchart-axis { position: relative; width: 58px; height: 220px; flex-shrink: 0; margin-top: 0; }
+    .fchart-axis span { position: absolute; right: 0; transform: translateY(50%); font-size: 11px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+    .fchart-scroll { flex: 1; min-width: 0; overflow-x: auto; padding-bottom: 4px; }
+    .fchart-plot { position: relative; display: grid; gap: 6px; }
+    .fchart-plot::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 220px; pointer-events: none;
+      background: linear-gradient(var(--line), var(--line)) top / 100% 1px no-repeat, linear-gradient(var(--line), var(--line)) center / 100% 1px no-repeat, linear-gradient(var(--line-strong), var(--line-strong)) bottom / 100% 1px no-repeat; }
+    .fchart-col { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 2px 8px; border: 0; border-radius: var(--radius-sm); background: none; font: inherit; color: var(--text); cursor: pointer; transition: background-color .15s ease; }
+    .fchart-col:hover { background: var(--surface-2); }
+    .fchart-col.sel { background: var(--primary-soft); }
+    .fchart-col:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+    .fchart-bars { height: 220px; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; position: relative; }
+    .fb { display: block; flex: 1; max-width: 16px; min-width: 6px; border-radius: 4px 4px 0 0; background: var(--c); transition: height .35s ease, filter .15s ease; }
+    .fb.in { --c: var(--fin); } .fb.out { --c: var(--fac); } .fb.inv { --c: var(--primary); }
+    .fchart-col:hover .fb { filter: brightness(1.06); }
+    .fchart-lbl { font-size: 12.5px; font-weight: 700; text-transform: capitalize; }
+    .fchart-lbl small { margin-left: 3px; font-size: 11px; font-weight: 600; color: var(--muted); }
+    .fchart-bal { font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+    .fchart-bal.pos, .fchart-stat .pos { color: var(--fin-ink); } .fchart-bal.neg, .fchart-stat .neg { color: var(--fac-ink); }
+    .fchart-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 14px; }
+    .fchart-stat { padding: 11px 14px; border-radius: var(--radius-md); background: var(--surface-2); }
+    .fchart-stat small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .fchart-stat strong { display: block; margin-top: 2px; font-size: 15.5px; font-weight: 700; overflow-wrap: anywhere; }
+    @media (max-width: 560px) { .fchart-axis { width: 48px; } .fchart-legend .lg-note { margin-left: 0; width: 100%; } }
+
+    /* ===== Agenda: calendário compacto + compromisso ampliado ===== */
+    .agenda-layout { display: grid; grid-template-columns: minmax(270px, 330px) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .agenda-cal { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-sm); }
+    .agenda-cal .calendar-toolbar { margin-bottom: 10px; gap: 6px; }
+    .agenda-cal .calendar-month-label { font-size: 13.5px; font-weight: 700; }
+    .agenda-cal .icon-btn { width: 32px; height: 32px; }
+    .agenda-cal #calendarTodayBtn { margin-left: 0; padding: 0 11px; height: 32px; font-size: 12px; }
+    .agenda-cal .calendar-weekdays { gap: 3px; margin-bottom: 4px; font-size: 10px; }
+    .agenda-cal .calendar-grid { gap: 3px; margin-bottom: 0; }
+    .agenda-cal .calendar-cell { aspect-ratio: 1 / 1; min-height: 0; padding: 0; gap: 1px; font-size: 12px; border-radius: var(--radius-sm); }
+    .agenda-cal .calendar-cell .calendar-count { display: none; }
+    .agenda-cal .calendar-cell .calendar-dot { width: 4px; height: 4px; }
+    .agenda-cal .calendar-cell.today:not(.selected) { background: var(--primary-soft); }
+    .agenda-layout .agenda-day-card { box-shadow: var(--shadow-sm); border-radius: var(--radius); }
+    .agenda-event[data-agenda-open] { cursor: pointer; border-left: 4px solid var(--c, var(--line)); transition: background-color .15s ease; }
+    .agenda-event[data-agenda-open]:hover { background: var(--cs, var(--surface-2)); }
+    .agenda-event[data-agenda-open]:focus-visible { outline: 2px solid var(--c, var(--primary)); outline-offset: -2px; }
+    .agenda-event-time { color: var(--ci, var(--primary)); }
+    .agenda-event-meta .badge { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 900px) { .agenda-layout { grid-template-columns: 1fr; } .agenda-cal { max-width: 360px; width: 100%; margin: 0 auto; } }
+
+    .agenda-detail-modal { width: min(100%, 520px); }
+    .ad-hero { margin: 0 21px; padding: 16px 18px 18px; border-radius: var(--radius-md); background: var(--cs); border-left: 5px solid var(--c); }
+    .ad-when { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; font-weight: 700; color: var(--ci); }
+    .ad-date { display: inline-block; } .ad-date::first-letter { text-transform: uppercase; }
+    .ad-title { margin: 8px 0 0; font-family: var(--font-head); font-size: 23px; line-height: 1.25; letter-spacing: -.02em; overflow-wrap: anywhere; }
+    .ad-fields { margin: 16px 21px 0; display: grid; gap: 14px; }
+    .ad-fields dt { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .ad-fields dd { margin: 3px 0 0; font-size: 14.5px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .ad-fields a { color: var(--primary); }
+    .ad-empty { margin: 16px 21px 0; font-size: 13.5px; color: var(--muted); }
+    .ad-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; padding: 18px 21px 21px; }
+    .ad-actions:empty { padding: 0 0 10px; }
   </style>
 </head>
 <body>
@@ -1869,6 +1936,22 @@
           </div>
 
           <section id="financeOverviewPane" class="finance-pane active">
+            <section class="finance-card fchart-card" style="margin-bottom:16px;">
+              <div class="finance-card-head">
+                <div><h2>Comparativo por mês</h2><p>Entradas, saídas e investimentos mês a mês. Toque em um mês para ver os detalhes dele.</p></div>
+                <div class="fchart-range" role="group" aria-label="Período do gráfico">
+                  <button type="button" class="active" data-fchart-range="6">6 meses</button>
+                  <button type="button" data-fchart-range="12">12 meses</button>
+                </div>
+              </div>
+              <div class="fchart-legend">
+                <span class="lg-in">Entradas</span><span class="lg-out">Saídas</span><span class="lg-inv">Investimentos</span>
+                <span class="lg-note">Abaixo de cada mês: saldo</span>
+              </div>
+              <div class="fchart" id="financeChart"></div>
+              <div class="fchart-stats" id="financeChartStats"></div>
+            </section>
+
             <div class="finance-grid">
               <section class="finance-card">
                 <div class="finance-card-head">
@@ -1982,6 +2065,8 @@
               </div>
               <button class="secondary-btn" data-personal-add="agenda">＋ Novo compromisso</button>
             </div>
+            <div class="agenda-layout">
+            <div class="agenda-cal">
             <div class="calendar-toolbar">
               <button class="icon-btn" id="calendarPrevBtn" aria-label="Mês anterior">‹</button>
               <strong id="calendarMonthLabel" class="calendar-month-label"></strong>
@@ -1992,7 +2077,9 @@
               <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
             <div id="calendarDayDetail" class="agenda-day-card"></div>
+            </div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;"><button class="primary-btn" id="gcalSyncBtn" type="button">🔄 Sincronizar com Google Calendar</button><button class="secondary-btn" id="gcalConfigBtn" type="button">⚙️ Client ID</button><button class="secondary-btn" id="gcalIcsBtn" type="button">⬇️ Baixar .ics</button></div>
           </section>
 
@@ -2130,6 +2217,17 @@
           <button type="submit" class="primary-btn">Salvar Cargas Horárias</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: compromisso ampliado -->
+  <div class="modal-backdrop" id="agendaDetailBackdrop" role="dialog" aria-modal="true" aria-labelledby="agendaDetailKind">
+    <div class="modal agenda-detail-modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="agendaDetailKind">Compromisso</h2>
+        <button class="icon-btn" id="closeAgendaDetailBtn" aria-label="Fechar">×</button>
+      </div>
+      <div id="agendaDetailBody"></div>
     </div>
   </div>
 
@@ -2945,6 +3043,7 @@
       // ---- Agenda em formato de calendário -------------------------------
       let calendarCursor = new Date(); // mês/ano exibidos
       let calendarSelectedDate = localDateISO(); // dia selecionado no grid
+      let calendarDayItems = []; // compromissos do dia selecionado (para o painel ampliado)
 
       function renderCalendar() {
         const grid = $("#calendarGrid");
@@ -2999,12 +3098,13 @@
         }).join("");
 
         // Lista de compromissos do dia selecionado
-        const dayItems = unifiedEvents(calendarSelectedDate, calendarSelectedDate);
+        const dayItems = unifiedEvents(calendarSelectedDate, calendarSelectedDate).sort((x, y) => (x.time || "99:99").localeCompare(y.time || "99:99"));
+        calendarDayItems = dayItems;
 
         detail.innerHTML = `
           <div class="agenda-day-head"><strong>${escapeHTML(agendaDateLabel(calendarSelectedDate))}</strong><span>${dayItems.length} compromisso${dayItems.length===1?"":"s"}</span></div>
-          ${dayItems.length ? dayItems.map(item => `
-            <div class="agenda-event">
+          ${dayItems.length ? dayItems.map((item, idx) => `
+            <div class="agenda-event ${KIND_AREA_CLASS[item.kind] || "wk-pes"}" data-agenda-open="${idx}" tabindex="0" role="button" title="Ver detalhes">
               <div class="agenda-event-time">${escapeHTML(item.time || "—")}</div>
               <div class="agenda-event-main">
                 <h3>${item.icon} ${escapeHTML(item.title)}</h3>
@@ -3193,6 +3293,60 @@
         });
       }
 
+      let financeChartRange = 6;
+      function renderFinanceChart(month) {
+        const el = $("#financeChart"); if (!el) return;
+        const statsEl = $("#financeChartStats");
+        const n = financeChartRange;
+        // janela fixa terminando no mês atual; só se desloca se o mês escolhido ficar fora dela
+        const idx = mo => { const [yy, mm] = mo.split("-").map(Number); return yy * 12 + (mm - 1); };
+        let endIdx = idx(localDateISO().slice(0, 7));
+        const selIdx = idx(month);
+        if (selIdx > endIdx) endIdx = selIdx;
+        else if (selIdx < endIdx - (n - 1)) endIdx = selIdx + (n - 1);
+        const y = Math.floor(endIdx / 12), m = (endIdx % 12) + 1;
+        const data = [];
+        for (let i = n - 1; i >= 0; i--) {
+          const d = new Date(y, m - 1 - i, 1);
+          const mo = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+          const t = financeTotals(mo);
+          data.push({ mo, d, inc: t.incomeTotal, out: t.exitsTotal, inv: t.investmentTotal, bal: t.balance });
+        }
+        const maxV = Math.max(0, ...data.flatMap(x => [x.inc, x.out, x.inv]));
+        if (!maxV) {
+          el.innerHTML = `<div class="finance-empty"><strong>Sem movimentações neste período</strong><span>Registre entradas, gastos ou investimentos para comparar os meses.</span></div>`;
+          if (statsEl) statsEl.innerHTML = "";
+          return;
+        }
+        const nice = v => { const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
+        const top = nice(maxV);
+        const compact = new Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 });
+        const short = v => "R$ " + compact.format(v);
+        const bar = (cls, label, v) => `<i class="fb ${cls}" style="height:${v > 0 ? Math.max(1.5, v / top * 100) : 0}%" title="${label}: ${moneyBRL(v)}"></i>`;
+        const cols = data.map(x => {
+          const mName = new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(x.d).replace(".", "");
+          const sign = x.bal < 0 ? "−" : "+";
+          return `<button type="button" class="fchart-col${x.mo === month ? " sel" : ""}" data-fchart-month="${x.mo}" title="${escapeHTML(financeMonthLabel(x.mo))}">
+            <span class="fchart-bars">${bar("in", "Entradas", x.inc)}${bar("out", "Saídas", x.out)}${bar("inv", "Investimentos", x.inv)}</span>
+            <span class="fchart-lbl">${escapeHTML(mName)}<small>${String(x.d.getFullYear()).slice(2)}</small></span>
+            <span class="fchart-bal ${x.bal < 0 ? "neg" : "pos"}">${sign}${short(Math.abs(x.bal))}</span>
+          </button>`;
+        }).join("");
+        el.innerHTML = `<div class="fchart-wrap">
+          <div class="fchart-axis"><span style="bottom:100%">${short(top)}</span><span style="bottom:50%">${short(top / 2)}</span><span style="bottom:0">0</span></div>
+          <div class="fchart-scroll"><div class="fchart-plot" style="min-width:${n * 66}px;grid-template-columns:repeat(${n},minmax(0,1fr))">${cols}</div></div>
+        </div>`;
+        if (statsEl) {
+          const totalBal = data.reduce((a, x) => a + x.bal, 0);
+          const avgOut = data.reduce((a, x) => a + x.out, 0) / n;
+          const worst = data.reduce((a, x) => (x.out > a.out ? x : a), data[0]);
+          statsEl.innerHTML = `
+            <div class="fchart-stat"><small>Saldo no período</small><strong class="${totalBal < 0 ? "neg" : "pos"}">${moneyBRL(totalBal)}</strong></div>
+            <div class="fchart-stat"><small>Média de saídas por mês</small><strong>${moneyBRL(avgOut)}</strong></div>
+            <div class="fchart-stat"><small>Mês com mais saídas</small><strong>${worst.out > 0 ? escapeHTML(financeMonthLabel(worst.mo)) + " · " + moneyBRL(worst.out) : "—"}</strong></div>`;
+        }
+      }
+
       function renderFinance() {
         renderFinanceCardsSummary();
         ensureFinanceCards();
@@ -3200,6 +3354,7 @@
         if ($("#financeMonthInput")) $("#financeMonthInput").value = month;
         if ($("#financeMonthTitle")) $("#financeMonthTitle").textContent = financeMonthLabel(month);
         const t = financeTotals(month);
+        renderFinanceChart(month);
 
         $("#financeKpiIn").textContent = moneyBRL(t.incomeTotal);
         $("#financeKpiOut").textContent = moneyBRL(t.exitsTotal);
@@ -4136,6 +4291,21 @@
         if ($("#financeExpenseFilterPayment")) $("#financeExpenseFilterPayment").value = "";
       }
 
+      $("#financeChart")?.addEventListener("click", e => {
+        const col = e.target.closest("[data-fchart-month]");
+        if (!col) return;
+        state.finance.selectedMonth = col.dataset.fchartMonth;
+        resetFinanceExpenseFilters();
+        saveFinance();
+        renderFinance();
+      });
+      document.addEventListener("click", e => {
+        const b = e.target.closest("[data-fchart-range]");
+        if (!b) return;
+        financeChartRange = Number(b.dataset.fchartRange) || 6;
+        $$("[data-fchart-range]").forEach(x => x.classList.toggle("active", x === b));
+        renderFinanceChart(state.finance.selectedMonth || localDateISO().slice(0, 7));
+      });
       $("#financeMonthInput")?.addEventListener("change", e => {
         state.finance.selectedMonth = e.target.value || localDateISO().slice(0,7);
         resetFinanceExpenseFilters();
@@ -4366,6 +4536,39 @@
 
       // ---- Agenda unificada (aulas, provas, leituras, contas, tarefas, compromissos) ----
       const KIND_LABEL = { aula:"Aula", prova:"Prova/entrega", leitura:"Leitura", conta:"Conta", parcela:"Parcela", fatura:"Fatura", tarefa:"Tarefa", agenda:"Compromisso", lembrete:"Lembrete" };
+      const KIND_AREA_CLASS = { prova:"wk-fac", leitura:"wk-fac", aula:"wk-fac", tarefa:"wk-pes", agenda:"wk-pes", lembrete:"wk-pes", conta:"wk-fin", parcela:"wk-fin", fatura:"wk-fin" };
+      const KIND_DEST = { prova:"faculty:exams", leitura:"faculty:readings", aula:"faculty:courses", tarefa:"personal:todos", conta:"finance:fixed", parcela:"finance:installments", fatura:"finance:cards" };
+      const DEST_LABEL = { faculty:"Faculdade", personal:"Pessoal", finance:"Financeiro" };
+
+      function closeAgendaDetail() { $("#agendaDetailBackdrop")?.classList.remove("open"); }
+      function openAgendaDetail(idx) {
+        const item = calendarDayItems[idx]; if (!item) return;
+        const raw = item.raw || {};
+        const dateLong = new Intl.DateTimeFormat("pt-BR", { weekday:"long", day:"numeric", month:"long", year:"numeric" }).format(new Date(item.date + "T12:00:00"));
+        const time = item.time ? item.time.replace(":", "h") + (item.end ? " – " + item.end.replace(":", "h") : "") : "Dia todo";
+        const fields = [];
+        if (raw.location) fields.push(["📍 Local", escapeHTML(raw.location)]);
+        if (raw.value != null && raw.value !== "" && ["conta","parcela","fatura"].includes(item.kind)) fields.push(["💰 Valor", moneyBRL(raw.value)]);
+        if (raw.category) fields.push(["🏷️ Categoria", escapeHTML(raw.category)]);
+        if (raw.notes) fields.push(["📝 Observações", escapeHTML(raw.notes)]);
+        if (raw.link) fields.push(["🔗 Link", `<a href="${escapeHTML(raw.link)}" target="_blank" rel="noopener">${escapeHTML(raw.link)}</a>`]);
+        if (item.kind === "prova" && raw.pdfName) fields.push(["📕 Arquivo", `<button class="badge" type="button" data-exam-pdf="${escapeHTML(raw.id)}">Abrir PDF</button>`]);
+        let actions = "";
+        if (item.kind === "agenda") actions = `<button class="secondary-btn" data-personal-edit="agenda" data-id="${escapeHTML(raw.id)}">✎ Editar</button><button class="secondary-btn" data-personal-delete="agenda" data-id="${escapeHTML(raw.id)}">⌫ Excluir</button>`;
+        else if (item.kind === "prova" || item.kind === "leitura") { const t = item.kind === "prova" ? "exam" : "reading"; actions = `<button class="secondary-btn" data-faculty-edit="${t}" data-id="${escapeHTML(raw.id)}">✎ Editar</button><button class="secondary-btn" data-faculty-delete="${t}" data-id="${escapeHTML(raw.id)}">⌫ Excluir</button>`; }
+        const dest = KIND_DEST[item.kind];
+        if (dest) actions += `<button class="primary-btn" data-ad-go="${dest}">Abrir em ${DEST_LABEL[dest.split(":")[0]]} →</button>`;
+        $("#agendaDetailKind").textContent = KIND_LABEL[item.kind] || "Compromisso";
+        $("#agendaDetailBody").innerHTML = `
+          <div class="ad-hero ${KIND_AREA_CLASS[item.kind] || "wk-pes"}">
+            <div class="ad-when"><span class="ad-date">${escapeHTML(dateLong)}</span><span class="ad-time">🕒 ${escapeHTML(time)}</span></div>
+            <h3 class="ad-title">${item.icon} ${escapeHTML(item.title)}</h3>
+          </div>
+          ${fields.length ? `<dl class="ad-fields">${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>` : `<p class="ad-empty">Sem mais detalhes neste compromisso.</p>`}
+          ${actions ? `<div class="ad-actions">${actions}</div>` : `<div class="ad-actions"></div>`}`;
+        $("#agendaDetailBackdrop").classList.add("open");
+      }
+
       function unifiedEvents(fromISO, toISO) {
         const ev = [];
         const add = (date, time, end, title, icon, kind, key, raw) => { if (date >= fromISO && date <= toISO) ev.push({ date, time: time || "", end: end || "", title, icon, kind, key, raw }); };
@@ -4472,6 +4675,23 @@
       $("#gcalSyncBtn")?.addEventListener("click", gcalSync);
       $("#gcalConfigBtn")?.addEventListener("click", gcalConfigure);
       $("#gcalIcsBtn")?.addEventListener("click", downloadICS);
+
+      $("#calendarDayDetail")?.addEventListener("click", e => {
+        if (e.target.closest("button, a")) return;
+        const row = e.target.closest("[data-agenda-open]");
+        if (row) openAgendaDetail(Number(row.dataset.agendaOpen));
+      });
+      $("#calendarDayDetail")?.addEventListener("keydown", e => {
+        if ((e.key === "Enter" || e.key === " ") && e.target.matches("[data-agenda-open]")) { e.preventDefault(); openAgendaDetail(Number(e.target.dataset.agendaOpen)); }
+      });
+      $("#agendaDetailBody")?.addEventListener("click", e => {
+        const go = e.target.closest("[data-ad-go]");
+        if (go) { closeAgendaDetail(); goToWeekItem(go.dataset.adGo); return; }
+        if (e.target.closest("[data-personal-edit],[data-personal-delete],[data-faculty-edit],[data-faculty-delete]")) closeAgendaDetail();
+      });
+      $("#closeAgendaDetailBtn")?.addEventListener("click", closeAgendaDetail);
+      $("#agendaDetailBackdrop")?.addEventListener("click", e => { if (e.target === $("#agendaDetailBackdrop")) closeAgendaDetail(); });
+      document.addEventListener("keydown", e => { if (e.key === "Escape") closeAgendaDetail(); });
 
       $("#calendarGrid")?.addEventListener("click", e => {
         const cell = e.target.closest("[data-calendar-day]");
