@@ -33,6 +33,7 @@
       --fac: #b5604a; --fac-soft: #f7ebe6; --fac-ink: #8a4332;
       --pes: #e0a800; --pes-soft: #fdf4d3; --pes-ink: #7a5a00;
       --fin: #3b8a4d; --fin-soft: #e6f3e8; --fin-ink: #2a6a39;
+      --cat0: #2f7f78; --cat1: #b5604a; --cat2: #b88a3e; --cat3: #6b8f5e; --cat4: #5b7894; --cat5: #8a6f8f; --cat6: #b04a68; --cat7: #9a9a8a;
       --hero-from: #123a36;
       --hero-to: #0b2421;
       --hero-ink: #b5ddd7;
@@ -66,6 +67,7 @@
       --fac: #e0957f; --fac-soft: #3a2420; --fac-ink: #efb9a8;
       --pes: #f0c24a; --pes-soft: #3a3010; --pes-ink: #f3d77f;
       --fin: #72cf88; --fin-soft: #15301b; --fin-ink: #a2e3b3;
+      --cat0: #5fc4b8; --cat1: #e0957f; --cat2: #e0b35e; --cat3: #9cc58a; --cat4: #86a7c7; --cat5: #b79bbd; --cat6: #dd8aa5; --cat7: #b8b8a8;
       --hero-from: #17413c;
       --hero-to: #0e2623;
       --hero-ink: #a8d8d2;
@@ -1604,6 +1606,77 @@
     .ad-empty { margin: 16px 21px 0; font-size: 13.5px; color: var(--muted); }
     .ad-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; padding: 18px 21px 21px; }
     .ad-actions:empty { padding: 0 0 10px; }
+
+    /* ===== Financeiro: harmonia, pagamentos, pizza e formulário ===== */
+    .finance-kpi { border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+    .finance-kpi .kpi-label { text-transform: none; letter-spacing: 0; font-size: 12.5px; font-weight: 600; }
+    .finance-kpi .kpi-value { font-family: var(--font-head); font-weight: 800; letter-spacing: -.03em; }
+    .finance-kpi .kpi-note { font-size: 12px; }
+    .finance-kpi.positive .kpi-value, .money.in { color: var(--fin-ink); }
+    .finance-kpi.negative .kpi-value, .money.out { color: var(--fac-ink); }
+    .finance-card { border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+    .finance-card-head h2 { font-family: var(--font-head); font-size: 18px; letter-spacing: -.01em; }
+    .finance-card-head p { font-size: 12.5px; }
+    .finance-table th { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 700; }
+    .finance-table td { font-size: 13px; }
+    .finance-summary-row span:first-child { font-size: 13.5px; }
+    .finance-tab.active { color: var(--primary); }
+
+    .fpay-total { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text); white-space: nowrap; }
+    .payment-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; padding: 0 18px 18px; }
+    .payment-item { --pc: var(--cat7); padding: 14px 15px 15px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); min-width: 0; }
+    .pk-pix { --pc: var(--cat0); } .pk-debit { --pc: var(--cat4); } .pk-credit { --pc: var(--cat1); }
+    .pi-top { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .pi-ico { flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-size: 15px; background: color-mix(in srgb, var(--pc) 16%, transparent); }
+    .payment-item small { font-size: 13px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .payment-item strong { margin-top: 10px; font-family: var(--font-head); font-size: 22px; letter-spacing: -.02em; }
+    .pi-bar { height: 6px; margin-top: 10px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+    .pi-bar span { display: block; height: 100%; border-radius: 99px; background: var(--pc); }
+    .payment-item em { display: block; margin-top: 6px; font-style: normal; font-size: 12px; color: var(--muted); }
+
+    .fov-grid { grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr); }
+    .fcat { padding: 0 18px 20px; }
+    .dn-wrap { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 22px; align-items: center; }
+    .dn-chart { position: relative; width: 200px; height: 200px; }
+    .dn-chart svg { display: block; width: 100%; height: 100%; }
+    .dn-seg { transition: opacity .15s ease; }
+    .dn-seg.dim { opacity: .22; }
+    .dn-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+    .dn-center small { font-size: 11px; font-weight: 600; color: var(--muted); }
+    .dn-center strong { max-width: 84px; font-family: var(--font-head); font-size: 14.5px; line-height: 1.15; letter-spacing: -.02em; }
+    .dn-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; min-width: 0; }
+    .dn-row { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 7px 8px; border-radius: var(--radius-sm); font-size: 13px; transition: background-color .15s ease; }
+    .dn-row i { width: 10px; height: 10px; border-radius: 3px; }
+    .dn-row:hover { background: var(--surface-2); }
+    .dn-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    .dn-pct { min-width: 34px; text-align: right; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .dn-row strong { font-size: 13px; font-weight: 700; white-space: nowrap; }
+    @media (max-width: 900px) { .fov-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .dn-wrap { grid-template-columns: 1fr; justify-items: center; } .dn-legend { width: 100%; } }
+
+    /* registro de gasto */
+    .fm-amount { display: flex; align-items: center; gap: 10px; padding: 2px 16px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-2); }
+    .fm-amount:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .fm-amount span { font-size: 18px; font-weight: 700; color: var(--muted); }
+    .fm-amount .field { width: 100%; min-width: 0; padding: 8px 0; border: 0; background: transparent; box-shadow: none; font-family: var(--font-head); font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+    .fm-amount .field:focus { box-shadow: none; }
+    .fm-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .fm-chip { padding: 7px 13px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+    .fm-chip:hover { border-color: var(--primary); }
+    .fm-chip.on { border-color: var(--primary); background: var(--primary); color: #fff; }
+    body.dark-mode .fm-chip.on { color: #0d1514; }
+    .fm-cat-select { margin-top: 9px; }
+    .fm-date { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .fm-date .field { flex: 1 1 150px; max-width: 190px; }
+    .fm-saved { grid-column: 1 / -1; padding: 9px 13px; border-radius: var(--radius-sm); background: var(--fin-soft); color: var(--fin-ink); font-size: 13px; font-weight: 700; }
+    #financeModalBackdrop .modal-actions { flex-wrap: wrap; }
+    #saveAddAnotherBtn[hidden] { display: none; }
+
+    /* sobra do mês anterior / saldo final */
+    .fsr-carry { padding: 11px 12px; background: var(--fin-soft); border-radius: var(--radius-sm); margin-bottom: 4px; border-top: 0; }
+    .fsr-carry span:first-child { color: var(--fin-ink); font-weight: 700; }
+    .finance-summary-row.fsr-total { margin-top: 4px; border-top: 2px solid var(--line-strong); font-size: 15px; }
+    .finance-summary-row.fsr-total span:first-child { color: var(--text); font-weight: 700; }
   </style>
 </head>
 <body>
@@ -1936,7 +2009,30 @@
           </div>
 
           <section id="financeOverviewPane" class="finance-pane active">
-            <section class="finance-card fchart-card" style="margin-bottom:16px;">
+            <section class="finance-card fpay-card" style="margin-bottom:16px;">
+              <div class="finance-card-head">
+                <div><h2>Gastos por tipo de pagamento</h2><p>Onde seu dinheiro saiu neste mês.</p></div>
+                <span class="fpay-total" id="financePaymentTotal"></span>
+              </div>
+              <div class="payment-grid" id="financePaymentGrid"></div>
+            </section>
+
+            <div class="finance-grid fov-grid">
+              <section class="finance-card">
+                <div class="finance-card-head">
+                  <div><h2>Gastos por categoria</h2><p>Para onde foi cada parte dos gastos do mês.</p></div>
+                </div>
+                <div class="fcat" id="financeCategoryList"></div>
+              </section>
+              <section class="finance-card">
+                <div class="finance-card-head">
+                  <div><h2>Resumo do mês</h2><p>Quanto entrou, saiu e foi investido.</p></div>
+                </div>
+                <div class="finance-summary-list" id="financeSummaryList"></div>
+              </section>
+            </div>
+
+            <section class="finance-card fchart-card" style="margin-top:16px;">
               <div class="finance-card-head">
                 <div><h2>Comparativo por mês</h2><p>Entradas, saídas e investimentos mês a mês. Toque em um mês para ver os detalhes dele.</p></div>
                 <div class="fchart-range" role="group" aria-label="Período do gráfico">
@@ -1946,31 +2042,10 @@
               </div>
               <div class="fchart-legend">
                 <span class="lg-in">Entradas</span><span class="lg-out">Saídas</span><span class="lg-inv">Investimentos</span>
-                <span class="lg-note">Abaixo de cada mês: saldo</span>
+                <span class="lg-note">Abaixo de cada mês: resultado do mês</span>
               </div>
               <div class="fchart" id="financeChart"></div>
               <div class="fchart-stats" id="financeChartStats"></div>
-            </section>
-
-            <div class="finance-grid">
-              <section class="finance-card">
-                <div class="finance-card-head">
-                  <div><h2>Resumo do mês</h2><p>Quanto entrou, saiu e foi investido.</p></div>
-                </div>
-                <div class="finance-summary-list" id="financeSummaryList"></div>
-              </section>
-              <section class="finance-card">
-                <div class="finance-card-head">
-                  <div><h2>Gastos por categoria</h2><p>Distribuição dos gastos do mês.</p></div>
-                </div>
-                <div class="category-list" id="financeCategoryList"></div>
-              </section>
-            </div>
-            <section class="finance-card" style="margin-top:16px;">
-              <div class="finance-card-head">
-                <div><h2>Gastos por tipo de pagamento</h2><p>Veja onde está concentrado o uso de cada forma de pagamento.</p></div>
-              </div>
-              <div class="payment-grid" id="financePaymentGrid"></div>
             </section>
           </section>
 
@@ -2288,6 +2363,7 @@
         <div class="form-grid" id="financeFormFields"></div>
         <div class="modal-actions">
           <button type="button" class="secondary-btn" id="cancelFinanceModalBtn">Cancelar</button>
+          <button type="button" class="secondary-btn" id="saveAddAnotherBtn" hidden>Salvar e adicionar outro</button>
           <button type="submit" class="primary-btn">Salvar</button>
         </div>
       </form>
@@ -2715,14 +2791,58 @@
         return value;
       }
 
+      function expenseFormFields(existing) {
+        const f = state.finance;
+        const last = f.expenses.length ? f.expenses[f.expenses.length - 1] : null;
+        const payVal = existing ? paymentKey(existing) : (last ? paymentKey(last) : "");
+        const catVal = existing?.category || "";
+        const freq = {};
+        f.expenses.forEach(x => { if (x.category) freq[x.category] = (freq[x.category] || 0) + 1; });
+        const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).map(e => e[0]).filter(c => EXPENSE_CATEGORIES.includes(c)).slice(0, 6);
+        ["Supermercado","Restaurantes, bares e lanchonetes","Delivery","Aplicativos de transporte (Uber, 99)","Lazer e Entretenimento","Saúde"].forEach(c => { if (top.length < 6 && !top.includes(c) && EXPENSE_CATEGORIES.includes(c)) top.push(c); });
+        const pays = [["Pix","⚡ Pix"], ["Cartão de débito","💳 Débito"], ...Object.entries(f.cards || {}).map(([id, c]) => ["card:" + id, "💳 " + c.name])];
+        if (payVal && !pays.some(p => p[0] === payVal)) pays.push([payVal, paymentLabel(payVal)]);
+        const names = [...new Set(f.expenses.slice(-120).map(x => x.name).filter(Boolean).reverse())].slice(0, 30);
+        const chip = (v, l, on) => `<button type="button" class="fm-chip${on ? " on" : ""}" data-v="${escapeHTML(v)}">${escapeHTML(l)}</button>`;
+        return `
+          <div class="form-group full"><label>Valor</label>
+            <div class="fm-amount"><span>R$</span><input class="field" name="value" type="number" inputmode="decimal" min="0" step=".01" required value="${existing?.value ?? ""}" placeholder="0,00" autocomplete="off"></div></div>
+          <div class="form-group full"><label>O que foi?</label>
+            <input class="field" name="name" required list="fmNames" autocomplete="off" value="${escapeHTML(existing?.name || "")}" placeholder="Ex.: Mercado">
+            <datalist id="fmNames">${names.map(n => `<option value="${escapeHTML(n)}"></option>`).join("")}</datalist></div>
+          <div class="form-group full"><label>Como pagou?</label>
+            <div class="fm-chips" data-fm-group="payment">${pays.map(([v, l]) => chip(v, l, v === payVal)).join("")}</div>
+            <input type="hidden" name="payment" value="${escapeHTML(payVal)}"></div>
+          <div class="form-group full"><label>Categoria</label>
+            <div class="fm-chips" data-fm-group="category">${top.map(c => chip(c, c.replace(/ \(.*\)/, ""), c === catVal)).join("")}</div>
+            <select class="field fm-cat-select" id="fmCatSelect"><option value="">Outras categorias…</option>${EXPENSE_CATEGORIES.filter(c => !top.includes(c)).map(c => `<option value="${escapeHTML(c)}" ${c === catVal ? "selected" : ""}>${escapeHTML(c)}</option>`).join("")}</select>
+            <input type="hidden" name="category" value="${escapeHTML(catVal)}"></div>
+          <div class="form-group full"><label>Data</label>
+            <div class="fm-date"><button type="button" class="fm-chip" data-fm-day="0">Hoje</button><button type="button" class="fm-chip" data-fm-day="-1">Ontem</button><input class="field" name="date" type="date" required value="${existing?.date || localDateISO()}"></div></div>`;
+      }
+
+      function fmSetGroup(group, value) {
+        const box = $("#financeFormFields");
+        const hid = box.querySelector(`input[name="${group}"]`); if (!hid) return;
+        hid.value = value;
+        box.querySelectorAll(`[data-fm-group="${group}"] .fm-chip`).forEach(c => c.classList.toggle("on", value !== "" && c.dataset.v === value));
+        if (group === "category") {
+          const sel = box.querySelector("#fmCatSelect");
+          if (sel) sel.value = [...sel.options].some(o => o.value === value) ? value : "";
+        }
+      }
+      function fmSyncDate() {
+        const box = $("#financeFormFields"); const inp = box.querySelector('input[name="date"]'); if (!inp) return;
+        box.querySelectorAll("[data-fm-day]").forEach(b => {
+          const d = new Date(); d.setDate(d.getDate() + Number(b.dataset.fmDay));
+          b.classList.toggle("on", inp.value === localDateISO(d));
+        });
+      }
+      let financeKeepOpen = false;
+
       function financeModal(type, existing = null) {
         const defaults = {
-          expense: { title:"Novo gasto do mês", fields:`
-            <div class="form-group full"><label>Nome</label><input class="field" name="name" required value="${escapeHTML(existing?.name||"")}" placeholder="Ex.: Mercado"></div>
-            <div class="form-group"><label>Data</label><input class="field" name="date" type="date" required value="${existing?.date||localDateISO()}"></div>
-            <div class="form-group"><label>Tipo de pagamento</label><select class="field" name="payment">${paymentOptions(paymentSelectValue(existing))}</select></div>
-            <div class="form-group"><label>Categoria</label><select class="field" name="category">${categoryOptions(existing?.category)}</select></div>
-            <div class="form-group"><label>Valor</label><input class="field" name="value" type="number" min="0" step=".01" required value="${existing?.value??""}" placeholder="0,00"></div>`},
+          expense: { title:"Novo gasto do mês", fields: expenseFormFields(existing) },
           fixed: { title:"Novo gasto fixo", fields:`
             <div class="form-group full"><label>Nome</label><input class="field" name="name" required value="${escapeHTML(existing?.name||"")}" placeholder="Ex.: Internet"></div>
             <div class="form-group"><label>Repete todo mês?</label><select class="field" name="recurring"><option value="true" ${existing?.recurring===false?"":"selected"}>Sim, repetir todo mês</option><option value="false" ${existing?.recurring===false?"selected":""}>Não, só este mês</option></select></div>
@@ -2764,6 +2884,9 @@
         $("#financeModalTitle").textContent = existing ? cfg.title.replace("Novo ","Editar ") : cfg.title;
         $("#financeFormFields").innerHTML = cfg.fields;
         $("#financeModalBackdrop").classList.add("open");
+        const again = $("#saveAddAnotherBtn"); if (again) again.hidden = !(type === "expense" && !existing);
+        $("#financeFormFields").dataset.payTouched = "";
+        if (type === "expense") fmSyncDate();
         setTimeout(() => $("#financeFormFields input, #financeFormFields select")?.focus(), 40);
       }
 
@@ -2815,6 +2938,28 @@
         return { expenses, fixed, installments, outflow, income, investments };
       }
 
+      // Sobra que vem dos meses anteriores: só entra o que terminou POSITIVO; saldo negativo não é transportado.
+      function financeCarryIn(month) {
+        const f = state.finance;
+        const months = [];
+        f.expenses.forEach(x => months.push(financeExpensePaymentMonth(x)));
+        [...f.income, ...f.investments, ...f.fixed, ...f.installments].forEach(x => { if (x.date) months.push(String(x.date).slice(0, 7)); });
+        const valid = months.filter(m => /^\d{4}-\d{2}$/.test(m)).sort();
+        if (!valid.length || valid[0] >= month) return 0;
+        const sum = arr => arr.reduce((a, x) => a + Number(x.value || 0), 0);
+        let [y, m] = valid[0].split("-").map(Number);
+        let carry = 0, guard = 0;
+        while (guard++ < 600) {
+          const key = `${y}-${String(m).padStart(2, "0")}`;
+          if (key >= month) break;
+          const r = financeRecordsForMonth(key);
+          const result = sum(r.income) - (sum(r.expenses) + sum(r.fixed) + sum(r.installments)) - sum(r.investments);
+          carry = Math.max(0, carry + result);
+          m++; if (m > 12) { m = 1; y++; }
+        }
+        return Math.round(carry * 100) / 100;
+      }
+
       function financeTotals(month) {
         const r = financeRecordsForMonth(month);
         const expenseTotal = r.expenses.reduce((s,x)=>s+Number(x.value||0),0);
@@ -2825,7 +2970,9 @@
         const investmentTotal = r.investments.reduce((s,x)=>s+Number(x.value||0),0);
         const expensesTotal = expenseTotal + fixedTotal + installmentTotal;
         const exitsTotal = expensesTotal;
-        return { ...r, expenseTotal, fixedTotal, installmentTotal, outflowTotal, incomeTotal, investmentTotal, expensesTotal, exitsTotal, balance: incomeTotal-exitsTotal-investmentTotal };
+        const monthResult = incomeTotal - exitsTotal - investmentTotal;
+        const carryIn = financeCarryIn(month);
+        return { ...r, expenseTotal, fixedTotal, installmentTotal, outflowTotal, incomeTotal, investmentTotal, expensesTotal, exitsTotal, carryIn, monthResult, balance: carryIn + monthResult };
       }
 
       function financeDelete(type,id) {
@@ -3293,6 +3440,30 @@
         });
       }
 
+      function renderCategoryDonut(cats) {
+        const el = $("#financeCategoryList"); if (!el) return;
+        if (!cats.length) { el.innerHTML = `<div class="finance-empty"><strong>Sem gastos no mês</strong><span>Cadastre um gasto para ver a distribuição.</span></div>`; return; }
+        const MAX = 7;
+        const list = cats.slice(0, MAX);
+        if (cats.length > MAX) list.push(["Outras categorias", cats.slice(MAX).reduce((a, c) => a + c[1], 0)]);
+        const total = list.reduce((a, c) => a + c[1], 0);
+        const R = 64, C = 2 * Math.PI * R; let off = 0;
+        const pct = v => { const x = v / total * 100; return x < 1 ? "<1%" : Math.round(x) + "%"; };
+        const segs = list.map(([name, val], i) => {
+          const len = val / total * C, vis = Math.max(0, len - (list.length > 1 ? 2 : 0));
+          const seg = `<circle class="dn-seg" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="var(--cat${i})" stroke-width="46" stroke-dasharray="${vis} ${C - vis}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${escapeHTML(name)}: ${moneyBRL(val)} (${pct(val)})</title></circle>`;
+          off += len; return seg;
+        }).join("");
+        const rows = list.map(([name, val], i) => `<li class="dn-row" data-i="${i}"><i style="background:var(--cat${i})"></i><span class="dn-name" title="${escapeHTML(name)}">${escapeHTML(name)}</span><span class="dn-pct">${pct(val)}</span><strong>${moneyBRL(val)}</strong></li>`).join("");
+        el.innerHTML = `<div class="dn-wrap"><div class="dn-chart"><svg viewBox="0 0 200 200" role="img" aria-label="Gastos por categoria">${segs}</svg><div class="dn-center"><small>Total</small><strong>${moneyBRL(total)}</strong></div></div><ul class="dn-legend">${rows}</ul></div>`;
+      }
+      (function () {
+        const el = document.getElementById("financeCategoryList"); if (!el) return;
+        const mark = i => el.querySelectorAll(".dn-seg").forEach(sg => sg.classList.toggle("dim", i !== null && sg.dataset.i !== i));
+        el.addEventListener("mouseover", e => { const r = e.target.closest("[data-i]"); mark(r ? r.dataset.i : null); });
+        el.addEventListener("mouseleave", () => mark(null));
+      })();
+
       let financeChartRange = 6;
       function renderFinanceChart(month) {
         const el = $("#financeChart"); if (!el) return;
@@ -3310,7 +3481,7 @@
           const d = new Date(y, m - 1 - i, 1);
           const mo = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
           const t = financeTotals(mo);
-          data.push({ mo, d, inc: t.incomeTotal, out: t.exitsTotal, inv: t.investmentTotal, bal: t.balance });
+          data.push({ mo, d, inc: t.incomeTotal, out: t.exitsTotal, inv: t.investmentTotal, bal: t.monthResult });
         }
         const maxV = Math.max(0, ...data.flatMap(x => [x.inc, x.out, x.inv]));
         if (!maxV) {
@@ -3341,7 +3512,7 @@
           const avgOut = data.reduce((a, x) => a + x.out, 0) / n;
           const worst = data.reduce((a, x) => (x.out > a.out ? x : a), data[0]);
           statsEl.innerHTML = `
-            <div class="fchart-stat"><small>Saldo no período</small><strong class="${totalBal < 0 ? "neg" : "pos"}">${moneyBRL(totalBal)}</strong></div>
+            <div class="fchart-stat"><small>Resultado no período</small><strong class="${totalBal < 0 ? "neg" : "pos"}">${moneyBRL(totalBal)}</strong></div>
             <div class="fchart-stat"><small>Média de saídas por mês</small><strong>${moneyBRL(avgOut)}</strong></div>
             <div class="fchart-stat"><small>Mês com mais saídas</small><strong>${worst.out > 0 ? escapeHTML(financeMonthLabel(worst.mo)) + " · " + moneyBRL(worst.out) : "—"}</strong></div>`;
         }
@@ -3360,35 +3531,41 @@
         $("#financeKpiOut").textContent = moneyBRL(t.exitsTotal);
         $("#financeKpiInvest").textContent = moneyBRL(t.investmentTotal);
         $("#financeKpiBalance").textContent = moneyBRL(t.balance);
+        const balNote = $("#financeKpiBalance").nextElementSibling;
+        if (balNote) balNote.textContent = t.carryIn > 0 ? `inclui ${moneyBRL(t.carryIn)} que sobraram do mês anterior` : "entradas − saídas − investimentos";
         $("#financeKpiBalance").parentElement.classList.toggle("positive", t.balance >= 0);
         $("#financeKpiBalance").parentElement.classList.toggle("negative", t.balance < 0);
 
         $("#financeSummaryList").innerHTML = `
+          ${t.carryIn > 0 ? `<div class="finance-summary-row fsr-carry"><span>↪ Sobra do mês anterior</span><strong class="money in">${moneyBRL(t.carryIn)}</strong></div>` : ""}
           <div class="finance-summary-row"><span>Entradas</span><strong class="money in">${moneyBRL(t.incomeTotal)}</strong></div>
           <div class="finance-summary-row"><span>Saídas do mês</span><strong class="money out">${moneyBRL(t.expensesTotal)}</strong></div>
           <div class="finance-summary-row"><span>Gastos avulsos</span><strong>${moneyBRL(t.expenseTotal)}</strong></div>
           <div class="finance-summary-row"><span>Gastos fixos</span><strong>${moneyBRL(t.fixedTotal)}</strong></div>
           <div class="finance-summary-row"><span>Parcelas do mês</span><strong>${moneyBRL(t.installmentTotal)}</strong></div>
-          <div class="finance-summary-row"><span>Investimentos</span><strong class="money invest">${moneyBRL(t.investmentTotal)}</strong></div>`;
+          <div class="finance-summary-row"><span>Investimentos</span><strong class="money invest">${moneyBRL(t.investmentTotal)}</strong></div>
+          <div class="finance-summary-row fsr-total"><span>Saldo do mês</span><strong class="money ${t.balance < 0 ? "out" : "in"}">${moneyBRL(t.balance)}</strong></div>`;
 
         const categoryMap = {};
         [...t.expenses,...t.fixed,...t.installments].forEach(x => {
           const cat = x.category || "Outros";
           categoryMap[cat] = (categoryMap[cat]||0) + Number(x.value||0);
         });
-        const cats = Object.entries(categoryMap).sort((a,b)=>b[1]-a[1]);
-        const maxCat = cats[0]?.[1] || 1;
-        $("#financeCategoryList").innerHTML = cats.length ? cats.map(([cat,val])=>`
-          <div class="category-row"><div class="category-head"><span>${escapeHTML(cat)}</span><span>${moneyBRL(val)}</span></div><div class="category-bar"><span style="width:${Math.max(4,val/maxCat*100)}%"></span></div></div>
-        `).join("") : `<div class="finance-empty"><strong>Sem gastos no mês</strong><span>Cadastre um gasto para ver a distribuição.</span></div>`;
+        renderCategoryDonut(Object.entries(categoryMap).filter(e => e[1] > 0).sort((a,b)=>b[1]-a[1]));
 
         const paymentMap = {};
         [...t.expenses,...t.fixed,...t.installments,...t.outflow].forEach(x=>{
           const p=paymentKey(x)||"Não informado"; paymentMap[p]=(paymentMap[p]||0)+Number(x.value||0);
         });
-        const pays = Object.entries(paymentMap).sort((a,b)=>b[1]-a[1]);
-        $("#financePaymentGrid").innerHTML = pays.length ? pays.map(([p,v])=>`<div class="payment-item"><small>${escapeHTML(paymentLabel(p))}</small><strong>${moneyBRL(v)}</strong></div>`).join("") :
-          `<div class="finance-empty" style="grid-column:1/-1"><strong>Sem pagamentos registrados</strong><span>Os valores aparecerão aqui automaticamente.</span></div>`;
+        const pays = Object.entries(paymentMap).filter(e => e[1] > 0).sort((a,b)=>b[1]-a[1]);
+        const payTotal = pays.reduce((acc,[,v]) => acc + v, 0);
+        if ($("#financePaymentTotal")) $("#financePaymentTotal").textContent = payTotal ? moneyBRL(payTotal) : "";
+        const payKind = p => p === "Pix" ? "pix" : p === "Cartão de débito" ? "debit" : String(p).startsWith("card:") ? "credit" : "other";
+        const payIcon = p => ({ pix:"⚡", debit:"💳", credit:"💳", other:"💵" })[payKind(p)];
+        $("#financePaymentGrid").innerHTML = pays.length ? pays.map(([p,v]) => {
+          const share = payTotal ? v / payTotal * 100 : 0;
+          return `<article class="payment-item pk-${payKind(p)}"><div class="pi-top"><span class="pi-ico">${payIcon(p)}</span><small title="${escapeHTML(paymentLabel(p))}">${escapeHTML(paymentLabel(p))}</small></div><strong>${moneyBRL(v)}</strong><div class="pi-bar"><span style="width:${Math.max(3,share)}%"></span></div><em>${share < 1 ? "<1" : Math.round(share)}% dos gastos</em></article>`;
+        }).join("") : `<div class="finance-empty" style="grid-column:1/-1"><strong>Sem pagamentos registrados</strong><span>Os valores aparecerão aqui automaticamente.</span></div>`;
 
         populateFinanceExpenseFilters();
         const filterActive = !!(financeExpenseFilter.q || financeExpenseFilter.category || financeExpenseFilter.payment);
@@ -4343,6 +4520,40 @@
 
       $("#closeFinanceModalBtn")?.addEventListener("click", financeCloseModal);
       $("#cancelFinanceModalBtn")?.addEventListener("click", financeCloseModal);
+      $("#saveAddAnotherBtn")?.addEventListener("click", () => {
+        const form = $("#financeForm");
+        if (!form.reportValidity()) return;
+        financeKeepOpen = true;
+        form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
+      });
+      $("#financeFormFields")?.addEventListener("click", e => {
+        const chip = e.target.closest(".fm-chip[data-v]");
+        if (chip) {
+          const group = chip.closest("[data-fm-group]").dataset.fmGroup;
+          if (group === "payment") $("#financeFormFields").dataset.payTouched = "1";
+          fmSetGroup(group, chip.classList.contains("on") ? "" : chip.dataset.v);
+          return;
+        }
+        const day = e.target.closest("[data-fm-day]");
+        if (day) {
+          const d = new Date(); d.setDate(d.getDate() + Number(day.dataset.fmDay));
+          $("#financeFormFields").querySelector('input[name="date"]').value = localDateISO(d);
+          fmSyncDate();
+        }
+      });
+      $("#financeFormFields")?.addEventListener("input", e => { if (e.target.name === "date") fmSyncDate(); });
+      $("#financeFormFields")?.addEventListener("change", e => {
+        const box = $("#financeFormFields");
+        if (e.target.id === "fmCatSelect") { fmSetGroup("category", e.target.value); return; }
+        if (e.target.name === "name" && !$("#financeId").value && $("#financeType").value === "expense") {
+          const nm = e.target.value.trim().toLowerCase();
+          const prev = [...state.finance.expenses].reverse().find(x => (x.name || "").trim().toLowerCase() === nm);
+          if (!prev) return;
+          if (prev.category && !box.querySelector('input[name="category"]').value) fmSetGroup("category", prev.category);
+          if (!box.dataset.payTouched && paymentKey(prev)) fmSetGroup("payment", paymentKey(prev));
+          const val = box.querySelector('input[name="value"]'); if (val && !val.value && prev.value) val.value = prev.value;
+        }
+      });
       $("#financeModalBackdrop")?.addEventListener("click", e => { if (e.target === $("#financeModalBackdrop")) financeCloseModal(); });
 
       function ensureFinanceCards(){ if(!state.finance.cards || typeof state.finance.cards!=="object" || Array.isArray(state.finance.cards)) state.finance.cards={}; }
@@ -4405,8 +4616,22 @@
         else arr.push(payload);
 
         saveFinance(id ? "Registro financeiro atualizado" : "Registro financeiro salvo");
-        financeCloseModal();
-        render();
+        const keepOpen = financeKeepOpen && type === "expense" && !id;
+        financeKeepOpen = false;
+        if (keepOpen) {
+          render();
+          const box = $("#financeFormFields");
+          box.querySelector('[name="value"]').value = "";
+          box.querySelector('[name="name"]').value = "";
+          fmSetGroup("category", "");
+          let note = box.querySelector("#fmSaved");
+          if (!note) { note = document.createElement("div"); note.id = "fmSaved"; note.className = "fm-saved"; box.prepend(note); }
+          note.textContent = `✓ Salvo: ${payload.name} · ${moneyBRL(payload.value)}`;
+          box.querySelector('[name="value"]').focus();
+        } else {
+          financeCloseModal();
+          render();
+        }
       });
 
       // Pessoal
