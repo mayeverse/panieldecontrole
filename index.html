@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300..800&display=swap" rel="stylesheet" />
   <title>Painel de Controle — Organizador Pessoal & Acadêmico</title>
   <style>
         :root {
@@ -42,8 +42,8 @@
       --radius: 18px;
       --radius-md: 14px;
       --radius-sm: 10px;
-      --font-body: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-      --font-head: "Bricolage Grotesque", "Figtree", ui-sans-serif, system-ui, sans-serif;
+      --font-body: "Lexend", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-head: "Lexend", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     body.dark-mode {
@@ -1677,6 +1677,90 @@
     .fsr-carry span:first-child { color: var(--fin-ink); font-weight: 700; }
     .finance-summary-row.fsr-total { margin-top: 4px; border-top: 2px solid var(--line-strong); font-size: 15px; }
     .finance-summary-row.fsr-total span:first-child { color: var(--text); font-weight: 700; }
+
+    /* ===== Lexend em todo o site ===== */
+    body, button, input, select, textarea { font-family: var(--font-body); }
+    body { font-size: 14.5px; }
+    h1 { letter-spacing: -.02em; }
+    h1, h2, .panel-title, .stat-value, .brand strong { letter-spacing: -.01em; }
+    .sem-pct, .kpi-value, .fm-amount .field { letter-spacing: -.02em; }
+
+    /* cor por forma de pagamento */
+    .payment-item .pi-bar span { background: var(--pc); }
+    .fm-chip.fm-pay::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: var(--pc); vertical-align: 0; }
+    .fm-chip.fm-pay.on { background: var(--pc); border-color: var(--pc); color: #fff; }
+    .fm-chip.fm-pay.on::before { background: #fff; }
+    body.dark-mode .fm-chip.fm-pay.on { color: #0d1514; }
+    body.dark-mode .fm-chip.fm-pay.on::before { background: #0d1514; }
+
+    /* gráfico por categoria */
+    .fchart-controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .fb-stack { display: flex; flex-direction: column-reverse; width: 100%; max-width: 34px; height: 100%; border-radius: 6px 6px 0 0; overflow: hidden; }
+    .fb-stack .fs { display: block; flex: none; border-top: 1px solid var(--surface); }
+    .fb-stack .fs:first-child { border-top: 0; }
+    .fchart-bal.neutral { color: var(--muted); }
+    .fchart-legend .lg-cat { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity .15s ease, border-color .15s ease; }
+    .fchart-legend .lg-cat i { width: 10px; height: 10px; border-radius: 3px; }
+    .fchart-legend .lg-cat::before { display: none; }
+    .fchart-legend .lg-cat:hover { border-color: var(--line-strong); }
+    .fchart-legend .lg-cat.on { border-color: var(--text); background: var(--surface-2); }
+    .fchart-legend .lg-cat.dim { opacity: .45; }
+
+    /* extrato */
+    #openStatementBtn { height: 40px; white-space: nowrap; }
+    .finance-monthbar .month-picker { flex-wrap: wrap; justify-content: flex-end; }
+    .statement-modal { width: min(100%, 960px); }
+    .st-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 0 21px 14px; }
+    .st-range { display: flex; flex-wrap: wrap; gap: 10px; }
+    .st-range label { margin: 0; font-size: 12px; }
+    .st-range .field { margin-top: 5px; width: 160px; }
+    .st-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .st-body { padding: 0 21px 24px; }
+    .st-sheet { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; background: var(--surface); }
+    .st-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px 20px; padding-bottom: 14px; border-bottom: 2px solid var(--text); }
+    .st-head h3 { margin: 0; font-size: 22px; }
+    .st-head p { margin: 4px 0 0; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: capitalize; }
+    .st-gen { font-size: 12px; color: var(--muted); }
+    .st-summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+    .st-summary > div { padding: 11px 13px; border-radius: var(--radius-md); background: var(--surface-2); }
+    .st-summary small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .st-summary strong { display: block; margin-top: 3px; font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+    .st-summary .st-final { background: var(--text); }
+    .st-summary .st-final small { color: var(--surface-2); opacity: .8; }
+    .st-summary .st-final strong { color: var(--surface); }
+    .st-table-wrap { overflow-x: auto; }
+    .st-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .st-table th { padding: 8px 10px; text-align: left; font-size: 12px; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--line-strong); }
+    .st-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .st-table .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .st-table td small { display: block; margin-top: 2px; font-size: 11px; color: var(--muted); }
+    .st-month td { padding: 14px 10px 6px; border-bottom: 0; font-weight: 700; font-size: 13.5px; text-transform: capitalize; color: var(--primary); }
+    .st-carry td { background: var(--fin-soft); color: var(--fin-ink); font-weight: 600; }
+    .st-monthend td { font-weight: 700; background: var(--surface-2); border-bottom: 2px solid var(--line-strong); }
+    .st-none { text-align: center; color: var(--muted); }
+    .st-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; }
+    .st-split h4 { margin: 0 0 6px; font-size: 14px; }
+    .st-mini { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .st-mini td { padding: 6px 4px; border-bottom: 1px solid var(--line); }
+    .st-mini .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .st-dot { display: inline-block; width: 9px; height: 9px; margin-right: 8px; border-radius: 3px; }
+    .st-foot { margin: 18px 0 0; font-size: 11.5px; color: var(--muted); }
+    @media (max-width: 760px) { .st-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st-split { grid-template-columns: 1fr; } .st-sheet { padding: 16px; } }
+
+    @media print {
+      body.printing-statement .app-shell,
+      body.printing-statement .modal-backdrop:not(#statementBackdrop),
+      body.printing-statement .st-noprint { display: none !important; }
+      body.printing-statement { background: #fff !important; }
+      body.printing-statement #statementBackdrop { --surface: #fff; --surface-2: #f3f5f3; --text: #14211f; --muted: #5c6c68; --line: #dfe5e2; --line-strong: #b9c4c0; --primary: #0f6b66; --fin-soft: #e8f3ea; --fin-ink: #2a6a39; --fac-ink: #8a4332; --fin: #3b8a4d; display: block !important; position: static; padding: 0; background: #fff; backdrop-filter: none; }
+      body.printing-statement #statementBackdrop .modal { width: 100%; max-height: none; overflow: visible; border: 0; box-shadow: none; border-radius: 0; background: #fff; }
+      body.printing-statement .st-body { padding: 0; }
+      body.printing-statement .st-sheet { border: 0; padding: 0; }
+      body.printing-statement .st-summary .st-final, body.printing-statement .st-summary > div, body.printing-statement .st-carry td, body.printing-statement .st-monthend td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body.printing-statement .st-table tr { break-inside: avoid; }
+      body.printing-statement .money.out { color: #8a4332; }
+      body.printing-statement .money.in { color: #2a6a39; }
+    }
   </style>
 </head>
 <body>
@@ -1980,6 +2064,7 @@
               <button class="icon-btn" id="financePrevMonth" aria-label="Mês anterior">‹</button>
               <input class="field" id="financeMonthInput" type="month" style="width:155px;">
               <button class="icon-btn" id="financeNextMonth" aria-label="Próximo mês">›</button>
+              <button class="secondary-btn" id="openStatementBtn" type="button">🧾 Extrato</button>
             </div>
           </div>
 
@@ -2035,15 +2120,18 @@
             <section class="finance-card fchart-card" style="margin-top:16px;">
               <div class="finance-card-head">
                 <div><h2>Comparativo por mês</h2><p>Entradas, saídas e investimentos mês a mês. Toque em um mês para ver os detalhes dele.</p></div>
-                <div class="fchart-range" role="group" aria-label="Período do gráfico">
-                  <button type="button" class="active" data-fchart-range="6">6 meses</button>
-                  <button type="button" data-fchart-range="12">12 meses</button>
+                <div class="fchart-controls">
+                  <div class="fchart-range" role="group" aria-label="Tipo de comparação">
+                    <button type="button" class="active" data-fchart-mode="flow">Entradas × saídas</button>
+                    <button type="button" data-fchart-mode="cat">Por categoria</button>
+                  </div>
+                  <div class="fchart-range" role="group" aria-label="Período do gráfico">
+                    <button type="button" class="active" data-fchart-range="6">6 meses</button>
+                    <button type="button" data-fchart-range="12">12 meses</button>
+                  </div>
                 </div>
               </div>
-              <div class="fchart-legend">
-                <span class="lg-in">Entradas</span><span class="lg-out">Saídas</span><span class="lg-inv">Investimentos</span>
-                <span class="lg-note">Abaixo de cada mês: resultado do mês</span>
-              </div>
+              <div class="fchart-legend" id="financeChartLegend"></div>
               <div class="fchart" id="financeChart"></div>
               <div class="fchart-stats" id="financeChartStats"></div>
             </section>
@@ -2292,6 +2380,27 @@
           <button type="submit" class="primary-btn">Salvar Cargas Horárias</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: extrato financeiro -->
+  <div class="modal-backdrop" id="statementBackdrop" role="dialog" aria-modal="true" aria-labelledby="statementTitle">
+    <div class="modal statement-modal">
+      <div class="modal-header st-noprint">
+        <h2 class="modal-title" id="statementTitle">Extrato financeiro</h2>
+        <button class="icon-btn" id="closeStatementBtn" aria-label="Fechar">×</button>
+      </div>
+      <div class="st-toolbar st-noprint">
+        <div class="st-range">
+          <label>De<input class="field" type="month" id="stFrom"></label>
+          <label>Até<input class="field" type="month" id="stTo"></label>
+        </div>
+        <div class="st-actions">
+          <button class="secondary-btn" id="stCsvBtn" type="button">⬇ Baixar CSV</button>
+          <button class="primary-btn" id="stPrintBtn" type="button">🖨 Imprimir / salvar PDF</button>
+        </div>
+      </div>
+      <div id="statementBody" class="st-body"></div>
     </div>
   </div>
 
@@ -2803,7 +2912,7 @@
         const pays = [["Pix","⚡ Pix"], ["Cartão de débito","💳 Débito"], ...Object.entries(f.cards || {}).map(([id, c]) => ["card:" + id, "💳 " + c.name])];
         if (payVal && !pays.some(p => p[0] === payVal)) pays.push([payVal, paymentLabel(payVal)]);
         const names = [...new Set(f.expenses.slice(-120).map(x => x.name).filter(Boolean).reverse())].slice(0, 30);
-        const chip = (v, l, on) => `<button type="button" class="fm-chip${on ? " on" : ""}" data-v="${escapeHTML(v)}">${escapeHTML(l)}</button>`;
+        const chip = (v, l, on, pay) => `<button type="button" class="fm-chip${pay ? " fm-pay" : ""}${on ? " on" : ""}" data-v="${escapeHTML(v)}"${pay ? ` style="--pc:${paymentColor(v)}"` : ""}>${escapeHTML(l)}</button>`;
         return `
           <div class="form-group full"><label>Valor</label>
             <div class="fm-amount"><span>R$</span><input class="field" name="value" type="number" inputmode="decimal" min="0" step=".01" required value="${existing?.value ?? ""}" placeholder="0,00" autocomplete="off"></div></div>
@@ -2811,7 +2920,7 @@
             <input class="field" name="name" required list="fmNames" autocomplete="off" value="${escapeHTML(existing?.name || "")}" placeholder="Ex.: Mercado">
             <datalist id="fmNames">${names.map(n => `<option value="${escapeHTML(n)}"></option>`).join("")}</datalist></div>
           <div class="form-group full"><label>Como pagou?</label>
-            <div class="fm-chips" data-fm-group="payment">${pays.map(([v, l]) => chip(v, l, v === payVal)).join("")}</div>
+            <div class="fm-chips" data-fm-group="payment">${pays.map(([v, l]) => chip(v, l.replace(/^[^ ]+ /, ""), v === payVal, true)).join("")}</div>
             <input type="hidden" name="payment" value="${escapeHTML(payVal)}"></div>
           <div class="form-group full"><label>Categoria</label>
             <div class="fm-chips" data-fm-group="category">${top.map(c => chip(c, c.replace(/ \(.*\)/, ""), c === catVal)).join("")}</div>
@@ -3440,6 +3549,28 @@
         });
       }
 
+      function paymentColor(key) {
+        if (key === "Pix") return "var(--cat0)";
+        if (key === "Cartão de débito") return "var(--cat4)";
+        if (String(key).startsWith("card:")) {
+          const ids = Object.keys(state.finance.cards || {});
+          const i = Math.max(0, ids.indexOf(String(key).slice(5)));
+          return `var(--cat${[1, 2, 3, 5, 6][i % 5]})`;
+        }
+        return "var(--cat7)";
+      }
+      // ranking de categorias (últimos 12 meses) para manter a mesma cor da categoria em todos os gráficos
+      function financeCatRanking(month) {
+        const [y, m] = month.split("-").map(Number); const tot = {};
+        for (let i = 0; i < 12; i++) {
+          const d = new Date(y, m - 1 - i, 1);
+          const r = financeRecordsForMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+          [...r.expenses, ...r.fixed, ...r.installments].forEach(x => { const c = x.category || "Outros"; tot[c] = (tot[c] || 0) + Number(x.value || 0); });
+        }
+        return Object.entries(tot).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]).map(e => e[0]);
+      }
+      const catColor = (name, rank) => { const i = rank.indexOf(name); return `var(--cat${i >= 0 && i < 7 ? i : 7})`; };
+
       function renderCategoryDonut(cats) {
         const el = $("#financeCategoryList"); if (!el) return;
         if (!cats.length) { el.innerHTML = `<div class="finance-empty"><strong>Sem gastos no mês</strong><span>Cadastre um gasto para ver a distribuição.</span></div>`; return; }
@@ -3448,13 +3579,14 @@
         if (cats.length > MAX) list.push(["Outras categorias", cats.slice(MAX).reduce((a, c) => a + c[1], 0)]);
         const total = list.reduce((a, c) => a + c[1], 0);
         const R = 64, C = 2 * Math.PI * R; let off = 0;
+        const rank = financeCatRanking(state.finance.selectedMonth || localDateISO().slice(0, 7));
         const pct = v => { const x = v / total * 100; return x < 1 ? "<1%" : Math.round(x) + "%"; };
         const segs = list.map(([name, val], i) => {
           const len = val / total * C, vis = Math.max(0, len - (list.length > 1 ? 2 : 0));
-          const seg = `<circle class="dn-seg" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="var(--cat${i})" stroke-width="46" stroke-dasharray="${vis} ${C - vis}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${escapeHTML(name)}: ${moneyBRL(val)} (${pct(val)})</title></circle>`;
+          const seg = `<circle class="dn-seg" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="${catColor(name, rank)}" stroke-width="46" stroke-dasharray="${vis} ${C - vis}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${escapeHTML(name)}: ${moneyBRL(val)} (${pct(val)})</title></circle>`;
           off += len; return seg;
         }).join("");
-        const rows = list.map(([name, val], i) => `<li class="dn-row" data-i="${i}"><i style="background:var(--cat${i})"></i><span class="dn-name" title="${escapeHTML(name)}">${escapeHTML(name)}</span><span class="dn-pct">${pct(val)}</span><strong>${moneyBRL(val)}</strong></li>`).join("");
+        const rows = list.map(([name, val], i) => `<li class="dn-row" data-i="${i}"><i style="background:${catColor(name, rank)}"></i><span class="dn-name" title="${escapeHTML(name)}">${escapeHTML(name)}</span><span class="dn-pct">${pct(val)}</span><strong>${moneyBRL(val)}</strong></li>`).join("");
         el.innerHTML = `<div class="dn-wrap"><div class="dn-chart"><svg viewBox="0 0 200 200" role="img" aria-label="Gastos por categoria">${segs}</svg><div class="dn-center"><small>Total</small><strong>${moneyBRL(total)}</strong></div></div><ul class="dn-legend">${rows}</ul></div>`;
       }
       (function () {
@@ -3464,10 +3596,118 @@
         el.addEventListener("mouseleave", () => mark(null));
       })();
 
+      // ---- Extrato financeiro ----
+      function buildStatement(fromM, toM) {
+        if (fromM > toM) [fromM, toM] = [toM, fromM];
+        const months = [];
+        let [y, m] = fromM.split("-").map(Number);
+        for (let g = 0; g < 36; g++) {
+          const key = `${y}-${String(m).padStart(2, "0")}`;
+          if (key > toM) break;
+          months.push(key); m++; if (m > 12) { m = 1; y++; }
+        }
+        const opening = financeCarryIn(fromM);
+        let running = opening;
+        const blocks = [], catTot = {}, payTot = {};
+        let inc = 0, out = 0, inv = 0;
+        months.forEach((mo, i) => {
+          const r = financeRecordsForMonth(mo);
+          if (i > 0) running = Math.max(0, running);
+          const carry = i === 0 ? opening : running;
+          const items = [
+            ...r.income.map(x => ({ date: x.date, desc: x.name, type: "Entrada", cat: x.category || "Entrada", pay: "", amount: Number(x.value || 0) })),
+            ...r.expenses.map(x => ({ date: x.date, desc: x.name, type: "Gasto", cat: x.category || "Outros", pay: paymentLabel(paymentKey(x)), amount: -Number(x.value || 0) })),
+            ...r.fixed.map(x => ({ date: x.occurrenceDate || x.date, desc: x.name, type: "Gasto fixo", cat: x.category || "Outros", pay: paymentLabel(paymentKey(x)), amount: -Number(x.value || 0) })),
+            ...r.installments.map(x => ({ date: x.date, desc: `${x.name} (${x.parcel}/${x.totalParcels})`, type: "Parcela", cat: x.category || "Outros", pay: paymentLabel(paymentKey(x)), amount: -Number(x.value || 0) })),
+            ...r.investments.map(x => ({ date: x.date, desc: x.name, type: "Investimento", cat: x.category || "Investimento", pay: "", amount: -Number(x.value || 0) }))
+          ].sort((a, b) => String(a.date).localeCompare(String(b.date)) || (b.amount > 0) - (a.amount > 0));
+          items.forEach(it => {
+            running += it.amount;
+            it.balance = running;
+            if (it.type === "Entrada") inc += it.amount;
+            else if (it.type === "Investimento") inv += -it.amount;
+            else { out += -it.amount; catTot[it.cat] = (catTot[it.cat] || 0) + -it.amount; const pk = it.pay || "Não informado"; payTot[pk] = (payTot[pk] || 0) + -it.amount; }
+          });
+          blocks.push({ mo, carry, items, closing: running });
+        });
+        return { fromM: months[0], toM: months[months.length - 1], opening, closing: running, inc, out, inv, blocks, catTot, payTot };
+      }
+
+      function renderStatement() {
+        const body = $("#statementBody"); if (!body) return;
+        const st = buildStatement($("#stFrom").value || localDateISO().slice(0, 7), $("#stTo").value || localDateISO().slice(0, 7));
+        window.__lastStatement = st;
+        const sgn = v => (v < 0 ? "out" : "in");
+        const now = new Date();
+        const lines = st.blocks.map(b => `
+          <tr class="st-month"><td colspan="6">${escapeHTML(financeMonthLabel(b.mo))}</td></tr>
+          ${b.carry > 0 ? `<tr class="st-carry"><td></td><td colspan="3">↪ Sobra do mês anterior</td><td class="num money in">${moneyBRL(b.carry)}</td><td class="num">${moneyBRL(b.carry)}</td></tr>` : ""}
+          ${b.items.map(it => `<tr><td>${escapeHTML(formatDate(it.date))}</td><td><strong>${escapeHTML(it.desc)}</strong><small>${it.type}</small></td><td>${escapeHTML(it.cat)}</td><td>${escapeHTML(it.pay || "—")}</td><td class="num money ${sgn(it.amount)}">${it.amount < 0 ? "−" : "+"}${moneyBRL(Math.abs(it.amount))}</td><td class="num">${moneyBRL(it.balance)}</td></tr>`).join("") || `<tr><td colspan="6" class="st-none">Sem movimentações neste mês.</td></tr>`}
+          <tr class="st-monthend"><td colspan="5">Saldo ao fim de ${escapeHTML(financeMonthLabel(b.mo))}</td><td class="num money ${b.closing < 0 ? "out" : "in"}">${moneyBRL(b.closing)}</td></tr>`).join("");
+        const split = (obj, color) => { const tot = Object.values(obj).reduce((a, v) => a + v, 0); return Object.entries(obj).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td>${color ? `<i class="st-dot" style="background:${color(k)}"></i>` : ""}${escapeHTML(k)}</td><td class="num">${tot ? Math.round(v / tot * 100) : 0}%</td><td class="num">${moneyBRL(v)}</td></tr>`).join("") || `<tr><td colspan="3" class="st-none">—</td></tr>`; };
+        const keyByLabel = {}; Object.keys(state.finance.cards || {}).forEach(id => { keyByLabel[paymentLabel("card:" + id)] = "card:" + id; });
+        const rank = financeCatRanking(st.toM);
+        body.innerHTML = `<div class="st-sheet">
+          <header class="st-head">
+            <div><h3>Extrato financeiro</h3><p>${st.fromM === st.toM ? escapeHTML(financeMonthLabel(st.fromM)) : `${escapeHTML(financeMonthLabel(st.fromM))} a ${escapeHTML(financeMonthLabel(st.toM))}`}</p></div>
+            <div class="st-gen">Emitido em ${escapeHTML(formatDate(localDateISO()))} às ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}</div>
+          </header>
+          <div class="st-summary">
+            <div><small>Saldo anterior</small><strong>${moneyBRL(st.opening)}</strong></div>
+            <div><small>Entradas</small><strong class="money in">${moneyBRL(st.inc)}</strong></div>
+            <div><small>Saídas</small><strong class="money out">${moneyBRL(st.out)}</strong></div>
+            <div><small>Investimentos</small><strong class="money invest">${moneyBRL(st.inv)}</strong></div>
+            <div class="st-final"><small>Saldo final</small><strong class="money ${st.closing < 0 ? "out" : "in"}">${moneyBRL(st.closing)}</strong></div>
+          </div>
+          <div class="st-table-wrap"><table class="st-table">
+            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Pagamento</th><th class="num">Valor</th><th class="num">Saldo</th></tr></thead>
+            <tbody>${lines}</tbody>
+          </table></div>
+          <div class="st-split">
+            <section><h4>Saídas por categoria</h4><table class="st-mini"><tbody>${split(st.catTot, k => catColor(k, rank))}</tbody></table></section>
+            <section><h4>Saídas por forma de pagamento</h4><table class="st-mini"><tbody>${split(st.payTot, k => paymentColor(keyByLabel[k] || k))}</tbody></table></section>
+          </div>
+          <p class="st-foot">Saldo negativo de um mês não é transportado para o seguinte. Gastos no cartão de crédito aparecem no mês da fatura.</p>
+        </div>`;
+      }
+
+      function openStatement() {
+        const mo = state.finance.selectedMonth || localDateISO().slice(0, 7);
+        $("#stFrom").value = mo; $("#stTo").value = mo;
+        renderStatement();
+        $("#statementBackdrop").classList.add("open");
+      }
+      function closeStatement() { $("#statementBackdrop")?.classList.remove("open"); }
+      function statementCSV() {
+        const st = window.__lastStatement || buildStatement($("#stFrom").value, $("#stTo").value);
+        const cell = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+        const num = v => String(Number(v).toFixed(2)).replace(".", ",");
+        const rows = [["Data", "Descrição", "Tipo", "Categoria", "Pagamento", "Valor", "Saldo"]];
+        st.blocks.forEach(b => {
+          if (b.carry > 0) rows.push([b.mo + "-01", "Sobra do mês anterior", "Sobra", "", "", num(b.carry), num(b.carry)]);
+          b.items.forEach(it => rows.push([it.date, it.desc, it.type, it.cat, it.pay, num(it.amount), num(it.balance)]));
+        });
+        const csv = "\ufeff" + rows.map(r => r.map(cell).join(";")).join("\r\n");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        a.download = `extrato-${st.fromM}${st.fromM === st.toM ? "" : "_a_" + st.toM}.csv`;
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      function printStatement() {
+        const st = window.__lastStatement; const old = document.title;
+        if (st) document.title = `Extrato ${st.fromM}${st.fromM === st.toM ? "" : " a " + st.toM}`;
+        document.body.classList.add("printing-statement");
+        const done = () => { document.body.classList.remove("printing-statement"); document.title = old; window.removeEventListener("afterprint", done); };
+        window.addEventListener("afterprint", done);
+        window.print();
+      }
+
       let financeChartRange = 6;
+      let financeChartMode = "flow";
+      let financeChartCat = null;
       function renderFinanceChart(month) {
         const el = $("#financeChart"); if (!el) return;
-        const statsEl = $("#financeChartStats");
+        const statsEl = $("#financeChartStats"), legEl = $("#financeChartLegend");
         const n = financeChartRange;
         // janela fixa terminando no mês atual; só se desloca se o mês escolhido ficar fora dela
         const idx = mo => { const [yy, mm] = mo.split("-").map(Number); return yy * 12 + (mm - 1); };
@@ -3481,40 +3721,77 @@
           const d = new Date(y, m - 1 - i, 1);
           const mo = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
           const t = financeTotals(mo);
-          data.push({ mo, d, inc: t.incomeTotal, out: t.exitsTotal, inv: t.investmentTotal, bal: t.monthResult });
+          data.push({ mo, d, t, inc: t.incomeTotal, out: t.exitsTotal, inv: t.investmentTotal, bal: t.monthResult });
         }
-        const maxV = Math.max(0, ...data.flatMap(x => [x.inc, x.out, x.inv]));
-        if (!maxV) {
-          el.innerHTML = `<div class="finance-empty"><strong>Sem movimentações neste período</strong><span>Registre entradas, gastos ou investimentos para comparar os meses.</span></div>`;
-          if (statsEl) statsEl.innerHTML = "";
-          return;
-        }
-        const nice = v => { const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
-        const top = nice(maxV);
         const compact = new Intl.NumberFormat("pt-BR", { notation: "compact", maximumFractionDigits: 1 });
         const short = v => "R$ " + compact.format(v);
-        const bar = (cls, label, v) => `<i class="fb ${cls}" style="height:${v > 0 ? Math.max(1.5, v / top * 100) : 0}%" title="${label}: ${moneyBRL(v)}"></i>`;
-        const cols = data.map(x => {
-          const mName = new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(x.d).replace(".", "");
-          const sign = x.bal < 0 ? "−" : "+";
-          return `<button type="button" class="fchart-col${x.mo === month ? " sel" : ""}" data-fchart-month="${x.mo}" title="${escapeHTML(financeMonthLabel(x.mo))}">
-            <span class="fchart-bars">${bar("in", "Entradas", x.inc)}${bar("out", "Saídas", x.out)}${bar("inv", "Investimentos", x.inv)}</span>
-            <span class="fchart-lbl">${escapeHTML(mName)}<small>${String(x.d.getFullYear()).slice(2)}</small></span>
-            <span class="fchart-bal ${x.bal < 0 ? "neg" : "pos"}">${sign}${short(Math.abs(x.bal))}</span>
-          </button>`;
-        }).join("");
-        el.innerHTML = `<div class="fchart-wrap">
+        const nice = v => { const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
+        const label = x => { const mName = new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(x.d).replace(".", ""); return `<span class="fchart-lbl">${escapeHTML(mName)}<small>${String(x.d.getFullYear()).slice(2)}</small></span>`; };
+        const frame = (top, cols) => `<div class="fchart-wrap">
           <div class="fchart-axis"><span style="bottom:100%">${short(top)}</span><span style="bottom:50%">${short(top / 2)}</span><span style="bottom:0">0</span></div>
           <div class="fchart-scroll"><div class="fchart-plot" style="min-width:${n * 66}px;grid-template-columns:repeat(${n},minmax(0,1fr))">${cols}</div></div>
         </div>`;
+        const empty = () => { el.innerHTML = `<div class="finance-empty"><strong>Sem movimentações neste período</strong><span>Registre entradas, gastos ou investimentos para comparar os meses.</span></div>`; if (statsEl) statsEl.innerHTML = ""; };
+        const stat = (k, v, cls) => `<div class="fchart-stat"><small>${k}</small><strong class="${cls || ""}">${v}</strong></div>`;
+
+        if (financeChartMode === "cat") {
+          const rank = financeCatRanking(month), top7 = rank.slice(0, 7);
+          const rows = data.map(x => {
+            const map = {};
+            [...x.t.expenses, ...x.t.fixed, ...x.t.installments].forEach(e => { const c = e.category || "Outros"; map[c] = (map[c] || 0) + Number(e.value || 0); });
+            const total = Object.values(map).reduce((a, v) => a + v, 0);
+            const segs = top7.map(c => ({ name: c, val: map[c] || 0 }));
+            const rest = total - segs.reduce((a, sg) => a + sg.val, 0);
+            if (rest > 0.004) segs.push({ name: "Outras categorias", val: rest });
+            return { x, total, segs, map };
+          });
+          if (financeChartCat && !rank.includes(financeChartCat) && financeChartCat !== "Outras categorias") financeChartCat = null;
+          const view = rows.map(r => ({ ...r, show: financeChartCat ? r.segs.filter(sg => sg.name === financeChartCat) : r.segs }));
+          const sumOf = r => r.show.reduce((a, sg) => a + sg.val, 0);
+          const maxV = Math.max(0, ...view.map(sumOf));
+          const legNames = [...top7, ...(rows.some(r => r.segs.some(sg => sg.name === "Outras categorias")) ? ["Outras categorias"] : [])];
+          if (legEl) legEl.innerHTML = legNames.map(c => `<button type="button" class="lg-cat${financeChartCat === c ? " on" : ""}${financeChartCat && financeChartCat !== c ? " dim" : ""}" data-fchart-cat="${escapeHTML(c)}"><i style="background:${catColor(c, rank)}"></i>${escapeHTML(c.replace(/ \(.*\)/, ""))}</button>`).join("") + `<span class="lg-note">${financeChartCat ? "Toque de novo na categoria para voltar" : "Toque numa categoria para comparar só ela"}</span>`;
+          if (!maxV) { empty(); return; }
+          const top = nice(maxV);
+          const cols = view.map(r => `<button type="button" class="fchart-col${r.x.mo === month ? " sel" : ""}" data-fchart-month="${r.x.mo}" title="${escapeHTML(financeMonthLabel(r.x.mo))}">
+            <span class="fchart-bars"><span class="fb-stack">${r.show.filter(sg => sg.val > 0).map(sg => `<i class="fs" style="height:${sg.val / top * 100}%;background:${catColor(sg.name, rank)}" title="${escapeHTML(sg.name)}: ${moneyBRL(sg.val)}"></i>`).join("")}</span></span>
+            ${label(r.x)}
+            <span class="fchart-bal neutral">${short(sumOf(r))}</span>
+          </button>`).join("");
+          el.innerHTML = frame(top, cols);
+          if (statsEl) {
+            const totals = view.map(sumOf);
+            const sum = totals.reduce((a, v) => a + v, 0);
+            const iMax = totals.indexOf(Math.max(...totals));
+            const catTot = {}; rows.forEach(r => Object.entries(r.map).forEach(([c, v]) => { catTot[c] = (catTot[c] || 0) + v; }));
+            const lead = Object.entries(catTot).sort((a, b) => b[1] - a[1])[0];
+            statsEl.innerHTML =
+              (financeChartCat ? stat("Categoria comparada", escapeHTML(financeChartCat.replace(/ \(.*\)/, ""))) : stat("Categoria que mais pesou", lead ? escapeHTML(lead[0].replace(/ \(.*\)/, "")) + " · " + moneyBRL(lead[1]) : "—")) +
+              stat(financeChartCat ? "Média por mês" : "Média de gastos por mês", moneyBRL(sum / n)) +
+              stat("Mês mais alto", totals[iMax] > 0 ? escapeHTML(financeMonthLabel(view[iMax].x.mo)) + " · " + moneyBRL(totals[iMax]) : "—");
+          }
+          return;
+        }
+
+        if (legEl) legEl.innerHTML = `<span class="lg-in">Entradas</span><span class="lg-out">Saídas</span><span class="lg-inv">Investimentos</span><span class="lg-note">Abaixo de cada mês: resultado do mês</span>`;
+        const maxV = Math.max(0, ...data.flatMap(x => [x.inc, x.out, x.inv]));
+        if (!maxV) { empty(); return; }
+        const top = nice(maxV);
+        const bar = (cls, lb, v) => `<i class="fb ${cls}" style="height:${v > 0 ? Math.max(1.5, v / top * 100) : 0}%" title="${lb}: ${moneyBRL(v)}"></i>`;
+        const cols = data.map(x => {
+          const sign = x.bal < 0 ? "−" : "+";
+          return `<button type="button" class="fchart-col${x.mo === month ? " sel" : ""}" data-fchart-month="${x.mo}" title="${escapeHTML(financeMonthLabel(x.mo))}">
+            <span class="fchart-bars">${bar("in", "Entradas", x.inc)}${bar("out", "Saídas", x.out)}${bar("inv", "Investimentos", x.inv)}</span>
+            ${label(x)}
+            <span class="fchart-bal ${x.bal < 0 ? "neg" : "pos"}">${sign}${short(Math.abs(x.bal))}</span>
+          </button>`;
+        }).join("");
+        el.innerHTML = frame(top, cols);
         if (statsEl) {
           const totalBal = data.reduce((a, x) => a + x.bal, 0);
           const avgOut = data.reduce((a, x) => a + x.out, 0) / n;
           const worst = data.reduce((a, x) => (x.out > a.out ? x : a), data[0]);
-          statsEl.innerHTML = `
-            <div class="fchart-stat"><small>Resultado no período</small><strong class="${totalBal < 0 ? "neg" : "pos"}">${moneyBRL(totalBal)}</strong></div>
-            <div class="fchart-stat"><small>Média de saídas por mês</small><strong>${moneyBRL(avgOut)}</strong></div>
-            <div class="fchart-stat"><small>Mês com mais saídas</small><strong>${worst.out > 0 ? escapeHTML(financeMonthLabel(worst.mo)) + " · " + moneyBRL(worst.out) : "—"}</strong></div>`;
+          statsEl.innerHTML = stat("Resultado no período", moneyBRL(totalBal), totalBal < 0 ? "neg" : "pos") + stat("Média de saídas por mês", moneyBRL(avgOut)) + stat("Mês com mais saídas", worst.out > 0 ? escapeHTML(financeMonthLabel(worst.mo)) + " · " + moneyBRL(worst.out) : "—");
         }
       }
 
@@ -3564,7 +3841,7 @@
         const payIcon = p => ({ pix:"⚡", debit:"💳", credit:"💳", other:"💵" })[payKind(p)];
         $("#financePaymentGrid").innerHTML = pays.length ? pays.map(([p,v]) => {
           const share = payTotal ? v / payTotal * 100 : 0;
-          return `<article class="payment-item pk-${payKind(p)}"><div class="pi-top"><span class="pi-ico">${payIcon(p)}</span><small title="${escapeHTML(paymentLabel(p))}">${escapeHTML(paymentLabel(p))}</small></div><strong>${moneyBRL(v)}</strong><div class="pi-bar"><span style="width:${Math.max(3,share)}%"></span></div><em>${share < 1 ? "<1" : Math.round(share)}% dos gastos</em></article>`;
+          return `<article class="payment-item pk-${payKind(p)}" style="--pc:${paymentColor(p)}"><div class="pi-top"><span class="pi-ico">${payIcon(p)}</span><small title="${escapeHTML(paymentLabel(p))}">${escapeHTML(paymentLabel(p))}</small></div><strong>${moneyBRL(v)}</strong><div class="pi-bar"><span style="width:${Math.max(3,share)}%"></span></div><em>${share < 1 ? "<1" : Math.round(share)}% dos gastos</em></article>`;
         }).join("") : `<div class="finance-empty" style="grid-column:1/-1"><strong>Sem pagamentos registrados</strong><span>Os valores aparecerão aqui automaticamente.</span></div>`;
 
         populateFinanceExpenseFilters();
@@ -4468,6 +4745,13 @@
         if ($("#financeExpenseFilterPayment")) $("#financeExpenseFilterPayment").value = "";
       }
 
+      $("#openStatementBtn")?.addEventListener("click", openStatement);
+      $("#closeStatementBtn")?.addEventListener("click", closeStatement);
+      $("#statementBackdrop")?.addEventListener("click", e => { if (e.target === $("#statementBackdrop")) closeStatement(); });
+      $("#stFrom")?.addEventListener("change", renderStatement);
+      $("#stTo")?.addEventListener("change", renderStatement);
+      $("#stCsvBtn")?.addEventListener("click", () => { if (!window.__lastStatement) renderStatement(); statementCSV(); });
+      $("#stPrintBtn")?.addEventListener("click", printStatement);
       $("#financeChart")?.addEventListener("click", e => {
         const col = e.target.closest("[data-fchart-month]");
         if (!col) return;
@@ -4477,6 +4761,17 @@
         renderFinance();
       });
       document.addEventListener("click", e => {
+        const md = e.target.closest("[data-fchart-mode]");
+        if (md) {
+          financeChartMode = md.dataset.fchartMode; financeChartCat = null;
+          $$("[data-fchart-mode]").forEach(x => x.classList.toggle("active", x === md));
+          renderFinanceChart(state.finance.selectedMonth || localDateISO().slice(0, 7)); return;
+        }
+        const cb = e.target.closest("[data-fchart-cat]");
+        if (cb) {
+          financeChartCat = financeChartCat === cb.dataset.fchartCat ? null : cb.dataset.fchartCat;
+          renderFinanceChart(state.finance.selectedMonth || localDateISO().slice(0, 7)); return;
+        }
         const b = e.target.closest("[data-fchart-range]");
         if (!b) return;
         financeChartRange = Number(b.dataset.fchartRange) || 6;
