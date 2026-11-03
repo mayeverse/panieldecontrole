@@ -1643,7 +1643,7 @@
     .dn-seg.dim { opacity: .22; }
     .dn-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
     .dn-center small { font-size: 11px; font-weight: 600; color: var(--muted); }
-    .dn-center strong { max-width: 84px; font-family: var(--font-head); font-size: 14.5px; line-height: 1.15; letter-spacing: -.02em; }
+    .dn-center strong { max-width: 88px; white-space: nowrap; font-family: var(--font-head); font-size: 14.5px; line-height: 1.15; letter-spacing: -.02em; }
     .dn-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; min-width: 0; }
     .dn-row { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 7px 8px; border-radius: var(--radius-sm); font-size: 13px; transition: background-color .15s ease; }
     .dn-row i { width: 10px; height: 10px; border-radius: 3px; }
@@ -1705,6 +1705,28 @@
     .fchart-legend .lg-cat:hover { border-color: var(--line-strong); }
     .fchart-legend .lg-cat.on { border-color: var(--text); background: var(--surface-2); }
     .fchart-legend .lg-cat.dim { opacity: .45; }
+
+
+    /* ===== Ajustes de margem e enquadramento (Financeiro) ===== */
+    .fchart-card .fchart-legend { padding: 0 18px; }
+    .fchart-card .fchart-wrap { padding: 0 18px; }
+    .fchart-card .fchart-stats { margin: 14px 18px 18px; }
+    .fchart-card .fchart-wrap + .fchart-stats { margin-top: 16px; }
+    .fchart-card .finance-empty { margin: 0 18px 18px; }
+    .fchart-bal { font-size: 11px; }
+    .fchart-axis { width: 66px; } .fchart-axis span { font-size: 10.5px; }
+    .fchart-catsel { width: auto; max-width: 230px; min-height: 36px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; border-radius: 999px; }
+    .fchart-catsel[hidden] { display: none; }
+    .dn-chart { flex-shrink: 0; }
+    .dn-legend .dn-name { min-width: 0; }
+    @media (max-width: 640px) {
+      .finance-card-head { flex-wrap: wrap; }
+      .fchart-controls { width: 100%; justify-content: flex-start; }
+      .fchart-catsel { width: 100%; max-width: none; }
+      .finance-monthbar .month-picker { justify-content: flex-start; width: 100%; flex-wrap: wrap; }
+      .finance-monthbar .month-picker .field { flex: 1 1 140px; width: auto !important; min-width: 0; }
+      #openStatementBtn { flex: 1 1 100%; }
+    }
 
     /* extrato */
     #openStatementBtn { height: 40px; white-space: nowrap; }
@@ -2125,6 +2147,7 @@
                     <button type="button" class="active" data-fchart-mode="flow">Entradas × saídas</button>
                     <button type="button" data-fchart-mode="cat">Por categoria</button>
                   </div>
+                  <select class="field fchart-catsel" id="financeChartCatSelect" aria-label="Escolher categoria" hidden></select>
                   <div class="fchart-range" role="group" aria-label="Período do gráfico">
                     <button type="button" class="active" data-fchart-range="6">6 meses</button>
                     <button type="button" data-fchart-range="12">12 meses</button>
@@ -2907,8 +2930,9 @@
         const catVal = existing?.category || "";
         const freq = {};
         f.expenses.forEach(x => { if (x.category) freq[x.category] = (freq[x.category] || 0) + 1; });
-        const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).map(e => e[0]).filter(c => EXPENSE_CATEGORIES.includes(c)).slice(0, 6);
-        ["Supermercado","Restaurantes, bares e lanchonetes","Delivery","Aplicativos de transporte (Uber, 99)","Lazer e Entretenimento","Saúde"].forEach(c => { if (top.length < 6 && !top.includes(c) && EXPENSE_CATEGORIES.includes(c)) top.push(c); });
+        const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).map(e => e[0]).filter(c => EXPENSE_CATEGORIES.includes(c) && c !== "Delivery").slice(0, 5);
+        ["Supermercado","Restaurantes, bares e lanchonetes","Aplicativos de transporte (Uber, 99)","Lazer e Entretenimento","Saúde"].forEach(c => { if (top.length < 5 && !top.includes(c) && EXPENSE_CATEGORIES.includes(c)) top.push(c); });
+        top.splice(2, 0, "Delivery"); // Delivery fica sempre à mão
         const pays = [["Pix","⚡ Pix"], ["Cartão de débito","💳 Débito"], ...Object.entries(f.cards || {}).map(([id, c]) => ["card:" + id, "💳 " + c.name])];
         if (payVal && !pays.some(p => p[0] === payVal)) pays.push([payVal, paymentLabel(payVal)]);
         const names = [...new Set(f.expenses.slice(-120).map(x => x.name).filter(Boolean).reverse())].slice(0, 30);
@@ -3569,25 +3593,28 @@
         }
         return Object.entries(tot).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]).map(e => e[0]);
       }
-      const catColor = (name, rank) => { const i = rank.indexOf(name); return `var(--cat${i >= 0 && i < 7 ? i : 7})`; };
+      const catColor = (name, rank) => {
+        if (name === "Outras categorias") return "var(--cat7)";
+        const i = rank.indexOf(name);
+        if (i < 0) return "var(--cat7)";
+        return i < 7 ? `var(--cat${i})` : `hsl(${(i * 47 + 20) % 360} 42% 52%)`;
+      };
 
       function renderCategoryDonut(cats) {
         const el = $("#financeCategoryList"); if (!el) return;
         if (!cats.length) { el.innerHTML = `<div class="finance-empty"><strong>Sem gastos no mês</strong><span>Cadastre um gasto para ver a distribuição.</span></div>`; return; }
-        const MAX = 7;
-        const list = cats.slice(0, MAX);
-        if (cats.length > MAX) list.push(["Outras categorias", cats.slice(MAX).reduce((a, c) => a + c[1], 0)]);
+        const list = cats.slice();
         const total = list.reduce((a, c) => a + c[1], 0);
         const R = 64, C = 2 * Math.PI * R; let off = 0;
         const rank = financeCatRanking(state.finance.selectedMonth || localDateISO().slice(0, 7));
         const pct = v => { const x = v / total * 100; return x < 1 ? "<1%" : Math.round(x) + "%"; };
         const segs = list.map(([name, val], i) => {
           const len = val / total * C, vis = Math.max(0, len - (list.length > 1 ? 2 : 0));
-          const seg = `<circle class="dn-seg" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="${catColor(name, rank)}" stroke-width="46" stroke-dasharray="${vis} ${C - vis}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${escapeHTML(name)}: ${moneyBRL(val)} (${pct(val)})</title></circle>`;
+          const seg = `<circle class="dn-seg" data-i="${i}" cx="100" cy="100" r="${R}" fill="none" stroke="${catColor(name, rank)}" stroke-width="38" stroke-dasharray="${vis} ${C - vis}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"><title>${escapeHTML(name)}: ${moneyBRL(val)} (${pct(val)})</title></circle>`;
           off += len; return seg;
         }).join("");
         const rows = list.map(([name, val], i) => `<li class="dn-row" data-i="${i}"><i style="background:${catColor(name, rank)}"></i><span class="dn-name" title="${escapeHTML(name)}">${escapeHTML(name)}</span><span class="dn-pct">${pct(val)}</span><strong>${moneyBRL(val)}</strong></li>`).join("");
-        el.innerHTML = `<div class="dn-wrap"><div class="dn-chart"><svg viewBox="0 0 200 200" role="img" aria-label="Gastos por categoria">${segs}</svg><div class="dn-center"><small>Total</small><strong>${moneyBRL(total)}</strong></div></div><ul class="dn-legend">${rows}</ul></div>`;
+        el.innerHTML = `<div class="dn-wrap"><div class="dn-chart"><svg viewBox="0 0 200 200" role="img" aria-label="Gastos por categoria">${segs}</svg><div class="dn-center"><small>Total</small><strong style="font-size:${moneyBRL(total).length > 12 ? 11 : moneyBRL(total).length > 10 ? 12.5 : 14}px">${moneyBRL(total)}</strong></div></div><ul class="dn-legend">${rows}</ul></div>`;
       }
       (function () {
         const el = document.getElementById("financeCategoryList"); if (!el) return;
@@ -3729,11 +3756,12 @@
         const label = x => { const mName = new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(x.d).replace(".", ""); return `<span class="fchart-lbl">${escapeHTML(mName)}<small>${String(x.d.getFullYear()).slice(2)}</small></span>`; };
         const frame = (top, cols) => `<div class="fchart-wrap">
           <div class="fchart-axis"><span style="bottom:100%">${short(top)}</span><span style="bottom:50%">${short(top / 2)}</span><span style="bottom:0">0</span></div>
-          <div class="fchart-scroll"><div class="fchart-plot" style="min-width:${n * 66}px;grid-template-columns:repeat(${n},minmax(0,1fr))">${cols}</div></div>
+          <div class="fchart-scroll"><div class="fchart-plot" style="min-width:${n * 76}px;grid-template-columns:repeat(${n},minmax(0,1fr))">${cols}</div></div>
         </div>`;
         const empty = () => { el.innerHTML = `<div class="finance-empty"><strong>Sem movimentações neste período</strong><span>Registre entradas, gastos ou investimentos para comparar os meses.</span></div>`; if (statsEl) statsEl.innerHTML = ""; };
         const stat = (k, v, cls) => `<div class="fchart-stat"><small>${k}</small><strong class="${cls || ""}">${v}</strong></div>`;
 
+        const catSelEl = $("#financeChartCatSelect"); if (catSelEl && financeChartMode !== "cat") catSelEl.hidden = true;
         if (financeChartMode === "cat") {
           const rank = financeCatRanking(month), top7 = rank.slice(0, 7);
           const rows = data.map(x => {
@@ -3745,8 +3773,16 @@
             if (rest > 0.004) segs.push({ name: "Outras categorias", val: rest });
             return { x, total, segs, map };
           });
-          if (financeChartCat && !rank.includes(financeChartCat) && financeChartCat !== "Outras categorias") financeChartCat = null;
-          const view = rows.map(r => ({ ...r, show: financeChartCat ? r.segs.filter(sg => sg.name === financeChartCat) : r.segs }));
+          const allCats = [...new Set([...EXPENSE_CATEGORIES, ...rank])].sort((a, b) => a.localeCompare(b, "pt-BR"));
+          if (financeChartCat && !allCats.includes(financeChartCat) && financeChartCat !== "Outras categorias") financeChartCat = null;
+          const catSel = $("#financeChartCatSelect");
+          if (catSel) {
+            catSel.hidden = false;
+            catSel.innerHTML = `<option value="">Todas as categorias</option>` + allCats.map(c => `<option value="${escapeHTML(c)}"${c === financeChartCat ? " selected" : ""}>${escapeHTML(c)}</option>`).join("");
+          }
+          const view = rows.map(r => ({ ...r, show: financeChartCat
+            ? (financeChartCat === "Outras categorias" ? r.segs.filter(sg => sg.name === financeChartCat) : [{ name: financeChartCat, val: r.map[financeChartCat] || 0 }])
+            : r.segs }));
           const sumOf = r => r.show.reduce((a, sg) => a + sg.val, 0);
           const maxV = Math.max(0, ...view.map(sumOf));
           const legNames = [...top7, ...(rows.some(r => r.segs.some(sg => sg.name === "Outras categorias")) ? ["Outras categorias"] : [])];
@@ -3758,7 +3794,7 @@
             ${label(r.x)}
             <span class="fchart-bal neutral">${short(sumOf(r))}</span>
           </button>`).join("");
-          el.innerHTML = frame(top, cols);
+          el.innerHTML = frame(top, cols); { const sc = el.querySelector(".fchart-scroll"); if (sc) sc.scrollLeft = sc.scrollWidth; }
           if (statsEl) {
             const totals = view.map(sumOf);
             const sum = totals.reduce((a, v) => a + v, 0);
@@ -3786,7 +3822,7 @@
             <span class="fchart-bal ${x.bal < 0 ? "neg" : "pos"}">${sign}${short(Math.abs(x.bal))}</span>
           </button>`;
         }).join("");
-        el.innerHTML = frame(top, cols);
+        el.innerHTML = frame(top, cols); { const sc = el.querySelector(".fchart-scroll"); if (sc) sc.scrollLeft = sc.scrollWidth; }
         if (statsEl) {
           const totalBal = data.reduce((a, x) => a + x.bal, 0);
           const avgOut = data.reduce((a, x) => a + x.out, 0) / n;
@@ -4752,6 +4788,10 @@
       $("#stTo")?.addEventListener("change", renderStatement);
       $("#stCsvBtn")?.addEventListener("click", () => { if (!window.__lastStatement) renderStatement(); statementCSV(); });
       $("#stPrintBtn")?.addEventListener("click", printStatement);
+      $("#financeChartCatSelect")?.addEventListener("change", e => {
+        financeChartCat = e.target.value || null;
+        renderFinanceChart(state.finance.selectedMonth || localDateISO().slice(0, 7));
+      });
       $("#financeChart")?.addEventListener("click", e => {
         const col = e.target.closest("[data-fchart-month]");
         if (!col) return;
